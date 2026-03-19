@@ -1,14 +1,21 @@
 @import "tailwindcss";
 
-/* ── Brand Colors ─────────────────────────────── */
+/* ── Dark Premium Palette ─────────────────────── */
 @theme {
+  --color-base: #050A14;
+  --color-base-light: #0A1428;
+  --color-base-lighter: #0F1D3A;
   --color-navy: #0A1E49;
   --color-indigo: #2433AD;
   --color-sky: #3EB5E1;
   --color-yellow: #F9D702;
   --color-white: #FFFFFF;
   --color-gray-copy: #54595F;
-  --color-sky-tint: rgba(62, 181, 225, 0.18);
+  --color-muted: rgba(255, 255, 255, 0.5);
+  --color-subtle: rgba(255, 255, 255, 0.08);
+  --color-glass: rgba(255, 255, 255, 0.04);
+  --color-glass-border: rgba(255, 255, 255, 0.08);
+  --color-glass-hover: rgba(255, 255, 255, 0.08);
 }
 
 /* ── Base Styles ──────────────────────────────── */
@@ -18,15 +25,80 @@ html {
 
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  color: var(--color-navy);
-  background: var(--color-white);
+  color: rgba(255, 255, 255, 0.8);
+  background: var(--color-base);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ── Honeycomb Pattern ────────────────────────── */
-.honeycomb-bg {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100' viewBox='0 0 56 100'%3E%3Cpath d='M28 66L0 50L0 16L28 0L56 16L56 50L28 66L28 100' fill='none' stroke='%230A1E49' stroke-opacity='0.08' stroke-width='1'/%3E%3Cpath d='M28 0L28 34L0 50L0 84L28 100L56 84L56 50L28 34' fill='none' stroke='%230A1E49' stroke-opacity='0.08' stroke-width='1'/%3E%3C/svg%3E");
+/* ── Display Font ─────────────────────────────── */
+.font-display {
+  font-family: 'Instrument Serif', 'Georgia', serif;
+}
+
+/* ── Grain Texture Overlay ────────────────────── */
+.grain::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* ── Glassmorphic Card ────────────────────────── */
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* ── Glow Effects ─────────────────────────────── */
+.glow-sky {
+  box-shadow: 0 0 40px rgba(62, 181, 225, 0.15), 0 0 80px rgba(62, 181, 225, 0.05);
+}
+
+.glow-yellow {
+  box-shadow: 0 0 40px rgba(249, 215, 2, 0.15), 0 0 80px rgba(249, 215, 2, 0.05);
+}
+
+.glow-border-sky {
+  border-color: rgba(62, 181, 225, 0.3);
+}
+
+.glow-border-yellow {
+  border-color: rgba(249, 215, 2, 0.3);
+}
+
+/* ── Gradient Mesh Orbs ───────────────────────── */
+.mesh-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.mesh-orb-sky {
+  background: radial-gradient(circle, rgba(62, 181, 225, 0.3) 0%, transparent 70%);
+}
+
+.mesh-orb-indigo {
+  background: radial-gradient(circle, rgba(36, 51, 173, 0.3) 0%, transparent 70%);
+}
+
+.mesh-orb-yellow {
+  background: radial-gradient(circle, rgba(249, 215, 2, 0.15) 0%, transparent 70%);
 }
 
 /* ── Smooth Scroll (Lenis) ────────────────────── */
@@ -47,19 +119,39 @@ html.lenis body {
   overflow: hidden;
 }
 
-/* ── Gradient animation ───────────────────────── */
-@keyframes gradient-shift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+/* ── Animated gradient border ─────────────────── */
+@keyframes border-glow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; }
 }
 
-.animate-gradient {
-  background-size: 200% 200%;
-  animation: gradient-shift 6s ease infinite;
+.animate-border-glow {
+  animation: border-glow 3s ease-in-out infinite;
 }
 
-/* ── Dot grid pattern ─────────────────────────── */
+/* ── Gradient text ────────────────────────────── */
+.text-gradient-sky {
+  background: linear-gradient(135deg, #3EB5E1 0%, #2433AD 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-yellow {
+  background: linear-gradient(135deg, #F9D702 0%, #FFB800 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Section divider ──────────────────────────── */
+.section-divider {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+  height: 1px;
+}
+
+/* ── Dot grid ─────────────────────────────────── */
 .dot-grid {
-  background-image: radial-gradient(circle, rgba(10, 30, 73, 0.06) 1px, transparent 1px);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
 }

@@ -8,17 +8,17 @@ export default function MobileMenu() {
     <div className="md:hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="p-2 text-navy"
+        className="p-2 text-white/70 hover:text-white transition-colors"
         aria-label="Toggle menu"
       >
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
           {open ? (
             <path d="M6 6l12 12M6 18L18 6" />
           ) : (
             <>
-              <path d="M4 6h16" />
-              <path d="M4 12h16" />
-              <path d="M4 18h16" />
+              <path d="M4 7h16" />
+              <path d="M4 12h12" />
+              <path d="M4 17h8" />
             </>
           )}
         </svg>
@@ -27,29 +27,36 @@ export default function MobileMenu() {
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: -10, backdropFilter: 'blur(0px)' }}
+            animate={{ opacity: 1, y: 0, backdropFilter: 'blur(20px)' }}
             exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="absolute top-full left-0 right-0 bg-white shadow-lg border-t border-gray-100"
+            transition={{ duration: 0.25 }}
+            className="absolute top-full left-0 right-0 bg-base/95 backdrop-blur-xl border-b border-white/5"
           >
-            <div className="flex flex-col p-4 gap-3">
-              <a href="#merchandising" onClick={() => setOpen(false)} className="text-sm font-medium text-navy/80 hover:text-navy py-2">
-                Merchandising
-              </a>
-              <a href="#sales" onClick={() => setOpen(false)} className="text-sm font-medium text-navy/80 hover:text-navy py-2">
-                Sales
-              </a>
-              <a href="#platform" onClick={() => setOpen(false)} className="text-sm font-medium text-navy/80 hover:text-navy py-2">
-                Platform
-              </a>
-              <a
+            <div className="flex flex-col p-6 gap-1">
+              {['Merchandising', 'Sales', 'Platform'].map((item, i) => (
+                <motion.a
+                  key={item}
+                  href={`#${item.toLowerCase()}`}
+                  onClick={() => setOpen(false)}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  className="text-base font-medium text-white/60 hover:text-white py-3 border-b border-white/5 transition-colors"
+                >
+                  {item}
+                </motion.a>
+              ))}
+              <motion.a
                 href="#contact"
                 onClick={() => setOpen(false)}
-                className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-white bg-navy rounded-lg hover:bg-navy/90 transition-colors mt-2"
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.15 }}
+                className="inline-flex items-center justify-center px-5 py-3 text-sm font-medium text-base-light bg-yellow rounded-full mt-4 transition-all"
               >
                 Contact Us
-              </a>
+              </motion.a>
             </div>
           </motion.div>
         )}

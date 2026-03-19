@@ -18,7 +18,6 @@ export default function ContactForm() {
 
     try {
       // TODO: Wire up to Supabase or API endpoint
-      // For now, simulate a successful submission
       await new Promise(resolve => setTimeout(resolve, 1000))
       console.log('Form data:', data)
       setStatus('success')
@@ -28,24 +27,30 @@ export default function ContactForm() {
     }
   }
 
-  return (
-    <section id="contact" className="py-24 sm:py-32 bg-navy relative overflow-hidden">
-      {/* Decorative */}
-      <div className="absolute top-0 left-0 w-96 h-96 bg-sky/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-0 w-72 h-72 bg-indigo/10 rounded-full blur-3xl" />
+  const inputClasses =
+    'w-full px-4 py-3.5 bg-white/[0.03] border border-white/[0.06] rounded-xl text-white placeholder-white/20 focus:outline-none focus:ring-1 focus:ring-yellow/40 focus:border-yellow/30 transition-all duration-300 text-sm'
 
-      <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+  return (
+    <section id="contact" className="relative py-28 sm:py-36 bg-base overflow-hidden">
+      {/* Orbs */}
+      <div className="mesh-orb mesh-orb-yellow w-[400px] h-[400px] top-0 left-0 opacity-15" />
+      <div className="mesh-orb mesh-orb-sky w-[300px] h-[300px] bottom-0 right-0 opacity-15" />
+
+      <div className="relative z-10 max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          className="text-center mb-14"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-            Get in Touch
+          <span className="inline-block text-[11px] font-medium tracking-[0.2em] text-yellow uppercase mb-5">
+            Get Started
+          </span>
+          <h2 className="font-display text-4xl sm:text-5xl text-white mb-4 leading-[1.1]">
+            Get in <span className="italic text-gradient-yellow">Touch</span>
           </h2>
-          <p className="text-sky/70 text-base">
+          <p className="text-sm text-white/40">
             Ready to move product? Tell us about your needs.
           </p>
         </motion.div>
@@ -56,11 +61,11 @@ export default function ContactForm() {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
           onSubmit={handleSubmit}
-          className="space-y-5"
+          className="glass-card rounded-2xl p-8 sm:p-10 space-y-5"
         >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-sky/70 mb-1.5">
+              <label htmlFor="name" className="block text-[11px] font-medium tracking-wider text-white/30 uppercase mb-2">
                 Name
               </label>
               <input
@@ -68,12 +73,12 @@ export default function ContactForm() {
                 id="name"
                 name="name"
                 required
-                className="w-full px-4 py-3 bg-white/10 border border-sky/20 rounded-lg text-white placeholder-sky/30 focus:outline-none focus:ring-2 focus:ring-sky/50 focus:border-transparent transition-all text-sm"
+                className={inputClasses}
                 placeholder="Your name"
               />
             </div>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-sky/70 mb-1.5">
+              <label htmlFor="email" className="block text-[11px] font-medium tracking-wider text-white/30 uppercase mb-2">
                 Email
               </label>
               <input
@@ -81,27 +86,27 @@ export default function ContactForm() {
                 id="email"
                 name="email"
                 required
-                className="w-full px-4 py-3 bg-white/10 border border-sky/20 rounded-lg text-white placeholder-sky/30 focus:outline-none focus:ring-2 focus:ring-sky/50 focus:border-transparent transition-all text-sm"
+                className={inputClasses}
                 placeholder="you@company.com"
               />
             </div>
           </div>
 
           <div>
-            <label htmlFor="company" className="block text-sm font-medium text-sky/70 mb-1.5">
+            <label htmlFor="company" className="block text-[11px] font-medium tracking-wider text-white/30 uppercase mb-2">
               Company
             </label>
             <input
               type="text"
               id="company"
               name="company"
-              className="w-full px-4 py-3 bg-white/10 border border-sky/20 rounded-lg text-white placeholder-sky/30 focus:outline-none focus:ring-2 focus:ring-sky/50 focus:border-transparent transition-all text-sm"
+              className={inputClasses}
               placeholder="Your company name"
             />
           </div>
 
           <div>
-            <label htmlFor="message" className="block text-sm font-medium text-sky/70 mb-1.5">
+            <label htmlFor="message" className="block text-[11px] font-medium tracking-wider text-white/30 uppercase mb-2">
               Message
             </label>
             <textarea
@@ -109,7 +114,7 @@ export default function ContactForm() {
               name="message"
               rows={4}
               required
-              className="w-full px-4 py-3 bg-white/10 border border-sky/20 rounded-lg text-white placeholder-sky/30 focus:outline-none focus:ring-2 focus:ring-sky/50 focus:border-transparent transition-all text-sm resize-none"
+              className={`${inputClasses} resize-none`}
               placeholder="Tell us about your merchandising needs..."
             />
           </div>
@@ -117,16 +122,16 @@ export default function ContactForm() {
           <button
             type="submit"
             disabled={status === 'sending'}
-            className="w-full py-4 bg-yellow text-navy font-semibold rounded-lg hover:bg-yellow/90 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed text-sm"
+            className="w-full py-4 bg-yellow text-base-light font-medium rounded-xl hover:shadow-[0_0_30px_rgba(249,215,2,0.25)] transition-all duration-500 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
           >
             {status === 'sending' ? 'Sending...' : 'Request a Demo'}
           </button>
 
           {status === 'success' && (
             <motion.p
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-center text-green-400 text-sm font-medium"
+              className="text-center text-emerald-400/80 text-sm"
             >
               Thanks! We'll be in touch shortly.
             </motion.p>
@@ -134,11 +139,11 @@ export default function ContactForm() {
 
           {status === 'error' && (
             <motion.p
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-center text-red-400 text-sm font-medium"
+              className="text-center text-red-400/80 text-sm"
             >
-              Something went wrong. Please try again or email us directly.
+              Something went wrong. Please email us directly.
             </motion.p>
           )}
         </motion.form>

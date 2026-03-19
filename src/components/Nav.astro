@@ -2,22 +2,22 @@
 import MobileMenu from './MobileMenu.tsx'
 ---
 
-<nav id="main-nav" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+<nav id="main-nav" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16 sm:h-20">
       <!-- Logo -->
-      <a href="/" class="flex items-center gap-2">
-        <span class="text-xl sm:text-2xl font-bold tracking-tight text-navy">
-          Merch<span class="text-sky">&</span>Move
+      <a href="/" class="flex items-center gap-2 group">
+        <span class="text-xl sm:text-2xl font-bold tracking-tight text-white">
+          Merch<span class="text-yellow group-hover:text-sky transition-colors duration-300">&</span>Move
         </span>
       </a>
 
       <!-- Desktop Nav -->
       <div class="hidden md:flex items-center gap-8">
-        <a href="#merchandising" class="text-sm font-medium text-navy/80 hover:text-navy transition-colors">Merchandising</a>
-        <a href="#sales" class="text-sm font-medium text-navy/80 hover:text-navy transition-colors">Sales</a>
-        <a href="#platform" class="text-sm font-medium text-navy/80 hover:text-navy transition-colors">Platform</a>
-        <a href="#contact" class="inline-flex items-center px-5 py-2.5 text-sm font-semibold text-white bg-navy rounded-lg hover:bg-navy/90 transition-colors">
+        <a href="#merchandising" class="text-sm font-medium text-white/50 hover:text-white transition-colors duration-300">Merchandising</a>
+        <a href="#sales" class="text-sm font-medium text-white/50 hover:text-white transition-colors duration-300">Sales</a>
+        <a href="#platform" class="text-sm font-medium text-white/50 hover:text-white transition-colors duration-300">Platform</a>
+        <a href="#contact" class="inline-flex items-center px-5 py-2 text-sm font-medium text-base bg-white/10 border border-white/10 rounded-full hover:bg-yellow hover:text-base hover:border-yellow transition-all duration-300">
           Contact Us
         </a>
       </div>
@@ -31,15 +31,12 @@ import MobileMenu from './MobileMenu.tsx'
 <script>
   const nav = document.getElementById('main-nav')
   if (nav) {
-    let lastScroll = 0
     window.addEventListener('scroll', () => {
-      const scrollY = window.scrollY
-      if (scrollY > 50) {
-        nav.classList.add('bg-white/95', 'backdrop-blur-md', 'shadow-sm')
+      if (window.scrollY > 50) {
+        nav.classList.add('bg-base/80', 'backdrop-blur-xl', 'border-b', 'border-white/5')
       } else {
-        nav.classList.remove('bg-white/95', 'backdrop-blur-md', 'shadow-sm')
+        nav.classList.remove('bg-base/80', 'backdrop-blur-xl', 'border-b', 'border-white/5')
       }
-      lastScroll = scrollY
     })
   }
 </script>
