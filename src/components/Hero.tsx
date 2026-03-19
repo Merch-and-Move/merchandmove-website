@@ -5,44 +5,44 @@ const words = ['Sales', 'That', 'Move.']
 export default function Hero() {
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-base overflow-hidden">
-      {/* Gradient mesh orbs */}
-      <div className="mesh-orb mesh-orb-indigo w-[600px] h-[600px] -top-40 -left-40" />
-      <div className="mesh-orb mesh-orb-sky w-[500px] h-[500px] top-1/3 right-0 translate-x-1/3" />
-      <div className="mesh-orb mesh-orb-yellow w-[300px] h-[300px] bottom-20 left-1/4" />
+      {/* Gradient mesh — more saturated */}
+      <div className="mesh-orb mesh-orb-indigo w-[800px] h-[800px] -top-60 -left-60" />
+      <div className="mesh-orb mesh-orb-sky w-[600px] h-[600px] top-1/4 right-0 translate-x-1/4" />
+      <div className="mesh-orb mesh-orb-yellow w-[400px] h-[400px] bottom-10 left-1/3" />
 
-      {/* Dot grid */}
-      <div className="absolute inset-0 dot-grid" />
+      {/* Structured grid lines */}
+      <div className="absolute inset-0 max-w-7xl mx-auto grid-lines" />
 
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-20">
-        {/* Labels */}
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-24">
+        {/* Pill labels */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex items-center justify-center gap-3 mb-10"
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="flex items-center justify-center gap-3 mb-12"
         >
-          <span className="px-4 py-1.5 text-[11px] font-medium tracking-[0.15em] uppercase glass-card rounded-full text-yellow">
+          <span className="px-4 py-1.5 text-[11px] font-medium tracking-[0.15em] uppercase bg-yellow/10 border border-yellow/20 rounded-full text-yellow">
             Stock In
           </span>
           <span className="w-1 h-1 rounded-full bg-white/20" />
-          <span className="px-4 py-1.5 text-[11px] font-medium tracking-[0.15em] uppercase glass-card rounded-full text-sky">
+          <span className="px-4 py-1.5 text-[11px] font-medium tracking-[0.15em] uppercase bg-sky/10 border border-sky/20 rounded-full text-sky">
             Stock Out
           </span>
         </motion.div>
 
-        {/* Headline — word-by-word reveal with display font */}
+        {/* Headline — word-by-word with blur reveal */}
         <h1 className="mb-8">
           {words.map((word, i) => (
             <motion.span
               key={word}
-              initial={{ opacity: 0, y: 40, filter: 'blur(8px)' }}
+              initial={{ opacity: 0, y: 50, filter: 'blur(10px)' }}
               animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
               transition={{
-                duration: 0.8,
-                delay: 0.5 + i * 0.15,
-                ease: [0.25, 0.46, 0.45, 0.94],
+                duration: 0.9,
+                delay: 0.4 + i * 0.12,
+                ease: [0.22, 1, 0.36, 1],
               }}
-              className="inline-block font-display text-6xl sm:text-7xl md:text-8xl lg:text-9xl text-white leading-[0.9] tracking-tight mr-4 sm:mr-6"
+              className="inline-block font-display text-7xl sm:text-8xl md:text-[110px] lg:text-[130px] text-white leading-[0.85] tracking-[-0.02em] mr-4 sm:mr-6 md:mr-8"
             >
               {word === 'Move.' ? (
                 <span className="italic text-gradient-yellow">{word}</span>
@@ -53,28 +53,28 @@ export default function Hero() {
           ))}
         </h1>
 
-        {/* Subheadline */}
+        {/* Subheadline — stronger opacity */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 1.1 }}
-          className="text-base sm:text-lg md:text-xl text-white/50 max-w-2xl mx-auto mb-12 leading-relaxed font-light"
+          transition={{ duration: 0.7, delay: 1.0 }}
+          className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto mb-14 leading-relaxed"
         >
           Your All-In-One Partner for Merchandising,{' '}
-          <span className="text-white/90 font-medium">Active Selling</span>, and
+          <span className="text-white font-medium">Active Selling</span>, and
           Live Software Tracking.
         </motion.p>
 
-        {/* CTAs */}
+        {/* CTAs — bigger, bolder */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 1.4 }}
+          transition={{ duration: 0.6, delay: 1.3 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
           <a
             href="#contact"
-            className="group inline-flex items-center px-8 py-4 text-sm font-medium text-base-light bg-yellow rounded-full hover:shadow-[0_0_30px_rgba(249,215,2,0.3)] transition-all duration-500"
+            className="group inline-flex items-center px-8 py-4 text-sm font-semibold text-base bg-yellow rounded-full hover:shadow-[0_0_40px_rgba(249,215,2,0.35)] transition-all duration-500"
           >
             Request a Demo
             <svg
@@ -89,7 +89,7 @@ export default function Hero() {
           </a>
           <a
             href="#about"
-            className="inline-flex items-center px-8 py-4 text-sm font-medium text-white/60 hover:text-white border border-white/10 hover:border-white/20 rounded-full transition-all duration-300"
+            className="inline-flex items-center px-8 py-4 text-sm font-medium text-white/70 hover:text-white border border-white/15 hover:border-white/30 rounded-full transition-all duration-300"
           >
             See How It Works
           </a>

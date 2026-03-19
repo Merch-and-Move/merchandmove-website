@@ -3,19 +3,18 @@
 /* ── Dark Premium Palette ─────────────────────── */
 @theme {
   --color-base: #050A14;
-  --color-base-light: #0A1428;
-  --color-base-lighter: #0F1D3A;
+  --color-base-light: #080F1E;
+  --color-base-lighter: #0C1628;
+  --color-surface: rgba(255, 255, 255, 0.04);
+  --color-surface-hover: rgba(255, 255, 255, 0.07);
   --color-navy: #0A1E49;
   --color-indigo: #2433AD;
   --color-sky: #3EB5E1;
   --color-yellow: #F9D702;
   --color-white: #FFFFFF;
   --color-gray-copy: #54595F;
-  --color-muted: rgba(255, 255, 255, 0.5);
-  --color-subtle: rgba(255, 255, 255, 0.08);
-  --color-glass: rgba(255, 255, 255, 0.04);
-  --color-glass-border: rgba(255, 255, 255, 0.08);
-  --color-glass-hover: rgba(255, 255, 255, 0.08);
+  --color-border: rgba(255, 255, 255, 0.06);
+  --color-border-hover: rgba(255, 255, 255, 0.12);
 }
 
 /* ── Base Styles ──────────────────────────────── */
@@ -25,7 +24,7 @@ html {
 
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.7);
   background: var(--color-base);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -46,59 +45,59 @@ body {
   height: 100%;
   pointer-events: none;
   z-index: 9999;
-  opacity: 0.03;
+  opacity: 0.025;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
 }
 
-/* ── Glassmorphic Card ────────────────────────── */
-.glass-card {
+/* ── Card System ──────────────────────────────── */
+.card {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.3s ease;
 }
 
-.glass-card:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.12);
+.card:hover {
+  background: rgba(255, 255, 255, 0.055);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.card-elevated {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.card-elevated:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.14);
 }
 
 /* ── Glow Effects ─────────────────────────────── */
 .glow-sky {
-  box-shadow: 0 0 40px rgba(62, 181, 225, 0.15), 0 0 80px rgba(62, 181, 225, 0.05);
+  box-shadow: 0 0 60px rgba(62, 181, 225, 0.12), 0 0 120px rgba(62, 181, 225, 0.04);
 }
 
 .glow-yellow {
-  box-shadow: 0 0 40px rgba(249, 215, 2, 0.15), 0 0 80px rgba(249, 215, 2, 0.05);
-}
-
-.glow-border-sky {
-  border-color: rgba(62, 181, 225, 0.3);
-}
-
-.glow-border-yellow {
-  border-color: rgba(249, 215, 2, 0.3);
+  box-shadow: 0 0 60px rgba(249, 215, 2, 0.12), 0 0 120px rgba(249, 215, 2, 0.04);
 }
 
 /* ── Gradient Mesh Orbs ───────────────────────── */
 .mesh-orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.4;
+  filter: blur(100px);
   pointer-events: none;
 }
 
 .mesh-orb-sky {
-  background: radial-gradient(circle, rgba(62, 181, 225, 0.3) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(62, 181, 225, 0.4) 0%, transparent 70%);
 }
 
 .mesh-orb-indigo {
-  background: radial-gradient(circle, rgba(36, 51, 173, 0.3) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(36, 51, 173, 0.4) 0%, transparent 70%);
 }
 
 .mesh-orb-yellow {
-  background: radial-gradient(circle, rgba(249, 215, 2, 0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(249, 215, 2, 0.2) 0%, transparent 70%);
 }
 
 /* ── Smooth Scroll (Lenis) ────────────────────── */
@@ -119,26 +118,16 @@ html.lenis body {
   overflow: hidden;
 }
 
-/* ── Animated gradient border ─────────────────── */
-@keyframes border-glow {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.8; }
-}
-
-.animate-border-glow {
-  animation: border-glow 3s ease-in-out infinite;
-}
-
 /* ── Gradient text ────────────────────────────── */
 .text-gradient-sky {
-  background: linear-gradient(135deg, #3EB5E1 0%, #2433AD 100%);
+  background: linear-gradient(135deg, #3EB5E1 0%, #6BC5E8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .text-gradient-yellow {
-  background: linear-gradient(135deg, #F9D702 0%, #FFB800 100%);
+  background: linear-gradient(135deg, #F9D702 0%, #FFDF3A 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -150,8 +139,30 @@ html.lenis body {
   height: 1px;
 }
 
-/* ── Dot grid ─────────────────────────────────── */
-.dot-grid {
-  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-  background-size: 32px 32px;
+/* ── Grid lines (Attio-style structure) ───────── */
+.grid-lines {
+  border-left: 1px solid rgba(255, 255, 255, 0.04);
+  border-right: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+/* ── Feature accent line ──────────────────────── */
+.accent-line {
+  width: 2px;
+  transition: all 0.4s ease;
+}
+
+/* ── Logo marquee ─────────────────────────────── */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+/* ── Counter animation ────────────────────────── */
+@keyframes count-fade {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

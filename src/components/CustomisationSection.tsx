@@ -3,26 +3,30 @@ import { motion } from 'framer-motion'
 const pillars = [
   {
     label: 'STOCK IN',
+    number: '01',
     description: 'We place your products smartly, backed by visual merchandising and field team execution.',
-    accent: 'yellow',
+    accent: 'yellow' as const,
   },
   {
     label: 'STOCK OUT',
+    number: '02',
     description: 'Our promoters convert shelf visibility into real sales — engaging shoppers in-store.',
-    accent: 'sky',
+    accent: 'sky' as const,
   },
   {
     label: 'DATA & INSIGHTS',
+    number: '03',
     description: 'Track your ROI with live dashboards. Every shelf touchpoint recorded and reported.',
-    accent: 'sky',
+    accent: 'sky' as const,
   },
 ]
 
 export default function CustomisationSection() {
   return (
-    <section className="relative py-28 sm:py-36 bg-base-light overflow-hidden">
+    <section className="relative py-32 sm:py-40 bg-base overflow-hidden">
       {/* Gradient backdrop */}
-      <div className="absolute inset-0 opacity-30" style={{ background: 'linear-gradient(169deg, rgba(36,51,173,0.15) 0%, rgba(62,181,225,0.1) 100%)' }} />
+      <div className="absolute inset-0 opacity-40" style={{ background: 'linear-gradient(169deg, rgba(36,51,173,0.2) 0%, rgba(62,181,225,0.1) 100%)' }} />
+      <div className="absolute inset-0 max-w-7xl mx-auto grid-lines" />
 
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <motion.span
@@ -30,7 +34,7 @@ export default function CustomisationSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="inline-block text-[11px] font-medium tracking-[0.2em] text-sky uppercase mb-5"
+          className="inline-block text-[11px] font-bold tracking-[0.25em] text-sky uppercase mb-6"
         >
           Tailored Solutions
         </motion.span>
@@ -40,7 +44,7 @@ export default function CustomisationSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
-          className="font-display text-4xl sm:text-5xl md:text-6xl text-white mb-4 leading-[1.05]"
+          className="font-display text-4xl sm:text-5xl md:text-6xl text-white mb-5 leading-[1.05]"
         >
           Customised to Your{' '}
           <span className="italic text-gradient-yellow">Full Basket</span>
@@ -51,12 +55,12 @@ export default function CustomisationSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-base text-white/40 mb-16 max-w-xl mx-auto"
+          className="text-base text-white/50 mb-16 max-w-lg mx-auto leading-[1.7]"
         >
           Everything tailored — from FMCG staff training to live sales tracking and reporting.
         </motion.p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-white/[0.04] rounded-2xl overflow-hidden">
           {pillars.map((pillar, i) => (
             <motion.div
               key={pillar.label}
@@ -64,16 +68,18 @@ export default function CustomisationSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
-              whileHover={{ y: -4, transition: { duration: 0.25 } }}
-              className="glass-card rounded-2xl p-8 text-left group cursor-default transition-all duration-300"
+              className="bg-base-light p-10 text-left group cursor-default hover:bg-base-lighter transition-colors duration-500 relative"
             >
-              <div className={`w-2 h-2 rounded-full mb-5 ${pillar.accent === 'yellow' ? 'bg-yellow' : 'bg-sky'}`} />
-              <h3 className={`text-[11px] font-semibold tracking-[0.15em] mb-3 ${
+              <span className="text-[11px] font-mono text-white/15 absolute top-6 right-6">
+                {pillar.number}
+              </span>
+              <div className={`w-2.5 h-2.5 rounded-full mb-6 ${pillar.accent === 'yellow' ? 'bg-yellow' : 'bg-sky'}`} />
+              <h3 className={`text-xs font-bold tracking-[0.2em] mb-3 ${
                 pillar.accent === 'yellow' ? 'text-yellow' : 'text-sky'
               }`}>
                 {pillar.label}
               </h3>
-              <p className="text-sm text-white/40 leading-relaxed group-hover:text-white/55 transition-colors duration-300">
+              <p className="text-sm text-white/50 leading-[1.7] group-hover:text-white/65 transition-colors duration-500">
                 {pillar.description}
               </p>
             </motion.div>

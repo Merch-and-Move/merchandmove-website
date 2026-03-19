@@ -2,9 +2,11 @@ import { motion } from 'framer-motion'
 
 export default function TaglineSection() {
   return (
-    <section id="about" className="relative py-28 sm:py-36 bg-base overflow-hidden">
-      {/* Subtle orb */}
-      <div className="mesh-orb mesh-orb-sky w-[400px] h-[400px] top-0 right-0 opacity-20" />
+    <section id="about" className="relative py-32 sm:py-40 bg-base overflow-hidden">
+      <div className="mesh-orb mesh-orb-sky w-[500px] h-[500px] top-0 right-0 opacity-25" />
+
+      {/* Grid lines */}
+      <div className="absolute inset-0 max-w-7xl mx-auto grid-lines" />
 
       <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <motion.p
@@ -12,7 +14,7 @@ export default function TaglineSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.5 }}
-          className="text-[11px] font-medium tracking-[0.2em] uppercase text-sky mb-6"
+          className="text-[11px] font-semibold tracking-[0.25em] uppercase text-sky mb-8"
         >
           Why Merch & Move
         </motion.p>
@@ -22,7 +24,7 @@ export default function TaglineSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.7 }}
-          className="font-display text-4xl sm:text-5xl md:text-6xl text-white mb-6 leading-[1.05]"
+          className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white mb-8 leading-[1.0]"
         >
           We Don't Just Fill Shelves.{' '}
           <span className="italic text-gradient-sky">We Move Product</span>
@@ -32,8 +34,8 @@ export default function TaglineSection() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-sm font-medium text-yellow/80 tracking-wide mb-8"
+          transition={{ duration: 0.6, delay: 0.15 }}
+          className="text-sm font-semibold text-yellow tracking-wide mb-8"
         >
           Merchandising. Active Selling. Real-Time Results.
         </motion.p>
@@ -42,8 +44,8 @@ export default function TaglineSection() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="text-base text-white/45 leading-relaxed"
+          transition={{ duration: 0.6, delay: 0.25 }}
+          className="text-base sm:text-lg text-white/55 leading-[1.8]"
         >
           At Merch&Move, we go beyond traditional retail merchandising services.
           Our trained in-store promoters actively engage with shoppers — answering
@@ -53,7 +55,6 @@ export default function TaglineSection() {
         </motion.p>
       </div>
 
-      {/* Section divider */}
       <div className="absolute bottom-0 left-0 right-0 section-divider" />
     </section>
   )
