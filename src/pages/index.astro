@@ -1,0 +1,34 @@
+---
+import Layout from '../layouts/Layout.astro'
+import Nav from '../components/Nav.astro'
+import Hero from '../components/Hero.tsx'
+import SmoothScroll from '../components/SmoothScroll.tsx'
+import TaglineSection from '../components/TaglineSection.tsx'
+import PillarsOverview from '../components/PillarsOverview.tsx'
+import StockInSection from '../components/StockInSection.tsx'
+import StockOutSection from '../components/StockOutSection.tsx'
+import DataInsightsSection from '../components/DataInsightsSection.tsx'
+import CustomisationSection from '../components/CustomisationSection.tsx'
+import BrandAmbassadors from '../components/BrandAmbassadors.tsx'
+import CTASection from '../components/CTASection.tsx'
+import ContactForm from '../components/ContactForm.tsx'
+import Footer from '../components/Footer.astro'
+---
+
+<Layout>
+  <SmoothScroll client:load />
+  <Nav />
+  <main>
+    <Hero client:load />
+    <TaglineSection client:visible />
+    <PillarsOverview client:visible />
+    <StockInSection client:visible />
+    <StockOutSection client:visible />
+    <DataInsightsSection client:visible />
+    <CustomisationSection client:visible />
+    <BrandAmbassadors client:visible />
+    <CTASection client:visible />
+    <ContactForm client:visible />
+  </main>
+  <Footer />
+</Layout>
