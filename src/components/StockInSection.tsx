@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion'
+import { motion, useInView } from 'framer-motion'
+import { useRef } from 'react'
 
 const features = [
   {
@@ -15,7 +16,66 @@ const features = [
   },
 ]
 
+/* Framer Motion variants for choreographed reveal */
+const cardVariants = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.8, ease: 'easeOut', staggerChildren: 0.1, delayChildren: 0.2 },
+  },
+}
+
+const avatarVariants = {
+  hidden: { scale: 0, opacity: 0 },
+  visible: {
+    scale: 1,
+    opacity: 1,
+    transition: { type: 'spring', stiffness: 300, damping: 20 },
+  },
+}
+
+const slideLeftVariants = {
+  hidden: { x: -12, opacity: 0 },
+  visible: { x: 0, opacity: 1, transition: { duration: 0.4 } },
+}
+
+const badgeVariants = {
+  hidden: { scale: 0, opacity: 0 },
+  visible: {
+    scale: [0, 1.15, 1],
+    opacity: 1,
+    transition: { duration: 0.5, times: [0, 0.6, 1] },
+  },
+}
+
+const dividerVariants = {
+  hidden: { scaleX: 0, opacity: 0 },
+  visible: {
+    scaleX: 1,
+    opacity: 1,
+    transition: { duration: 0.6, ease: 'easeOut' },
+  },
+}
+
+const dataRowVariants = {
+  hidden: { y: 8, opacity: 0 },
+  visible: (i: number) => ({
+    y: 0,
+    opacity: 1,
+    transition: { duration: 0.4, delay: i * 0.12 },
+  }),
+}
+
+const labelVariants = {
+  hidden: { opacity: 0, y: 5 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4, delay: 0.3 } },
+}
+
 export default function StockInSection() {
+  const mockRef = useRef<HTMLDivElement>(null)
+  const isInView = useInView(mockRef, { once: true, margin: '-80px' })
+
   return (
     <section id="active-selling" className="relative py-32 sm:py-40 bg-base overflow-hidden">
       <div className="mesh-orb mesh-orb-yellow w-[600px] h-[600px] -bottom-40 -left-40 opacity-30" />
@@ -78,45 +138,66 @@ export default function StockInSection() {
             </div>
           </div>
 
-          {/* Placeholder — mock in-store scenario */}
+          {/* Animated mock UI — "Live Check-In" */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.3 }}
+            ref={mockRef}
+            variants={cardVariants}
+            initial="hidden"
+            animate={isInView ? 'visible' : 'hidden'}
             className="card-elevated rounded-2xl aspect-[4/3] flex flex-col items-center justify-center gap-6 glow-yellow"
           >
-            {/* Mini mock UI showing a promoter check-in */}
             <div className="w-4/5 space-y-4">
+              {/* Promoter avatar row */}
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-yellow/20 flex items-center justify-center">
-                  <div className="w-3 h-3 rounded-full bg-yellow/50" />
-                </div>
-                <div>
+                <motion.div
+                  variants={avatarVariants}
+                  className="w-8 h-8 rounded-full bg-yellow/20 flex items-center justify-center"
+                >
+                  <div className={`w-3 h-3 rounded-full bg-yellow/50 ${isInView ? 'avatar-glow' : ''}`} />
+                </motion.div>
+                <motion.div variants={slideLeftVariants}>
                   <div className="w-24 h-2 bg-white/[0.08] rounded-full" />
                   <div className="w-16 h-1.5 bg-white/[0.04] rounded-full mt-1.5" />
-                </div>
-                <div className="ml-auto px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/20">
+                </motion.div>
+                <motion.div
+                  variants={badgeVariants}
+                  className="ml-auto px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/20 flex items-center gap-1.5"
+                >
+                  <div className={`w-1.5 h-1.5 rounded-full bg-emerald-400 ${isInView ? 'pulse-dot' : ''}`} />
                   <span className="text-[9px] font-medium text-emerald-400">Active</span>
-                </div>
+                </motion.div>
               </div>
-              <div className="h-px bg-white/[0.06]" />
+
+              {/* Divider — draws from center */}
+              <motion.div
+                variants={dividerVariants}
+                className="h-px bg-white/[0.06]"
+                style={{ transformOrigin: 'center' }}
+              />
+
+              {/* Data rows — stagger in from bottom */}
               <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <div className="w-20 h-1.5 bg-white/[0.06] rounded-full" />
-                  <div className="w-12 h-1.5 bg-yellow/15 rounded-full" />
-                </div>
-                <div className="flex justify-between items-center">
-                  <div className="w-16 h-1.5 bg-white/[0.05] rounded-full" />
-                  <div className="w-10 h-1.5 bg-yellow/10 rounded-full" />
-                </div>
-                <div className="flex justify-between items-center">
-                  <div className="w-24 h-1.5 bg-white/[0.04] rounded-full" />
-                  <div className="w-14 h-1.5 bg-yellow/10 rounded-full" />
-                </div>
+                {[
+                  { labelW: 'w-20', valueW: 'w-12', shimmerDelay: '' },
+                  { labelW: 'w-16', valueW: 'w-10', shimmerDelay: 'shimmer-delay-1' },
+                  { labelW: 'w-24', valueW: 'w-14', shimmerDelay: 'shimmer-delay-2' },
+                ].map((row, i) => (
+                  <motion.div
+                    key={i}
+                    custom={i}
+                    variants={dataRowVariants}
+                    className="flex justify-between items-center"
+                  >
+                    <div className={`${row.labelW} h-1.5 bg-white/[0.06] rounded-full`} />
+                    <div className={`${row.valueW} h-1.5 rounded-full ${isInView ? `shimmer-yellow ${row.shimmerDelay}` : 'bg-yellow/15'}`} />
+                  </motion.div>
+                ))}
               </div>
             </div>
-            <span className="text-white/15 text-xs font-medium">Promoter Activity Feed</span>
+
+            <motion.span variants={labelVariants} className="text-white/15 text-xs font-medium">
+              Promoter Activity Feed
+            </motion.span>
           </motion.div>
         </div>
       </div>

@@ -250,3 +250,101 @@ html.lenis body {
 .pulse-dot {
   animation: pulse-dot 2s ease-in-out infinite;
 }
+
+/* ── Mock UI Dashboard Animations ────────────── */
+
+/* Skeleton shimmer — moving highlight sweep across bars */
+@keyframes skeleton-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer-yellow {
+  background: linear-gradient(
+    90deg,
+    rgba(249, 215, 2, 0.08) 0%,
+    rgba(249, 215, 2, 0.2) 50%,
+    rgba(249, 215, 2, 0.08) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 3s ease-in-out infinite;
+}
+
+.shimmer-sky {
+  background: linear-gradient(
+    90deg,
+    rgba(62, 181, 225, 0.1) 0%,
+    rgba(62, 181, 225, 0.25) 50%,
+    rgba(62, 181, 225, 0.1) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 3s ease-in-out infinite;
+}
+
+/* Stagger shimmer rows so they don't all pulse at once */
+.shimmer-delay-1 { animation-delay: -1s; }
+.shimmer-delay-2 { animation-delay: -2s; }
+
+/* Avatar breathing glow (yellow) */
+@keyframes avatar-glow {
+  0%, 100% { box-shadow: 0 0 0px rgba(249, 215, 2, 0); }
+  50% { box-shadow: 0 0 10px rgba(249, 215, 2, 0.35); }
+}
+
+.avatar-glow {
+  animation: avatar-glow 3s ease-in-out infinite;
+}
+
+/* Bar chart breathing — gentle scaleY oscillation */
+@keyframes bar-breathe {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(1.04); }
+}
+
+/* Each bar gets a different duration for organic feel */
+.bar-breathe-1 { animation: bar-breathe 8s ease-in-out infinite; transform-origin: bottom; }
+.bar-breathe-2 { animation: bar-breathe 10s ease-in-out infinite; transform-origin: bottom; animation-delay: -2s; }
+.bar-breathe-3 { animation: bar-breathe 9s ease-in-out infinite; transform-origin: bottom; animation-delay: -4s; }
+.bar-breathe-4 { animation: bar-breathe 11s ease-in-out infinite; transform-origin: bottom; animation-delay: -1s; }
+.bar-breathe-5 { animation: bar-breathe 8.5s ease-in-out infinite; transform-origin: bottom; animation-delay: -5s; }
+.bar-breathe-6 { animation: bar-breathe 10.5s ease-in-out infinite; transform-origin: bottom; animation-delay: -3s; }
+.bar-breathe-7 { animation: bar-breathe 9.5s ease-in-out infinite; transform-origin: bottom; animation-delay: -6s; }
+
+/* Top-edge glow for "live" bar */
+@keyframes bar-glow-sky {
+  0%, 100% { box-shadow: 0 -2px 8px rgba(62, 181, 225, 0); }
+  50% { box-shadow: 0 -2px 12px rgba(62, 181, 225, 0.3); }
+}
+
+.bar-glow-active {
+  animation: bar-glow-sky 3s ease-in-out infinite;
+}
+
+/* Avatar border pulse — sequential heartbeat through team */
+@keyframes avatar-border-pulse {
+  0%, 100% { border-color: rgba(255, 255, 255, 0.06); }
+  50% { border-color: rgba(255, 255, 255, 0.16); }
+}
+
+.avatar-pulse {
+  border: 1.5px solid rgba(255, 255, 255, 0.06);
+  animation: avatar-border-pulse 4s ease-in-out infinite;
+}
+
+.avatar-pulse-delay-1 { animation-delay: 0s; }
+.avatar-pulse-delay-2 { animation-delay: -1.3s; }
+.avatar-pulse-delay-3 { animation-delay: -2.6s; }
+
+/* Badge status refresh — subtle live indicator */
+@keyframes badge-refresh {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 0.9; }
+}
+
+.badge-live {
+  animation: badge-refresh 5s ease-in-out infinite;
+}
+
+.badge-live-delay-1 { animation-delay: 0s; }
+.badge-live-delay-2 { animation-delay: -1.7s; }
+.badge-live-delay-3 { animation-delay: -3.3s; }

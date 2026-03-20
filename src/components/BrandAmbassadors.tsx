@@ -1,6 +1,66 @@
-import { motion } from 'framer-motion'
+import { motion, useInView } from 'framer-motion'
+import { useRef } from 'react'
+
+/* Card-level variants */
+const cardVariants = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.8, ease: 'easeOut' },
+  },
+}
+
+/* Header with ping effect */
+const headerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { duration: 0.4, delayChildren: 0.3 },
+  },
+}
+
+/* Team member rows — deliberate slower stagger for "roll call" cadence */
+const rosterVariants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.25, delayChildren: 0.6 },
+  },
+}
+
+const rowVariants = {
+  hidden: { x: 30, opacity: 0 },
+  visible: {
+    x: 0,
+    opacity: 1,
+    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+  },
+}
+
+const badgePopVariants = {
+  hidden: { scale: 0, opacity: 0 },
+  visible: {
+    scale: [0, 1.1, 1],
+    opacity: 1,
+    transition: { duration: 0.4, times: [0, 0.6, 1], delay: 0.15 },
+  },
+}
+
+const labelVariants = {
+  hidden: { opacity: 0, y: 5 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4, delay: 0.5 } },
+}
+
+const teamMembers = [
+  { nameW: 'w-20', subtitleW: 'w-12' },
+  { nameW: 'w-16', subtitleW: 'w-10' },
+  { nameW: 'w-24', subtitleW: 'w-14' },
+]
 
 export default function BrandAmbassadors() {
+  const mockRef = useRef<HTMLDivElement>(null)
+  const isInView = useInView(mockRef, { once: true, margin: '-80px' })
+
   return (
     <section className="relative py-32 sm:py-40 bg-base overflow-hidden">
       <div className="mesh-orb mesh-orb-yellow w-[500px] h-[500px] top-1/2 -right-40 -translate-y-1/2 opacity-20" />
@@ -9,34 +69,87 @@ export default function BrandAmbassadors() {
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
-          {/* Placeholder */}
+          {/* Animated mock UI — "Roster Roll Call" */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            ref={mockRef}
+            variants={cardVariants}
+            initial="hidden"
+            animate={isInView ? 'visible' : 'hidden'}
             className="card-elevated rounded-2xl aspect-[4/3] flex flex-col items-center justify-center gap-4"
           >
-            {/* Mock team roster UI */}
             <div className="w-4/5 space-y-3">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-3 h-3 rounded-full bg-yellow/30" />
-                <div className="w-20 h-2 bg-white/[0.08] rounded-full" />
-              </div>
-              {[1, 2, 3].map((_, j) => (
-                <div key={j} className="flex items-center gap-3 p-2 rounded-lg bg-white/[0.02]">
-                  <div className="w-7 h-7 rounded-full bg-white/[0.06]" />
-                  <div className="flex-1 space-y-1.5">
-                    <div className="w-20 h-1.5 bg-white/[0.06] rounded-full" />
-                    <div className="w-12 h-1 bg-white/[0.03] rounded-full" />
-                  </div>
-                  <div className="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/15">
-                    <span className="text-[8px] text-emerald-400/60">On Shift</span>
-                  </div>
+              {/* Header with radar ping */}
+              <motion.div
+                variants={headerVariants}
+                initial="hidden"
+                animate={isInView ? 'visible' : 'hidden'}
+                className="flex items-center gap-2 mb-4"
+              >
+                <div className="relative">
+                  <div className={`w-3 h-3 rounded-full bg-yellow/30 ${isInView ? 'pulse-dot' : ''}`} />
+                  {/* Radar ping ring */}
+                  {isInView && (
+                    <motion.div
+                      initial={{ scale: 1, opacity: 0.6 }}
+                      animate={{ scale: 2.5, opacity: 0 }}
+                      transition={{ duration: 0.8, delay: 0.4 }}
+                      className="absolute inset-0 rounded-full border border-yellow/40"
+                    />
+                  )}
                 </div>
-              ))}
+                <motion.div
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -8 }}
+                  transition={{ duration: 0.4, delay: 0.4 }}
+                  className="w-20 h-2 bg-white/[0.08] rounded-full"
+                />
+              </motion.div>
+
+              {/* Team member rows — staggered roll call */}
+              <motion.div
+                variants={rosterVariants}
+                initial="hidden"
+                animate={isInView ? 'visible' : 'hidden'}
+                className="space-y-3"
+              >
+                {teamMembers.map((member, j) => (
+                  <motion.div
+                    key={j}
+                    variants={rowVariants}
+                    className="flex items-center gap-3 p-2 rounded-lg bg-white/[0.02]"
+                  >
+                    {/* Avatar with border pulse */}
+                    <div
+                      className={`w-7 h-7 rounded-full bg-white/[0.06] ${
+                        isInView ? `avatar-pulse avatar-pulse-delay-${j + 1}` : ''
+                      }`}
+                    />
+                    <div className="flex-1 space-y-1.5">
+                      <div className={`${member.nameW} h-1.5 bg-white/[0.06] rounded-full`} />
+                      <div className={`${member.subtitleW} h-1 bg-white/[0.03] rounded-full`} />
+                    </div>
+                    {/* Badge pops in after row lands */}
+                    <motion.div
+                      variants={badgePopVariants}
+                      className="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/15"
+                    >
+                      <span className={`text-[8px] text-emerald-400/60 ${
+                        isInView ? `badge-live badge-live-delay-${j + 1}` : ''
+                      }`}>
+                        On Shift
+                      </span>
+                    </motion.div>
+                  </motion.div>
+                ))}
+              </motion.div>
             </div>
-            <span className="text-white/15 text-xs font-medium mt-2">Promoter Team View</span>
+
+            <motion.span
+              variants={labelVariants}
+              className="text-white/15 text-xs font-medium mt-2"
+            >
+              Promoter Team View
+            </motion.span>
           </motion.div>
 
           {/* Content */}
