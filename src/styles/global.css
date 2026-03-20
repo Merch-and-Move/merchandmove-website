@@ -251,85 +251,8 @@ html.lenis body {
   animation: pulse-dot 2s ease-in-out infinite;
 }
 
-/* ── Glow burst (one-shot for stat counter completion) ── */
-@keyframes glow-burst {
-  0% { opacity: 0; transform: scale(0.8); }
-  40% { opacity: 1; transform: scale(1.1); }
-  100% { opacity: 0; transform: scale(1.3); }
-}
-
-.glow-burst-sky {
-  animation: glow-burst 0.6s ease-out forwards;
-  background: radial-gradient(circle, rgba(62, 181, 225, 0.3), transparent 70%);
-}
-
-.glow-burst-yellow {
-  animation: glow-burst 0.6s ease-out forwards;
-  background: radial-gradient(circle, rgba(249, 215, 2, 0.3), transparent 70%);
-}
-
-/* ── Rotating border gradient (glassmorphism cards) ───── */
-@keyframes border-rotate {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.border-rotate-bg {
-  background: conic-gradient(from 0deg, transparent, rgba(249, 215, 2, 0.3), transparent, rgba(62, 181, 225, 0.3), transparent);
-  animation: border-rotate 4s linear infinite;
-}
-
-/* ── Map dot pulse (SA map retail locations) ──────────── */
-@keyframes dot-pulse-map {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.6); }
-}
-
-.dot-pulse-map {
-  animation: dot-pulse-map 3s ease-in-out infinite;
-}
-
-/* ── Floating geometric shapes ────────────────────────── */
-@keyframes float-shape {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-20px) rotate(180deg); }
-}
-
-.float-shape {
-  animation: float-shape 20s ease-in-out infinite;
-}
-
-/* ── Shimmer glow (pricing highlight card) ────────────── */
-@keyframes shimmer-glow {
-  0%, 100% { box-shadow: 0 0 40px rgba(249, 215, 2, 0.06), 0 0 80px rgba(249, 215, 2, 0.03); }
-  50% { box-shadow: 0 0 60px rgba(249, 215, 2, 0.12), 0 0 120px rgba(249, 215, 2, 0.06); }
-}
-
-.shimmer-glow {
-  animation: shimmer-glow 3s ease-in-out infinite;
-}
-
-/* ── Ripple expand (GPS pin) ──────────────────────────── */
-@keyframes ripple-expand {
-  0% { transform: scale(0.8); opacity: 0.5; }
-  100% { transform: scale(2.5); opacity: 0; }
-}
-
-.ripple-expand {
-  animation: ripple-expand 2s ease-out infinite;
-}
-
 /* ── Dot grid background ─────────────────────────────── */
 .dot-grid {
   background-image: radial-gradient(circle, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 24px 24px;
 }
-
-/* ── Glassmorphism card ──────────────────────────────── */
-.glass-card {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
