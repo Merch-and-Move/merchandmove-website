@@ -1,4 +1,9 @@
 import { motion } from 'framer-motion'
+import StepBookIllustration from './illustrations/StepBookIllustration'
+import StepExecuteIllustration from './illustrations/StepExecuteIllustration'
+import StepTrackIllustration from './illustrations/StepTrackIllustration'
+import StepPayIllustration from './illustrations/StepPayIllustration'
+import AnimatedConnector from './illustrations/AnimatedConnector'
 
 const steps = [
   {
@@ -9,11 +14,7 @@ const steps = [
       'Log into our platform, select the stores you want to activate, pick your dates, and assign the products you want promoted. Book as many or as few shifts as you need — scale up for launches, scale down for maintenance.',
     features: ['Select stores from our national footprint', 'Assign specific products & promotions', 'Flexible scheduling — daily, weekly, or campaign-based'],
     accent: 'yellow' as const,
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-      </svg>
-    ),
+    illustration: <StepBookIllustration />,
   },
   {
     number: '02',
@@ -23,11 +24,7 @@ const steps = [
       'Our nationally deployed, trained promoters arrive at your selected stores and actively engage shoppers. They don\'t just stand around — they recommend, demonstrate, and close sales of your products.',
     features: ['Trained brand ambassadors, not passive merchandisers', 'Active selling with real shopper engagement', 'GPS-verified attendance & timestamped check-ins'],
     accent: 'sky' as const,
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
-      </svg>
-    ),
+    illustration: <StepExecuteIllustration />,
   },
   {
     number: '03',
@@ -37,11 +34,7 @@ const steps = [
       'Access your dedicated portal to see exactly what sold, where, and when. Our platform uploads store-level sales data daily — so you know the impact of every shift within 24 hours.',
     features: ['Live dashboards by store, promoter & product', 'Daily sales data uploads with shift-level detail', 'ROI tracking — see your return on every rand spent'],
     accent: 'sky' as const,
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
-      </svg>
-    ),
+    illustration: <StepTrackIllustration />,
   },
   {
     number: '04',
@@ -51,11 +44,7 @@ const steps = [
       'Our model is built around performance. You pay a commission on the products our promoters actually sell — aligning our incentives directly with yours. The more we sell, the more we both earn.',
     features: ['Commission-based: pay only on confirmed sales', 'Nominal per-shift booking fee (volume discounts available)', 'Monthly platform subscription for portal access'],
     accent: 'yellow' as const,
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
+    illustration: <StepPayIllustration />,
   },
 ]
 
@@ -64,6 +53,7 @@ export default function HowItWorksSection() {
     <section id="how-it-works" className="relative py-32 sm:py-40 bg-base-light overflow-hidden">
       <div className="mesh-orb mesh-orb-yellow w-[600px] h-[600px] -top-40 -right-40 opacity-20" />
       <div className="mesh-orb mesh-orb-sky w-[400px] h-[400px] bottom-20 -left-20 opacity-15" />
+      <div className="absolute inset-0 dot-grid opacity-50" />
       <div className="absolute inset-0 max-w-7xl mx-auto grid-lines" />
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -116,17 +106,32 @@ export default function HowItWorksSection() {
               >
                 <div className="card rounded-2xl p-8 sm:p-10 group hover:bg-white/[0.055] transition-all duration-500">
                   <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr_1fr] gap-8 lg:gap-12 items-start">
-                    {/* Step number + icon */}
+                    {/* Step number + illustration */}
                     <div className="flex items-center gap-5 lg:flex-col lg:items-start lg:gap-4">
                       <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${
                         isYellow
                           ? 'bg-yellow/10 text-yellow border border-yellow/20'
                           : 'bg-sky/10 text-sky border border-sky/20'
                       }`}>
-                        {step.icon}
+                        {step.illustration}
                       </div>
-                      <div>
-                        <span className="text-[11px] font-mono text-white/20 block">{step.number}</span>
+                      <div className="flex items-center gap-3">
+                        <div className="relative w-7 h-7">
+                          <svg width={28} height={28} className="-rotate-90">
+                            <circle cx={14} cy={14} r={11} fill="none" stroke={isYellow ? 'rgba(249,215,2,0.08)' : 'rgba(62,181,225,0.08)'} strokeWidth={2} />
+                            <motion.circle
+                              cx={14} cy={14} r={11} fill="none"
+                              stroke={isYellow ? 'rgba(249,215,2,0.4)' : 'rgba(62,181,225,0.4)'}
+                              strokeWidth={2} strokeLinecap="round"
+                              strokeDasharray={69.1}
+                              initial={{ strokeDashoffset: 69.1 }}
+                              whileInView={{ strokeDashoffset: 0 }}
+                              viewport={{ once: true }}
+                              transition={{ duration: 0.8, delay: i * 0.15 }}
+                            />
+                          </svg>
+                          <span className="absolute inset-0 flex items-center justify-center text-[11px] font-mono text-white/20">{step.number}</span>
+                        </div>
                         <span className={`text-xs font-bold tracking-[0.15em] uppercase ${
                           isYellow ? 'text-yellow' : 'text-sky'
                         }`}>
@@ -159,12 +164,13 @@ export default function HowItWorksSection() {
                   </div>
                 </div>
 
-                {/* Connector line between steps */}
+                {/* Animated connector line between steps */}
                 {i < steps.length - 1 && (
                   <div className="hidden lg:flex justify-center py-1">
-                    <div className={`w-px h-6 ${
-                      isYellow ? 'bg-yellow/15' : 'bg-sky/15'
-                    }`} />
+                    <AnimatedConnector
+                      fromColor={step.accent}
+                      toColor={steps[i + 1].accent}
+                    />
                   </div>
                 )}
               </motion.div>

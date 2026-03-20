@@ -1,36 +1,12 @@
-import { motion, useInView } from 'framer-motion'
-import { useRef, useState, useEffect } from 'react'
-
-function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: string }) {
-  const ref = useRef<HTMLSpanElement>(null)
-  const isInView = useInView(ref, { once: true })
-  const [count, setCount] = useState(0)
-
-  useEffect(() => {
-    if (!isInView) return
-    let start = 0
-    const duration = 1500
-    const step = target / (duration / 16)
-    const timer = setInterval(() => {
-      start += step
-      if (start >= target) {
-        setCount(target)
-        clearInterval(timer)
-      } else {
-        setCount(Math.floor(start))
-      }
-    }, 16)
-    return () => clearInterval(timer)
-  }, [isInView, target])
-
-  return <span ref={ref}>{count.toLocaleString()}{suffix}</span>
-}
+import { motion } from 'framer-motion'
+import { AnimatedArcRing, BurstCounter, GlassCard } from './illustrations/shared'
+import SAMapSilhouette from './illustrations/SAMapSilhouette'
 
 const stats = [
-  { value: 500, suffix: '+', label: 'Stores covered nationally', accent: 'sky' as const },
-  { value: 200, suffix: '+', label: 'Trained promoters deployed', accent: 'yellow' as const },
-  { value: 98, suffix: '%', label: 'Shift completion rate', accent: 'sky' as const },
-  { value: 24, suffix: 'hr', label: 'Sales data turnaround', accent: 'yellow' as const },
+  { value: 500, suffix: '+', label: 'Stores covered nationally', accent: 'sky' as const, arcProgress: 85 },
+  { value: 200, suffix: '+', label: 'Trained promoters deployed', accent: 'yellow' as const, arcProgress: 70 },
+  { value: 98, suffix: '%', label: 'Shift completion rate', accent: 'sky' as const, arcProgress: 98 },
+  { value: 24, suffix: 'hr', label: 'Sales data turnaround', accent: 'yellow' as const, arcProgress: 100 },
 ]
 
 const usps = [
@@ -106,27 +82,36 @@ export default function DataInsightsSection() {
           </motion.p>
         </div>
 
-        {/* Stats grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/[0.04] rounded-2xl overflow-hidden mb-16"
-        >
-          {stats.map((stat) => (
-            <div key={stat.label} className="bg-base p-8 text-center group hover:bg-base-light transition-colors duration-500">
-              <div className={`font-display text-4xl sm:text-5xl italic mb-2 ${
-                stat.accent === 'sky' ? 'text-sky' : 'text-yellow'
-              }`}>
-                <AnimatedCounter target={stat.value} suffix={stat.suffix} />
+        {/* Stats grid with SA map behind */}
+        <div className="relative">
+          <SAMapSilhouette />
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="relative grid grid-cols-2 md:grid-cols-4 gap-px bg-white/[0.04] rounded-2xl overflow-hidden mb-16"
+          >
+            {stats.map((stat) => (
+              <div key={stat.label} className="relative text-center group hover:bg-base-light transition-colors duration-500 p-8 bg-base">
+                {/* Arc ring behind the number */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%] opacity-40">
+                  <AnimatedArcRing progress={stat.arcProgress} color={stat.accent} size={70} strokeWidth={2.5} delay={0.3} />
+                </div>
+                {/* Stat number */}
+                <div className={`relative font-display text-4xl sm:text-5xl italic mb-2 ${
+                  stat.accent === 'sky' ? 'text-sky' : 'text-yellow'
+                }`}>
+                  <BurstCounter target={stat.value} suffix={stat.suffix} color={stat.accent} delay={300} />
+                </div>
+                <p className="relative text-[11px] font-medium tracking-[0.1em] text-white/30 uppercase">
+                  {stat.label}
+                </p>
               </div>
-              <p className="text-[11px] font-medium tracking-[0.1em] text-white/30 uppercase">
-                {stat.label}
-              </p>
-            </div>
-          ))}
-        </motion.div>
+            ))}
+          </motion.div>
+        </div>
 
         {/* USP Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -137,15 +122,22 @@ export default function DataInsightsSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.4 + i * 0.1 }}
-              className="card-elevated rounded-2xl p-8 group cursor-default"
             >
-              <div className="w-10 h-10 rounded-xl bg-sky/10 text-sky border border-sky/20 flex items-center justify-center mb-6">
-                {usp.icon}
-              </div>
-              <h3 className="text-sm font-semibold text-white mb-3">{usp.title}</h3>
-              <p className="text-sm text-white/50 leading-[1.7] group-hover:text-white/65 transition-colors duration-500">
-                {usp.description}
-              </p>
+              <GlassCard>
+                <div className="p-8">
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+                    className="w-10 h-10 rounded-xl bg-sky/10 text-sky border border-sky/20 flex items-center justify-center mb-6"
+                  >
+                    {usp.icon}
+                  </motion.div>
+                  <h3 className="text-sm font-semibold text-white mb-3">{usp.title}</h3>
+                  <p className="text-sm text-white/50 leading-[1.7] group-hover:text-white/65 transition-colors duration-500">
+                    {usp.description}
+                  </p>
+                </div>
+              </GlassCard>
             </motion.div>
           ))}
         </div>

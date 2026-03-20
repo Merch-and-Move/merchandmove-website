@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { FloatingShapes, AnimatedCheckmark } from './illustrations/shared'
 
 const tiers = [
   {
@@ -62,6 +63,7 @@ export default function CustomisationSection() {
       <div className="absolute inset-0 opacity-30" style={{ background: 'linear-gradient(169deg, rgba(36,51,173,0.15) 0%, rgba(62,181,225,0.08) 100%)' }} />
       <div className="mesh-orb mesh-orb-yellow w-[500px] h-[500px] top-20 -right-40 opacity-15" />
       <div className="mesh-orb mesh-orb-sky w-[400px] h-[400px] -bottom-20 -left-20 opacity-15" />
+      <FloatingShapes />
       <div className="absolute inset-0 max-w-7xl mx-auto grid-lines" />
 
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -105,54 +107,82 @@ export default function CustomisationSection() {
             return (
               <motion.div
                 key={tier.label}
-                initial={{ opacity: 0, y: 25 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 35, rotateX: 5 }}
+                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
-                className={`rounded-2xl p-8 sm:p-10 group cursor-default transition-all duration-500 ${
-                  isHighlight
-                    ? 'pricing-highlight'
-                    : 'card'
-                }`}
+                transition={{ duration: 0.6, delay: 0.3 + i * 0.12 }}
+                style={{ perspective: '800px' }}
               >
-                {/* Icon */}
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 ${
-                  isYellow
-                    ? 'bg-yellow/10 text-yellow border border-yellow/20'
-                    : 'bg-sky/10 text-sky border border-sky/20'
-                }`}>
-                  {tier.icon}
+                <div className="relative group">
+                  {/* Animated gradient border on hover */}
+                  <div className="absolute -inset-[1px] rounded-2xl border-rotate-bg opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-[0.5px]" />
+
+                  {/* Ambient shimmer glow for highlighted card */}
+                  {isHighlight && (
+                    <div className="absolute -inset-2 rounded-3xl shimmer-glow pointer-events-none" />
+                  )}
+
+                  <div className={`relative rounded-2xl p-8 sm:p-10 cursor-default transition-all duration-500 ${
+                    isHighlight
+                      ? 'pricing-highlight'
+                      : 'card'
+                  }`}>
+                    {/* Icon with scale-bounce entrance */}
+                    <motion.div
+                      initial={{ scale: 0, opacity: 0 }}
+                      whileInView={{ scale: 1, opacity: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ type: 'spring', stiffness: 300, damping: 20, delay: 0.3 + i * 0.15 }}
+                    >
+                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 ${
+                        isYellow
+                          ? 'bg-yellow/10 text-yellow border border-yellow/20'
+                          : 'bg-sky/10 text-sky border border-sky/20'
+                      }`}>
+                        {tier.icon}
+                      </div>
+                    </motion.div>
+
+                    {/* Label */}
+                    <span className={`text-[11px] font-bold tracking-[0.2em] uppercase ${
+                      isYellow ? 'text-yellow' : 'text-sky'
+                    }`}>
+                      {tier.label}
+                    </span>
+
+                    {/* Price label */}
+                    <h3 className="font-display text-2xl text-white mt-3 mb-4 italic">
+                      {tier.price}
+                    </h3>
+
+                    <p className="text-sm text-white/50 leading-[1.7] mb-8">
+                      {tier.description}
+                    </p>
+
+                    {/* Features with stagger animation */}
+                    <ul className="space-y-3">
+                      {tier.features.map((feature, featureIndex) => (
+                        <motion.li
+                          key={feature}
+                          initial={{ opacity: 0, x: -10 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 0.3, delay: 0.5 + i * 0.1 + featureIndex * 0.08 }}
+                          className="flex items-start gap-2.5"
+                        >
+                          <span className="mt-0.5">
+                            <AnimatedCheckmark
+                              color={isYellow ? 'yellow' : 'sky'}
+                              size={16}
+                              delay={0.6 + i * 0.1 + featureIndex * 0.08}
+                            />
+                          </span>
+                          <span className="text-sm text-white/45">{feature}</span>
+                        </motion.li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
-
-                {/* Label */}
-                <span className={`text-[11px] font-bold tracking-[0.2em] uppercase ${
-                  isYellow ? 'text-yellow' : 'text-sky'
-                }`}>
-                  {tier.label}
-                </span>
-
-                {/* Price label */}
-                <h3 className="font-display text-2xl text-white mt-3 mb-4 italic">
-                  {tier.price}
-                </h3>
-
-                <p className="text-sm text-white/50 leading-[1.7] mb-8">
-                  {tier.description}
-                </p>
-
-                {/* Features */}
-                <ul className="space-y-3">
-                  {tier.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-2.5">
-                      <svg className={`w-4 h-4 mt-0.5 flex-shrink-0 ${
-                        isYellow ? 'text-yellow/60' : 'text-sky/60'
-                      }`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                      </svg>
-                      <span className="text-sm text-white/45">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
               </motion.div>
             )
           })}
