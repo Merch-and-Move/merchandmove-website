@@ -2,10 +2,28 @@ import { motion } from 'framer-motion'
 
 export default function CTASection() {
   return (
-    <section className="relative py-32 sm:py-40 bg-base overflow-hidden">
+    <section className="relative py-32 sm:py-40 bg-base-light overflow-hidden">
       {/* Strong central glow */}
-      <div className="mesh-orb mesh-orb-yellow w-[700px] h-[700px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-15" />
-      <div className="mesh-orb mesh-orb-sky w-[500px] h-[500px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-15" />
+      <motion.div
+        animate={{
+          x: [0, 20, -15, 10, 0],
+          y: [0, -15, 20, -10, 0],
+          scale: [1, 1.05, 0.95, 1.03, 1],
+        }}
+        transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
+        className="mesh-orb mesh-orb-yellow w-[700px] h-[700px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-15"
+        style={{ animation: 'none' }}
+      />
+      <motion.div
+        animate={{
+          x: [0, -20, 15, -10, 0],
+          y: [0, 15, -20, 10, 0],
+          scale: [1, 0.97, 1.04, 0.98, 1],
+        }}
+        transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+        className="mesh-orb mesh-orb-sky w-[500px] h-[500px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-15"
+        style={{ animation: 'none' }}
+      />
       <div className="absolute inset-0 max-w-7xl mx-auto grid-lines" />
 
       <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -27,8 +45,8 @@ export default function CTASection() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="text-base sm:text-lg text-white/50 mb-5 leading-[1.7]"
         >
-          Experience the difference of outsourced merchandising, in-store promoter
-          activation, and real-time sales tracking.
+          Book shifts, we sell your products, you track results in real-time.
+          Pay only for the sales we make.
         </motion.p>
 
         <motion.p

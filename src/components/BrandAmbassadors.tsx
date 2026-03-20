@@ -2,8 +2,9 @@ import { motion } from 'framer-motion'
 
 export default function BrandAmbassadors() {
   return (
-    <section className="relative py-32 sm:py-40 bg-base-light overflow-hidden">
-      <div className="mesh-orb mesh-orb-yellow w-[500px] h-[500px] top-1/2 -right-40 -translate-y-1/2 opacity-25" />
+    <section className="relative py-32 sm:py-40 bg-base overflow-hidden">
+      <div className="mesh-orb mesh-orb-yellow w-[500px] h-[500px] top-1/2 -right-40 -translate-y-1/2 opacity-20" />
+      <div className="mesh-orb mesh-orb-indigo w-[300px] h-[300px] -bottom-20 left-20 opacity-15" />
       <div className="absolute inset-0 max-w-7xl mx-auto grid-lines" />
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -16,14 +17,26 @@ export default function BrandAmbassadors() {
             transition={{ duration: 0.8 }}
             className="card-elevated rounded-2xl aspect-[4/3] flex flex-col items-center justify-center gap-4"
           >
-            <div className="flex gap-2 mb-2">
-              <div className="w-3 h-3 rounded-full bg-yellow/30" />
-              <div className="w-3 h-3 rounded-full bg-white/10" />
-              <div className="w-3 h-3 rounded-full bg-white/10" />
+            {/* Mock team roster UI */}
+            <div className="w-4/5 space-y-3">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-3 h-3 rounded-full bg-yellow/30" />
+                <div className="w-20 h-2 bg-white/[0.08] rounded-full" />
+              </div>
+              {[1, 2, 3].map((_, j) => (
+                <div key={j} className="flex items-center gap-3 p-2 rounded-lg bg-white/[0.02]">
+                  <div className="w-7 h-7 rounded-full bg-white/[0.06]" />
+                  <div className="flex-1 space-y-1.5">
+                    <div className="w-20 h-1.5 bg-white/[0.06] rounded-full" />
+                    <div className="w-12 h-1 bg-white/[0.03] rounded-full" />
+                  </div>
+                  <div className="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/15">
+                    <span className="text-[8px] text-emerald-400/60">On Shift</span>
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="w-3/4 h-2 bg-white/[0.06] rounded-full" />
-            <div className="w-2/3 h-2 bg-white/[0.04] rounded-full" />
-            <span className="text-white/15 text-xs font-medium mt-4">Brand Ambassadors</span>
+            <span className="text-white/15 text-xs font-medium mt-2">Promoter Team View</span>
           </motion.div>
 
           {/* Content */}
@@ -35,7 +48,7 @@ export default function BrandAmbassadors() {
               transition={{ duration: 0.5 }}
               className="inline-block text-[11px] font-bold tracking-[0.25em] text-yellow uppercase mb-6"
             >
-              Brand Ambassadors
+              Our Team
             </motion.span>
 
             <motion.h2
@@ -58,17 +71,18 @@ export default function BrandAmbassadors() {
             >
               <p className="text-sm text-white/55 leading-[1.8]">
                 We train our team on your products, brand protocols, and retail
-                sales processes, so they act as true brand ambassadors.
+                sales processes, so they act as true brand ambassadors — not
+                generic merchandisers.
               </p>
               <p className="text-sm text-white/55 leading-[1.8]">
-                Whether it's merchandising, promotions, or live selling, our staff
-                seamlessly plug into your brand and speak your language with
-                confidence.
+                Whether it's active in-store selling, product demonstrations, or
+                promotional activations, our staff seamlessly plug into your brand
+                and speak your language with confidence.
               </p>
               <p className="text-sm text-white/55 leading-[1.8]">
-                With our real-time software, you'll track performance, manage
-                shifts, and view results — all without the admin.{' '}
-                <span className="text-white font-medium">It's outsourced staffing with in-house control.</span>
+                With our real-time platform, you'll see who's on shift, what
+                they're selling, and how they're performing — {' '}
+                <span className="text-white font-medium">all without the admin overhead of managing your own field team.</span>
               </p>
             </motion.div>
 

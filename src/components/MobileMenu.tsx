@@ -1,6 +1,13 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
+const links = [
+  { label: 'How It Works', href: '#how-it-works' },
+  { label: 'Active Selling', href: '#active-selling' },
+  { label: 'Platform', href: '#platform' },
+  { label: 'Pricing', href: '#pricing' },
+]
+
 export default function MobileMenu() {
   const [open, setOpen] = useState(false)
 
@@ -34,17 +41,17 @@ export default function MobileMenu() {
             className="absolute top-full left-0 right-0 bg-base/95 backdrop-blur-xl border-b border-white/5"
           >
             <div className="flex flex-col p-6 gap-1">
-              {['Merchandising', 'Sales', 'Platform'].map((item, i) => (
+              {links.map((item, i) => (
                 <motion.a
-                  key={item}
-                  href={`#${item.toLowerCase()}`}
+                  key={item.label}
+                  href={item.href}
                   onClick={() => setOpen(false)}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.05 }}
                   className="text-base font-medium text-white/60 hover:text-white py-3 border-b border-white/5 transition-colors"
                 >
-                  {item}
+                  {item.label}
                 </motion.a>
               ))}
               <motion.a
@@ -52,7 +59,7 @@ export default function MobileMenu() {
                 onClick={() => setOpen(false)}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.15 }}
+                transition={{ delay: links.length * 0.05 }}
                 className="inline-flex items-center justify-center px-5 py-3 text-sm font-medium text-base-light bg-yellow rounded-full mt-4 transition-all"
               >
                 Contact Us

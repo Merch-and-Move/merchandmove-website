@@ -8,7 +8,7 @@ export default function TaglineSection() {
       {/* Grid lines */}
       <div className="absolute inset-0 max-w-7xl mx-auto grid-lines" />
 
-      <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <motion.p
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -35,24 +35,42 @@ export default function TaglineSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.6, delay: 0.15 }}
-          className="text-sm font-semibold text-yellow tracking-wide mb-8"
+          className="text-base sm:text-lg text-white/55 leading-[1.8] mb-10 max-w-3xl mx-auto"
         >
-          Merchandising. Active Selling. Real-Time Results.
+          Most merchandising companies place products on shelves and walk away.
+          We place a trained promoter next to your product who <span className="text-white font-medium">actively sells it to shoppers</span> —
+          answering questions, recommending products, and driving conversions at the point of sale.
         </motion.p>
 
-        <motion.p
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.6, delay: 0.25 }}
-          className="text-base sm:text-lg text-white/55 leading-[1.8]"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto"
         >
-          At Merch&Move, we go beyond traditional retail merchandising services.
-          Our trained in-store promoters actively engage with shoppers — answering
-          questions, recommending products, and driving point-of-sale conversions.
-          Plus, our real-time retail execution dashboard lets you track every move,
-          every day.
-        </motion.p>
+          {[
+            { value: 'Book', label: 'Schedule shifts & assign products', accent: 'yellow' },
+            { value: 'Sell', label: 'Our promoters actively sell in-store', accent: 'sky' },
+            { value: 'Track', label: 'See real-time sales results & ROI', accent: 'sky' },
+          ].map((item, i) => (
+            <motion.div
+              key={item.value}
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
+              className="text-center"
+            >
+              <span className={`font-display text-3xl italic ${
+                item.accent === 'yellow' ? 'text-gradient-yellow' : 'text-gradient-sky'
+              }`}>
+                {item.value}
+              </span>
+              <p className="text-xs text-white/40 mt-2">{item.label}</p>
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
 
       <div className="absolute bottom-0 left-0 right-0 section-divider" />

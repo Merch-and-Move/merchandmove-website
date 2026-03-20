@@ -2,22 +2,22 @@ import { motion } from 'framer-motion'
 
 const pillars = [
   {
-    label: 'STOCK IN',
+    label: 'BOOK SHIFTS',
     number: '01',
-    description: 'We place your products smartly, backed by visual merchandising and field team execution.',
+    description: 'Schedule shifts at any of our 500+ retail locations. Choose your stores, dates, and products — fully managed through our platform.',
     accent: 'yellow' as const,
   },
   {
-    label: 'STOCK OUT',
+    label: 'ACTIVE SELLING',
     number: '02',
-    description: 'Our promoters convert shelf visibility into real sales — engaging shoppers in-store.',
+    description: 'Our trained promoters actively engage shoppers, recommend your products, and drive point-of-sale conversions in-store.',
     accent: 'sky' as const,
   },
   {
-    label: 'DATA & INSIGHTS',
+    label: 'TRACK & PAY',
     number: '03',
-    description: 'Track your ROI with live dashboards. Every shelf touchpoint recorded and reported.',
-    accent: 'sky' as const,
+    description: 'See real-time sales results on your portal. Only pay commission on products we actually sell — fully transparent, fully aligned.',
+    accent: 'yellow' as const,
   },
 ]
 
@@ -70,10 +70,10 @@ export default function PillarsOverview() {
           className="text-center mt-14"
         >
           <a
-            href="#contact"
+            href="#how-it-works"
             className="inline-flex items-center px-7 py-3 text-sm font-medium text-white/60 border border-white/12 hover:border-yellow/40 hover:text-yellow rounded-full transition-all duration-300"
           >
-            Request a Demo
+            See How It Works
           </a>
         </motion.div>
       </div>

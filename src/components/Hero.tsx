@@ -5,10 +5,37 @@ const words = ['Sales', 'That', 'Move.']
 export default function Hero() {
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-base overflow-hidden">
-      {/* Gradient mesh — more saturated */}
-      <div className="mesh-orb mesh-orb-indigo w-[800px] h-[800px] -top-60 -left-60" />
-      <div className="mesh-orb mesh-orb-sky w-[600px] h-[600px] top-1/4 right-0 translate-x-1/4" />
-      <div className="mesh-orb mesh-orb-yellow w-[400px] h-[400px] bottom-10 left-1/3" />
+      {/* Animated gradient mesh orbs */}
+      <motion.div
+        animate={{
+          x: [0, 30, -15, 20, 0],
+          y: [0, -20, 25, 10, 0],
+          scale: [1, 1.05, 0.95, 1.02, 1],
+        }}
+        transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+        className="mesh-orb mesh-orb-indigo w-[800px] h-[800px] -top-60 -left-60"
+        style={{ animation: 'none' }}
+      />
+      <motion.div
+        animate={{
+          x: [0, -25, 20, -10, 0],
+          y: [0, 15, -30, -15, 0],
+          scale: [1, 0.97, 1.04, 1.01, 1],
+        }}
+        transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
+        className="mesh-orb mesh-orb-sky w-[600px] h-[600px] top-1/4 right-0 translate-x-1/4"
+        style={{ animation: 'none' }}
+      />
+      <motion.div
+        animate={{
+          x: [0, 15, -30, 25, 0],
+          y: [0, 25, -10, -20, 0],
+          scale: [1, 1.03, 0.96, 1.05, 1],
+        }}
+        transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+        className="mesh-orb mesh-orb-yellow w-[400px] h-[400px] bottom-10 left-1/3"
+        style={{ animation: 'none' }}
+      />
 
       {/* Structured grid lines */}
       <div className="absolute inset-0 max-w-7xl mx-auto grid-lines" />
@@ -22,11 +49,11 @@ export default function Hero() {
           className="flex items-center justify-center gap-3 mb-12"
         >
           <span className="px-4 py-1.5 text-[11px] font-medium tracking-[0.15em] uppercase bg-yellow/10 border border-yellow/20 rounded-full text-yellow">
-            Stock In
+            Book & Execute
           </span>
           <span className="w-1 h-1 rounded-full bg-white/20" />
           <span className="px-4 py-1.5 text-[11px] font-medium tracking-[0.15em] uppercase bg-sky/10 border border-sky/20 rounded-full text-sky">
-            Stock Out
+            Track & Earn
           </span>
         </motion.div>
 
@@ -53,19 +80,18 @@ export default function Hero() {
           ))}
         </h1>
 
-        {/* Subheadline — stronger opacity */}
+        {/* Subheadline — clear value prop */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 1.0 }}
           className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto mb-14 leading-relaxed"
         >
-          Your All-In-One Partner for Merchandising,{' '}
-          <span className="text-white font-medium">Active Selling</span>, and
-          Live Software Tracking.
+          Book shifts. We sell your products in-store.{' '}
+          <span className="text-white font-medium">You only pay for what we sell.</span>
         </motion.p>
 
-        {/* CTAs — bigger, bolder */}
+        {/* CTAs */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -88,7 +114,7 @@ export default function Hero() {
             </svg>
           </a>
           <a
-            href="#about"
+            href="#how-it-works"
             className="inline-flex items-center px-8 py-4 text-sm font-medium text-white/70 hover:text-white border border-white/15 hover:border-white/30 rounded-full transition-all duration-300"
           >
             See How It Works
