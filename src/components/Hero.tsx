@@ -49,11 +49,11 @@ export default function Hero() {
           className="flex items-center justify-center gap-3 mb-12"
         >
           <span className="px-4 py-1.5 text-[11px] font-medium tracking-[0.15em] uppercase bg-yellow/10 border border-yellow/20 rounded-full text-yellow">
-            Book & Execute
+            Stock In
           </span>
           <span className="w-1 h-1 rounded-full bg-white/20" />
           <span className="px-4 py-1.5 text-[11px] font-medium tracking-[0.15em] uppercase bg-sky/10 border border-sky/20 rounded-full text-sky">
-            Track & Earn
+            Stock Out
           </span>
         </motion.div>
 
