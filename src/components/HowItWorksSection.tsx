@@ -1,9 +1,9 @@
-import { motion } from 'framer-motion'
-import StepBookIllustration from './illustrations/StepBookIllustration'
-import StepExecuteIllustration from './illustrations/StepExecuteIllustration'
-import StepTrackIllustration from './illustrations/StepTrackIllustration'
-import StepPayIllustration from './illustrations/StepPayIllustration'
-import AnimatedConnector from './illustrations/AnimatedConnector'
+import { useRef } from 'react'
+import { motion, useScroll, useTransform } from 'framer-motion'
+import StepBookMockup from './mockups/StepBookMockup'
+import StepExecuteMockup from './mockups/StepExecuteMockup'
+import StepTrackMockup from './mockups/StepTrackMockup'
+import StepPayMockup from './mockups/StepPayMockup'
 
 const steps = [
   {
@@ -14,7 +14,7 @@ const steps = [
       'Log into our platform, select the stores you want to activate, pick your dates, and assign the products you want promoted. Book as many or as few shifts as you need — scale up for launches, scale down for maintenance.',
     features: ['Select stores from our national footprint', 'Assign specific products & promotions', 'Flexible scheduling — daily, weekly, or campaign-based'],
     accent: 'yellow' as const,
-    illustration: <StepBookIllustration />,
+    mockup: <StepBookMockup />,
   },
   {
     number: '02',
@@ -24,7 +24,7 @@ const steps = [
       'Our nationally deployed, trained promoters arrive at your selected stores and actively engage shoppers. They don\'t just stand around — they recommend, demonstrate, and close sales of your products.',
     features: ['Trained brand ambassadors, not passive merchandisers', 'Active selling with real shopper engagement', 'GPS-verified attendance & timestamped check-ins'],
     accent: 'sky' as const,
-    illustration: <StepExecuteIllustration />,
+    mockup: <StepExecuteMockup />,
   },
   {
     number: '03',
@@ -34,7 +34,7 @@ const steps = [
       'Access your dedicated portal to see exactly what sold, where, and when. Our platform uploads store-level sales data daily — so you know the impact of every shift within 24 hours.',
     features: ['Live dashboards by store, promoter & product', 'Daily sales data uploads with shift-level detail', 'ROI tracking — see your return on every rand spent'],
     accent: 'sky' as const,
-    illustration: <StepTrackIllustration />,
+    mockup: <StepTrackMockup />,
   },
   {
     number: '04',
@@ -44,11 +44,24 @@ const steps = [
       'Our model is built around performance. You pay a commission on the products our promoters actually sell — aligning our incentives directly with yours. The more we sell, the more we both earn.',
     features: ['Commission-based: pay only on confirmed sales', 'Nominal per-shift booking fee (volume discounts available)', 'Monthly platform subscription for portal access'],
     accent: 'yellow' as const,
-    illustration: <StepPayIllustration />,
+    mockup: <StepPayMockup />,
   },
 ]
 
 export default function HowItWorksSection() {
+  const stepsRef = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({
+    target: stepsRef,
+    offset: ['start 70%', 'end 40%'],
+  })
+
+  /* Derive node glow opacities — each activates as the line passes it */
+  const node0 = useTransform(scrollYProgress, [0, 0.08], [0.12, 0.7])
+  const node1 = useTransform(scrollYProgress, [0.25, 0.35], [0.12, 0.7])
+  const node2 = useTransform(scrollYProgress, [0.55, 0.65], [0.12, 0.7])
+  const node3 = useTransform(scrollYProgress, [0.82, 0.92], [0.12, 0.7])
+  const nodeOpacities = [node0, node1, node2, node3]
+
   return (
     <section id="how-it-works" className="relative py-32 sm:py-40 bg-base-light overflow-hidden">
       <div className="mesh-orb mesh-orb-yellow w-[600px] h-[600px] -top-40 -right-40 opacity-20" />
@@ -91,91 +104,109 @@ export default function HowItWorksSection() {
           </motion.p>
         </div>
 
-        {/* Steps */}
-        <div className="space-y-6">
-          {steps.map((step, i) => {
-            const isYellow = step.accent === 'yellow'
-            return (
-              <motion.div
-                key={step.number}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-60px' }}
-                transition={{ duration: 0.6, delay: i * 0.1 }}
-                className="relative"
-              >
-                <div className="card rounded-2xl p-8 sm:p-10 group hover:bg-white/[0.055] transition-all duration-500">
-                  <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr_1fr] gap-8 lg:gap-12 items-start">
-                    {/* Step number + illustration */}
-                    <div className="flex items-center gap-5 lg:flex-col lg:items-start lg:gap-4">
-                      <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${
+        {/* Steps with scroll progress line */}
+        <div ref={stepsRef} className="relative">
+          {/* ── Vertical progress line (desktop only) ── */}
+          <div className="hidden lg:block absolute left-5 top-8 bottom-8 w-px">
+            {/* Track — dim baseline */}
+            <div className="absolute inset-0 bg-white/[0.06]" />
+
+            {/* Fill — scroll-driven yellow neon */}
+            <motion.div
+              className="absolute top-0 left-0 right-0 bg-yellow/50 origin-top"
+              style={{ scaleY: scrollYProgress, height: '100%' }}
+            />
+
+            {/* Glow — soft bloom behind the fill */}
+            <motion.div
+              className="absolute top-0 -left-[2px] w-[5px] bg-yellow/20 origin-top blur-[3px]"
+              style={{ scaleY: scrollYProgress, height: '100%' }}
+            />
+          </div>
+
+          {/* ── Step cards ── */}
+          <div className="space-y-6 lg:pl-14">
+            {steps.map((step, i) => {
+              const isYellow = step.accent === 'yellow'
+              return (
+                <motion.div
+                  key={step.number}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-60px' }}
+                  transition={{ duration: 0.6, delay: i * 0.08 }}
+                  className="relative"
+                >
+                  {/* Node dot on the progress line */}
+                  <div className="hidden lg:flex absolute -left-[46px] top-10 items-center justify-center">
+                    {/* Glow ring */}
+                    <motion.div
+                      className={`absolute w-4 h-4 rounded-full blur-[4px] ${
+                        isYellow ? 'bg-yellow' : 'bg-sky'
+                      }`}
+                      style={{ opacity: nodeOpacities[i] }}
+                    />
+                    {/* Dot */}
+                    <motion.div
+                      className={`relative w-2.5 h-2.5 rounded-full border-2 ${
+                        isYellow
+                          ? 'border-yellow/30 bg-yellow/20'
+                          : 'border-sky/30 bg-sky/20'
+                      }`}
+                      style={{ opacity: useTransform(nodeOpacities[i], [0.12, 0.7], [0.4, 1]) }}
+                    />
+                  </div>
+
+                  {/* Card */}
+                  <div className="card rounded-2xl p-6 sm:p-8 group hover:bg-white/[0.055] transition-all duration-500">
+                    {/* Header: number + title */}
+                    <div className="flex items-center gap-3 mb-5">
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-[11px] font-mono font-bold ${
                         isYellow
                           ? 'bg-yellow/10 text-yellow border border-yellow/20'
                           : 'bg-sky/10 text-sky border border-sky/20'
                       }`}>
-                        {step.illustration}
+                        {step.number}
                       </div>
-                      <div className="flex items-center gap-3">
-                        <div className="relative w-7 h-7">
-                          <svg width={28} height={28} className="-rotate-90">
-                            <circle cx={14} cy={14} r={11} fill="none" stroke={isYellow ? 'rgba(249,215,2,0.08)' : 'rgba(62,181,225,0.08)'} strokeWidth={2} />
-                            <motion.circle
-                              cx={14} cy={14} r={11} fill="none"
-                              stroke={isYellow ? 'rgba(249,215,2,0.4)' : 'rgba(62,181,225,0.4)'}
-                              strokeWidth={2} strokeLinecap="round"
-                              strokeDasharray={69.1}
-                              initial={{ strokeDashoffset: 69.1 }}
-                              whileInView={{ strokeDashoffset: 0 }}
-                              viewport={{ once: true }}
-                              transition={{ duration: 0.8, delay: i * 0.15 }}
-                            />
-                          </svg>
-                          <span className="absolute inset-0 flex items-center justify-center text-[11px] font-mono text-white/20">{step.number}</span>
-                        </div>
-                        <span className={`text-xs font-bold tracking-[0.15em] uppercase ${
-                          isYellow ? 'text-yellow' : 'text-sky'
-                        }`}>
-                          {step.title}
-                        </span>
-                      </div>
+                      <span className={`text-xs font-bold tracking-[0.15em] uppercase ${
+                        isYellow ? 'text-yellow' : 'text-sky'
+                      }`}>
+                        {step.title}
+                      </span>
                     </div>
 
-                    {/* Main content */}
-                    <div>
-                      <h3 className="font-display text-2xl sm:text-3xl text-white mb-4 leading-[1.1]">
-                        {step.headline}
-                      </h3>
-                      <p className="text-sm text-white/50 leading-[1.8]">
-                        {step.description}
-                      </p>
-                    </div>
+                    {/* Content grid: illustration | text */}
+                    <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6 lg:gap-8 items-start">
+                      {/* Left: Rich illustration */}
+                      <div className="w-full max-w-[260px] mx-auto lg:mx-0">
+                        {step.mockup}
+                      </div>
 
-                    {/* Features list */}
-                    <div className="space-y-4">
-                      {step.features.map((feature) => (
-                        <div key={feature} className="flex items-start gap-3">
-                          <div className={`w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0 ${
-                            isYellow ? 'bg-yellow/60' : 'bg-sky/60'
-                          }`} />
-                          <p className="text-sm text-white/55 leading-[1.6]">{feature}</p>
+                      {/* Right: Headline, description, features */}
+                      <div>
+                        <h3 className="font-display text-xl sm:text-2xl text-white mb-3 leading-[1.15]">
+                          {step.headline}
+                        </h3>
+                        <p className="text-sm text-white/50 leading-[1.8] mb-5">
+                          {step.description}
+                        </p>
+                        <div className="space-y-3">
+                          {step.features.map((feature) => (
+                            <div key={feature} className="flex items-start gap-2.5">
+                              <div className={`w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0 ${
+                                isYellow ? 'bg-yellow/60' : 'bg-sky/60'
+                              }`} />
+                              <p className="text-sm text-white/50 leading-[1.6]">{feature}</p>
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-
-                {/* Animated connector line between steps */}
-                {i < steps.length - 1 && (
-                  <div className="hidden lg:flex justify-center py-1">
-                    <AnimatedConnector
-                      fromColor={step.accent}
-                      toColor={steps[i + 1].accent}
-                    />
-                  </div>
-                )}
-              </motion.div>
-            )
-          })}
+                </motion.div>
+              )
+            })}
+          </div>
         </div>
       </div>
 
