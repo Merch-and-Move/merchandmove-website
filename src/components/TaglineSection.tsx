@@ -1,10 +1,11 @@
-import { motion } from 'framer-motion'
+import { motion, useInView } from 'framer-motion'
+import { useRef } from 'react'
 
 const steps = [
   {
     number: '01',
     value: 'Book',
-    label: 'Schedule shifts & assign products',
+    label: 'Schedule shifts at any of our 500+ retail locations. Choose your stores, dates, and products — fully managed through our platform.',
     accent: 'yellow' as const,
     icon: (
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -15,7 +16,7 @@ const steps = [
   {
     number: '02',
     value: 'Sell',
-    label: 'Our promoters actively sell in-store',
+    label: 'Our trained promoters actively engage shoppers, recommend your products, and drive point-of-sale conversions in-store.',
     accent: 'sky' as const,
     icon: (
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -26,7 +27,7 @@ const steps = [
   {
     number: '03',
     value: 'Track',
-    label: 'See real-time sales results & ROI',
+    label: 'See real-time sales results on your portal. Only pay commission on products we actually sell — fully transparent, fully aligned.',
     accent: 'sky' as const,
     icon: (
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -36,51 +37,51 @@ const steps = [
   },
 ]
 
-/* Connector line between cards — horizontal on desktop, vertical dot on mobile */
-function Connector({ delay, from, to }: { delay: number; from: 'yellow' | 'sky'; to: 'sky' }) {
+/* ── Connector between cards ─────────────────────────────────── */
+function Connector({ delay, accentFrom }: { delay: number; accentFrom: 'yellow' | 'sky' }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref, { once: false, margin: '-40px' })
+
+  const gradientColor = accentFrom === 'yellow'
+    ? 'rgba(249,215,2,0.4)'
+    : 'rgba(62,181,225,0.4)'
+  const dotColor = accentFrom === 'yellow'
+    ? 'rgba(249,215,2,0.7)'
+    : 'rgba(62,181,225,0.7)'
+
   return (
     <>
-      {/* Desktop: horizontal animated line */}
-      <div className="hidden sm:flex items-center justify-center">
-        <div className="relative w-full h-px">
-          {/* Track */}
+      {/* Desktop: horizontal line with traveling glow */}
+      <div ref={ref} className="hidden sm:flex items-center justify-center">
+        <div className="relative w-full h-px overflow-hidden">
+          {/* Static track */}
           <div className="absolute inset-0 bg-white/[0.06]" />
-          {/* Animated fill */}
+
+          {/* Static drawn line (appears once on scroll) */}
           <motion.div
             className="absolute inset-y-0 left-0 right-0 origin-left"
-            style={{
-              background: from === 'yellow'
-                ? 'linear-gradient(90deg, rgba(249,215,2,0.4), rgba(62,181,225,0.4))'
-                : 'linear-gradient(90deg, rgba(62,181,225,0.4), rgba(62,181,225,0.4))',
-            }}
+            style={{ background: gradientColor }}
             initial={{ scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay, ease: 'easeOut' }}
           />
-          {/* Glow */}
-          <motion.div
-            className="absolute -inset-y-[2px] left-0 right-0 origin-left blur-[2px]"
-            style={{
-              background: from === 'yellow'
-                ? 'linear-gradient(90deg, rgba(249,215,2,0.2), rgba(62,181,225,0.2))'
-                : 'linear-gradient(90deg, rgba(62,181,225,0.2), rgba(62,181,225,0.2))',
-            }}
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: delay + 0.05, ease: 'easeOut' }}
-          />
-          {/* End dot */}
-          <motion.div
-            className={`absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full ${
-              to === 'sky' ? 'bg-sky/50' : 'bg-yellow/50'
-            }`}
-            initial={{ opacity: 0, scale: 0 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: delay + 0.5, type: 'spring', stiffness: 400 }}
-          />
+
+          {/* Traveling glow dot — loops continuously */}
+          {inView && (
+            <motion.div
+              className="absolute top-1/2 -translate-y-1/2 w-6 h-1 rounded-full blur-[3px]"
+              style={{ background: dotColor }}
+              animate={{ left: ['-10%', '110%'] }}
+              transition={{
+                duration: 1.2,
+                repeat: Infinity,
+                repeatDelay: 2.5,
+                delay: delay + 0.8,
+                ease: 'easeInOut',
+              }}
+            />
+          )}
         </div>
       </div>
 
@@ -94,7 +95,7 @@ function Connector({ delay, from, to }: { delay: number; from: 'yellow' | 'sky';
       >
         <div className="w-px h-3 bg-white/[0.08]" />
         <div className={`w-1.5 h-1.5 rounded-full ${
-          from === 'yellow' ? 'bg-yellow/30' : 'bg-sky/30'
+          accentFrom === 'yellow' ? 'bg-yellow/30' : 'bg-sky/30'
         }`} />
         <div className="w-px h-3 bg-white/[0.08]" />
       </motion.div>
@@ -110,7 +111,7 @@ export default function TaglineSection() {
       {/* Grid lines */}
       <div className="absolute inset-0 max-w-7xl mx-auto grid-lines" />
 
-      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <motion.p
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -145,7 +146,7 @@ export default function TaglineSection() {
         </motion.p>
 
         {/* ── Connected Step Cards ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-[1fr_40px_1fr_40px_1fr] gap-0 items-center max-w-3xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-[1fr_48px_1fr_48px_1fr] gap-0 items-center">
           {steps.map((step, i) => {
             const isYellow = step.accent === 'yellow'
             return (
@@ -154,8 +155,7 @@ export default function TaglineSection() {
                 {i > 0 && (
                   <Connector
                     delay={0.5 + i * 0.15}
-                    from={steps[i - 1].accent}
-                    to="sky"
+                    accentFrom={steps[i - 1].accent}
                   />
                 )}
 
@@ -165,7 +165,7 @@ export default function TaglineSection() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.3 + i * 0.12 }}
-                  className={`relative bg-white/[0.03] border border-white/[0.06] backdrop-blur-sm rounded-xl px-6 py-8 flex flex-col items-center transition-all duration-300 hover:border-white/10 hover:-translate-y-0.5 group cursor-default`}
+                  className="relative bg-white/[0.03] border border-white/[0.06] backdrop-blur-sm rounded-xl px-5 py-7 sm:px-6 sm:py-8 flex flex-col items-center transition-all duration-300 hover:border-white/10 hover:-translate-y-0.5 group cursor-default"
                 >
                   {/* Step number */}
                   <span className="absolute top-3 right-3 text-[10px] font-mono text-white/10">
@@ -188,13 +188,13 @@ export default function TaglineSection() {
                   </motion.div>
 
                   {/* Word */}
-                  <span className={`font-display text-4xl italic mb-2 ${
+                  <span className={`font-display text-4xl italic mb-3 ${
                     isYellow ? 'text-gradient-yellow' : 'text-gradient-sky'
                   }`}>
                     {step.value}
                   </span>
 
-                  {/* Subtitle */}
+                  {/* Description (merged from PillarsOverview) */}
                   <p className="text-xs text-white/40 leading-relaxed group-hover:text-white/55 transition-colors duration-300">
                     {step.label}
                   </p>
@@ -203,6 +203,22 @@ export default function TaglineSection() {
             )
           })}
         </div>
+
+        {/* CTA link to detailed steps */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          className="mt-14"
+        >
+          <a
+            href="#how-it-works"
+            className="inline-flex items-center px-7 py-3 text-sm font-medium text-white/60 border border-white/12 hover:border-yellow/40 hover:text-yellow rounded-full transition-all duration-300"
+          >
+            See How It Works
+          </a>
+        </motion.div>
       </div>
 
       <div className="absolute bottom-0 left-0 right-0 section-divider" />
