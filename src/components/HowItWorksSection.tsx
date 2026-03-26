@@ -137,11 +137,11 @@ export default function HowItWorksSection() {
                   transition={{ duration: 0.6, delay: i * 0.08 }}
                   className="relative"
                 >
-                  {/* Node dot on the progress line */}
-                  <div className="hidden lg:flex absolute -left-[46px] top-10 items-center justify-center">
+                  {/* Node dot on the progress line — centered on left-5 (20px) */}
+                  <div className="hidden lg:flex absolute -left-[36px] top-10 -translate-x-1/2 w-4 h-4 items-center justify-center">
                     {/* Glow ring */}
                     <motion.div
-                      className={`absolute w-4 h-4 rounded-full blur-[4px] ${
+                      className={`absolute inset-0 rounded-full blur-[4px] ${
                         isYellow ? 'bg-yellow' : 'bg-sky'
                       }`}
                       style={{ opacity: nodeOpacities[i] }}
