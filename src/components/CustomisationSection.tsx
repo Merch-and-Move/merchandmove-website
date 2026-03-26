@@ -39,12 +39,12 @@ const tiers = [
   {
     label: 'Sales Commission',
     price: 'Pay Per Sale',
-    description: 'A commission on the products our promoters sell. This is our core model — you only pay for results, aligning our incentives with yours.',
+    description: 'A commission on the products our promoters sell. This is our core model — you only pay for results, aligning our objectives with yours.',
     features: [
       'Commission on confirmed sales only',
       'No sales = no commission charged',
       'Transparent per-product tracking',
-      'Incentives aligned with your goals',
+      'Objectives aligned with your goals',
     ],
     accent: 'yellow' as const,
     icon: (

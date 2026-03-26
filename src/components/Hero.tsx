@@ -57,27 +57,47 @@ export default function Hero() {
           </span>
         </motion.div>
 
-        {/* Headline — word-by-word with blur reveal */}
-        <h1 className="mb-8">
-          {words.map((word, i) => (
-            <motion.span
-              key={word}
-              initial={{ opacity: 0, y: 50, filter: 'blur(10px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              transition={{
-                duration: 0.9,
-                delay: 0.4 + i * 0.12,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className="inline-block font-display text-7xl sm:text-8xl md:text-[110px] lg:text-[130px] text-white leading-[0.85] tracking-[-0.02em] mr-4 sm:mr-6 md:mr-8"
-            >
-              {word === 'Move.' ? (
-                <span className="italic text-gradient-yellow">{word}</span>
-              ) : (
-                word
-              )}
-            </motion.span>
-          ))}
+        {/* Headline — word-by-word with blur reveal, "Move." kinetic */}
+        <h1 className="flex items-baseline justify-center flex-wrap mb-8 gap-x-4 sm:gap-x-6 md:gap-x-8">
+          {words.map((word, i) =>
+            word === 'Move.' ? (
+              <motion.span
+                key={word}
+                initial={{ opacity: 0, y: 50, filter: 'blur(10px)' }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  filter: 'blur(0px)',
+                  x: [0, 8, -8, 0],
+                  scale: [1, 1.03, 1, 0.98, 1],
+                }}
+                transition={{
+                  opacity: { duration: 0.9, delay: 0.64 },
+                  y: { duration: 0.9, delay: 0.64, ease: [0.22, 1, 0.36, 1] },
+                  filter: { duration: 0.9, delay: 0.64 },
+                  x: { duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 1.8 },
+                  scale: { duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 1.8 },
+                }}
+                className="inline-block font-display text-8xl sm:text-9xl md:text-[160px] lg:text-[190px] leading-[0.85] tracking-[-0.02em]"
+              >
+                <span className="italic text-gradient-yellow-animated">{word}</span>
+              </motion.span>
+            ) : (
+              <motion.span
+                key={word}
+                initial={{ opacity: 0, y: 50, filter: 'blur(10px)' }}
+                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                transition={{
+                  duration: 0.9,
+                  delay: 0.4 + i * 0.12,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className="inline-block font-display text-7xl sm:text-8xl md:text-[110px] lg:text-[130px] text-white leading-[0.85] tracking-[-0.02em]"
+              >
+                {word}
+              </motion.span>
+            )
+          )}
         </h1>
 
         {/* Subheadline — clear value prop */}
@@ -87,7 +107,8 @@ export default function Hero() {
           transition={{ duration: 0.7, delay: 1.0 }}
           className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto mb-14 leading-relaxed"
         >
-          Book shifts. We sell your products in-store.{' '}
+          Book shifts. We sell your products in-store.
+          <br />
           <span className="text-white font-medium">You only pay for what we sell.</span>
         </motion.p>
 
