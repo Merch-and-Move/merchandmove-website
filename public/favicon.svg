@@ -1,4 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
-  <rect width="32" height="32" rx="6" fill="#0A1E49"/>
-  <text x="5" y="23" font-family="Inter, sans-serif" font-weight="800" font-size="18" fill="#F9D702">M</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <circle cx="256" cy="256" r="256" fill="#0A1E49"/>
+  <g text-anchor="middle" dominant-baseline="central" font-family="'Arial Black', 'Impact', sans-serif" font-weight="900">
+    <!-- M (left, yellow) -->
+    <text x="155" y="268" font-size="250" fill="#F9D702">M</text>
+    <!-- & (center, sky blue) — slightly smaller, raised -->
+    <text x="270" y="258" font-size="185" fill="#3EB5E1">&amp;</text>
+    <!-- M (right, yellow) -->
+    <text x="375" y="268" font-size="250" fill="#F9D702">M</text>
+  </g>
 </svg>
