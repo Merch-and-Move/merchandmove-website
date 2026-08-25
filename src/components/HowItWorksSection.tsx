@@ -42,7 +42,7 @@ const steps = [
     headline: 'You Only Pay for What We Sell',
     description:
       'Our model is built around performance. You pay a commission on the products our promoters actually sell — aligning our objectives directly with yours. The more we sell, the more we both earn.',
-    features: ['Commission-based: pay only on confirmed sales', 'Nominal per-shift booking fee (volume discounts available)', 'Monthly platform subscription for portal access'],
+    features: ['Commission-based: pay only on confirmed sales', 'No monthly subscription — platform access is included', 'No per-shift booking fee — book as many as you need'],
     accent: 'yellow' as const,
     mockup: <StepPayMockup />,
   },
