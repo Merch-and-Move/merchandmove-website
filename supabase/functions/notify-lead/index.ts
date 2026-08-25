@@ -96,8 +96,8 @@ function escape(s: string): string {
 
 function row(label: string, value: string): string {
   return `<tr>
-    <td style="padding:8px 16px 8px 0;color:#9ca3af;width:140px;vertical-align:top;">${escape(label)}</td>
-    <td style="padding:8px 0;color:#ffffff;">${escape(value)}</td>
+    <td style="padding:8px 16px 8px 0;color:#6b7280;width:140px;vertical-align:top;">${escape(label)}</td>
+    <td style="padding:8px 0;color:#111827;">${escape(value)}</td>
   </tr>`
 }
 
@@ -136,24 +136,26 @@ function renderEmail(lead: LeadForm): { subject: string; html: string; text: str
   ].filter(Boolean).join('\n')
 
   const html = `<!doctype html>
-<html><body style="margin:0;padding:0;background:#0a0f1e;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#e5e7eb;">
+<html><body style="margin:0;padding:0;background:#f4f5f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1f2937;">
   <div style="max-width:560px;margin:0 auto;padding:32px 24px;">
-    <div style="border-left:3px solid #F9D702;padding-left:16px;margin-bottom:24px;">
-      <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#F9D702;font-weight:700;">New Lead</div>
-      <h1 style="margin:8px 0 4px;font-size:22px;line-height:1.2;color:#ffffff;font-weight:600;">${escape(lead.company ?? '')}</h1>
-      <div style="color:#9ca3af;font-size:14px;">${escape(lead.full_name ?? '')} · <a href="mailto:${escape(lead.work_email ?? '')}" style="color:#9ca3af;">${escape(lead.work_email ?? '')}</a></div>
-      ${lead.phone ? `<div style="color:#9ca3af;font-size:14px;margin-top:4px;"><a href="tel:${escape(lead.phone)}" style="color:#9ca3af;">${escape(lead.phone)}</a></div>` : ''}
-      ${lead.website ? `<div style="color:#9ca3af;font-size:14px;margin-top:4px;"><a href="${escape(lead.website)}" style="color:#3EB5E1;">${escape(lead.website)}</a></div>` : ''}
+    <div style="background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:32px 28px;">
+      <div style="border-left:3px solid #F9D702;padding-left:16px;margin-bottom:24px;">
+        <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#a16207;font-weight:700;">New Lead</div>
+        <h1 style="margin:8px 0 4px;font-size:22px;line-height:1.2;color:#111827;font-weight:600;">${escape(lead.company ?? '')}</h1>
+        <div style="color:#6b7280;font-size:14px;">${escape(lead.full_name ?? '')} · <a href="mailto:${escape(lead.work_email ?? '')}" style="color:#6b7280;">${escape(lead.work_email ?? '')}</a></div>
+        ${lead.phone ? `<div style="color:#6b7280;font-size:14px;margin-top:4px;"><a href="tel:${escape(lead.phone)}" style="color:#6b7280;">${escape(lead.phone)}</a></div>` : ''}
+        ${lead.website ? `<div style="color:#6b7280;font-size:14px;margin-top:4px;"><a href="${escape(lead.website)}" style="color:#2433AD;">${escape(lead.website)}</a></div>` : ''}
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:14px;line-height:1.6;">
+        ${row('Category', category)}
+        ${row('Retail footprint', footprint)}
+        ${row('Target regions', regions)}
+        ${row('Timeline', timeline)}
+      </table>
+      ${lead.notes ? `<div style="margin-top:24px;padding:16px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">Notes</div><div style="color:#1f2937;white-space:pre-wrap;">${escape(lead.notes)}</div></div>` : ''}
+      ${utmLine || lead.referrer ? `<div style="margin-top:24px;font-size:12px;color:#6b7280;">${utmLine ? `<div>Attribution: ${escape(utmLine)}</div>` : ''}${lead.referrer ? `<div>Referrer: ${escape(lead.referrer)}</div>` : ''}</div>` : ''}
+      <div style="margin-top:32px;padding-top:16px;border-top:1px solid #e5e7eb;font-size:12px;color:#6b7280;">Reply to this email to respond directly to ${escape(lead.full_name ?? '')}.</div>
     </div>
-    <table style="width:100%;border-collapse:collapse;font-size:14px;line-height:1.6;">
-      ${row('Category', category)}
-      ${row('Retail footprint', footprint)}
-      ${row('Target regions', regions)}
-      ${row('Timeline', timeline)}
-    </table>
-    ${lead.notes ? `<div style="margin-top:24px;padding:16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#9ca3af;margin-bottom:8px;">Notes</div><div style="color:#e5e7eb;white-space:pre-wrap;">${escape(lead.notes)}</div></div>` : ''}
-    ${utmLine || lead.referrer ? `<div style="margin-top:24px;font-size:12px;color:#6b7280;">${utmLine ? `<div>Attribution: ${escape(utmLine)}</div>` : ''}${lead.referrer ? `<div>Referrer: ${escape(lead.referrer)}</div>` : ''}</div>` : ''}
-    <div style="margin-top:32px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.08);font-size:12px;color:#6b7280;">Reply to this email to respond directly to ${escape(lead.full_name ?? '')}.</div>
   </div>
 </body></html>`
 
