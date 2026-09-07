@@ -1,0 +1,23 @@
+---
+import Layout from '../layouts/Layout.astro'
+import Nav from '../components/Nav.astro'
+import Footer from '../components/Footer.astro'
+import SmoothScroll from '../components/SmoothScroll.tsx'
+import { START_URL } from '../components/business/startUrl'
+import BusinessHero from '../components/business/BusinessHero.tsx'
+import BusinessBenefits from '../components/business/BusinessBenefits.tsx'
+---
+
+<Layout
+  title="Start Your Own Business — Merch & Move"
+  description="Become an independent Merch & Move seller. Side hustle or full-time, work on your own schedule, sell brands that already move, and cash out from your own wallet whenever you want."
+  noindex
+>
+  <SmoothScroll client:load />
+  <Nav minimal ctaLabel="Start Your Business" ctaHref={START_URL} />
+  <main>
+    <BusinessHero client:load />
+    <BusinessBenefits client:visible />
+  </main>
+  <Footer />
+</Layout>
