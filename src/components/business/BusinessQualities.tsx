@@ -39,6 +39,16 @@ const qualities = [
   },
 ]
 
+const perfectFits = [
+  'Doctors\' rooms receptionists',
+  'Personal trainers',
+  'Stay-at-home mothers',
+  'Community leaders',
+  'Students',
+  'Hairdressers & beauty therapists',
+  'Salespeople wanting a side income',
+]
+
 export default function BusinessQualities() {
   return (
     <section className="relative py-32 sm:py-40 bg-base overflow-hidden">
@@ -77,6 +87,31 @@ export default function BusinessQualities() {
               We'll teach you the products and the app. What we can't teach is the drive to use them.
               If this sounds like you, you're already most of the way there.
             </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="mt-10"
+            >
+              <div className="text-[10px] font-bold tracking-[0.3em] text-yellow/70 uppercase mb-4">Perfect fits</div>
+              <div className="flex flex-wrap gap-2">
+                {perfectFits.map((fit, i) => (
+                  <motion.span
+                    key={fit}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.3, delay: 0.35 + i * 0.06 }}
+                    className="px-3.5 py-2 text-xs rounded-full bg-yellow/[0.08] border border-yellow/20 text-white/75"
+                  >
+                    {fit}
+                  </motion.span>
+                ))}
+              </div>
+              <p className="text-xs text-white/30 mt-4">People with a network and a reason to talk to it.</p>
+            </motion.div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">

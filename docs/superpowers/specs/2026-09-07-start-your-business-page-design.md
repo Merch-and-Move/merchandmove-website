@@ -38,8 +38,21 @@ by URL only until the programme is ready to launch.
   not "training".
 - **Wallet payouts.** Request any time, no minimum, no fee, usually in the
   bank within a business day or two.
-- **Growth.** No tiers, team earnings or formal rewards yet. Growth copy is
-  about hours, products and adding a stock line.
+- **Commission.** A minimum of 15% on every sale made through the app. This
+  figure is published on the page.
+- **Ways to earn.** Four streams: selling from the app, buying in-house stock
+  at a discount and selling at own mark-up, a unique coupon code whose
+  website sales are credited to the owner, and booking shifts in retail
+  stores. They get their own section, "So Many Ways To Earn".
+- **Winners Event.** A recognition event for top sellers. Mentioned in the
+  community benefit card, step 4, a banner under the ways-to-earn section,
+  and an FAQ item. No dates, prizes or qualifying rules are published.
+- **Perfect fits.** The "What it takes" section lists example candidates:
+  doctors' rooms receptionists, personal trainers, stay-at-home mothers,
+  community leaders, students, hairdressers and beauty therapists, and
+  salespeople wanting a side income.
+- **Growth.** No tiers or team earnings. Growth copy is about hours,
+  products, adding a stock line and earning a Winners Event invitation.
 - **Income disclosure statement.** None exists. The disclaimer is a plain
   sentence with no link.
 
@@ -83,22 +96,25 @@ One scrolling page, modelled on Forever Living's "Your Opportunity" and
    notifications landing), grow (earnings chart climbing). Step copy is
    generic until the model is decided. Ends with a "Start Your Business"
    button.
-4. **Your wallet.** Two-column section, wallet mockup on one side and three
+4. **So many ways to earn.** Four cards, one per income stream, with icons,
+   followed by a Winners Event banner.
+5. **Your wallet.** Two-column section, wallet mockup on one side and three
    feature points on the other: earnings land in your wallet, request a
    payout whenever you want, see every sale.
-5. **What it takes.** Short grid of qualities: self-driven, people person,
-   organised, ambitious. Sets expectations without being a job spec.
-6. **Why Merch & Move.** Credibility block reusing the homepage's proof points
+6. **What it takes.** Short grid of qualities: self-driven, people person,
+   organised, ambitious, plus a "perfect fits" list of example candidates.
+   Sets expectations without being a job spec.
+7. **Why Merch & Move.** Credibility block reusing the homepage's proof points
    (active selling expertise, live tracking platform, brands that already
    move).
-7. **FAQ.** Seven accordion items, including "Can I do this as a side
+8. **FAQ.** Eight accordion items, including "Can I do this as a side
    hustle?" and "How do I get paid?" (answered with the wallet). The
    earnings answer is a clearly labelled illustrative example.
-8. **Disclaimer.** Short income disclaimer paragraph. South African
+9. **Disclaimer.** Short income disclaimer paragraph. South African
    direct-selling pages carry one. No income disclosure link.
-9. **Closing CTA.** Large headline and a single "Start Your Business" button,
+10. **Closing CTA.** Large headline and a single "Start Your Business" button,
    in the style of the homepage's closing CTA section.
-10. **Footer.** Existing site footer.
+11. **Footer.** Existing site footer.
 
 Nav is the existing `Nav.astro` in a new minimal mode: logo on the left,
 one "Start Your Business" pill on the right linking to the app, and nothing
@@ -125,6 +141,7 @@ src/components/business/startUrl.ts
 src/components/business/BusinessHero.tsx
 src/components/business/BusinessBenefits.tsx
 src/components/business/BusinessSteps.tsx
+src/components/business/BusinessWaysToEarn.tsx
 src/components/business/BusinessWallet.tsx
 src/components/business/BusinessQualities.tsx
 src/components/business/BusinessWhyUs.tsx

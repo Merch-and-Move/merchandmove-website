@@ -43,7 +43,7 @@ const steps = [
     headline: 'Side Hustle Today. Bigger Tomorrow.',
     description:
       'Start with a few hours a week and a handful of customers. Add more hours, more products and your own stock line as you go. The more you sell, the more the business becomes yours.',
-    features: ['Scale from a few hours a week to full-time', 'Buy stock at a discount and earn the mark-up too', 'See your growth month by month in the app'],
+    features: ['Scale from a few hours a week to full-time', 'Buy stock at a discount and earn the mark-up too', 'Earn your place at the Winners Event'],
     accent: 'yellow' as const,
     mockup: <StepGrowMockup />,
   },

@@ -23,7 +23,7 @@ const benefits = [
   },
   {
     title: 'Earn On What You Sell',
-    body: 'Earn commission on every sale you make through the app. Want more? Buy from our in-house brands at incredible discounts and sell at your own mark-up.',
+    body: 'A minimum of 15% on every sale you make through the app. Want more? Buy from our in-house brands at incredible discounts and sell at your own mark-up.',
     accent: 'sky' as const,
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -53,7 +53,7 @@ const benefits = [
   },
   {
     title: 'A Community Behind You',
-    body: 'Join a network of sellers across South Africa who share what works and celebrate each other\'s wins.',
+    body: 'Join a network of sellers across South Africa who share what works, and celebrate the best of them at our Winners Event.',
     accent: 'yellow' as const,
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>

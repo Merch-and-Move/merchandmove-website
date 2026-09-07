@@ -43,6 +43,13 @@ grep -q 'Request Payout\|REQUEST PAYOUT' "$P" || { echo "FAIL: wallet mockup mis
 grep -q 'id="wallet"' "$P" || { echo "FAIL: wallet section missing"; exit 1; }
 echo "OK: wallet section present"
 
+grep -q 'id="ways-to-earn"' "$P" || { echo "FAIL: ways-to-earn section missing"; exit 1; }
+grep -q 'Unique Coupon' "$P" || { echo "FAIL: coupon card missing"; exit 1; }
+grep -q 'Winners Event' "$P" || { echo "FAIL: Winners Event missing"; exit 1; }
+grep -q 'minimum of 15%' "$P" || { echo "FAIL: 15% minimum missing"; exit 1; }
+grep -q 'Personal trainers' "$P" || { echo "FAIL: perfect fits list missing"; exit 1; }
+echo "OK: ways to earn, Winners Event, 15% and perfect fits present"
+
 grep -q 'What It Takes' "$P" || { echo "FAIL: qualities section missing"; exit 1; }
 grep -q 'Why Merch' "$P" || { echo "FAIL: why-us section missing"; exit 1; }
 echo "OK: qualities and why-us sections present"

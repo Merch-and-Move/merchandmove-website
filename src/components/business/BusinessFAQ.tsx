@@ -11,11 +11,15 @@ const faqs = [
   },
   {
     q: 'How much can I earn?',
-    a: 'That\'s up to you. You earn commission on every sale you make through the app, and you can buy from our in-house brands at a discount and sell at your own mark-up. There is no cap and no salary band. Sell a little, earn a little. Sell a lot, and you write your own paycheck.',
+    a: 'That\'s up to you. You earn a minimum of 15% on every sale you make through the app, plus whatever mark-up you set on stock you buy from our in-house brands, plus every website sale that uses your coupon. There is no cap and no salary band. Sell a little, earn a little. Sell a lot, and you write your own paycheck.',
   },
   {
     q: 'Does it cost anything to start?',
     a: 'There is a starter kit to get you going. We are finalising exactly what goes in it and what it costs, and we will walk you through all of it before you commit to anything.',
+  },
+  {
+    q: 'What is the Winners Event?',
+    a: 'Our celebration of the business owners who sold the most. Top sellers earn an invitation, get recognised in front of the whole network, and are rewarded for it. Details are shared with business owners in the app.',
   },
   {
     q: 'Am I employed by Merch & Move?',
