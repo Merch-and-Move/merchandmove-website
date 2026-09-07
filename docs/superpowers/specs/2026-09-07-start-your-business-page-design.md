@@ -76,8 +76,7 @@ One scrolling page, modelled on Forever Living's "Your Opportunity" and
    give the hero visual energy.
 2. **Benefits grid.** Six cards with an icon each: be your own boss, side
    hustle or full-time, earn on what you sell, your own wallet, tools and
-   training, community. Earning-specific copy is placeholder text marked
-   `[EARNING MODEL]`.
+   training, community. Earning copy follows the programme decisions above.
 3. **How it works.** Four numbered steps in the homepage's step-card layout,
    each with a mini animated mockup: start your business (application form
    sending), get set up (onboarding checklist ticking), start selling (sale
@@ -93,8 +92,8 @@ One scrolling page, modelled on Forever Living's "Your Opportunity" and
    (active selling expertise, live tracking platform, brands that already
    move).
 7. **FAQ.** Seven accordion items, including "Can I do this as a side
-   hustle?" and "How do I get paid?" (answered with the wallet). Earning
-   amounts are placeholders.
+   hustle?" and "How do I get paid?" (answered with the wallet). The
+   earnings answer is a clearly labelled illustrative example.
 8. **Disclaimer.** Short income disclaimer paragraph. South African
    direct-selling pages carry one. No income disclosure link.
 9. **Closing CTA.** Large headline and a single "Start Your Business" button,
