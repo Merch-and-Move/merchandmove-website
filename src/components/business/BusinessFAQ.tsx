@@ -15,7 +15,7 @@ const faqs = [
   },
   {
     q: 'Does it cost anything to start?',
-    a: 'There is a starter kit to get you going. We are finalising exactly what goes in it and what it costs, and we will walk you through all of it before you commit to anything.',
+    a: 'Yes. Your starter kit sets you up with everything you need to make your first sales. We\'ll take you through exactly what\'s inside and what it costs when we chat, so you know where you stand from day one.',
   },
   {
     q: 'What is the Winners Event?',
