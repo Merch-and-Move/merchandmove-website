@@ -39,3 +39,17 @@ echo "OK: steps section with mockups present"
 grep -q 'Request Payout\|REQUEST PAYOUT' "$P" || { echo "FAIL: wallet mockup missing"; exit 1; }
 grep -q 'id="wallet"' "$P" || { echo "FAIL: wallet section missing"; exit 1; }
 echo "OK: wallet section present"
+
+grep -q 'What It Takes' "$P" || { echo "FAIL: qualities section missing"; exit 1; }
+grep -q 'Why Merch' "$P" || { echo "FAIL: why-us section missing"; exit 1; }
+echo "OK: qualities and why-us sections present"
+
+grep -q '<details' "$P" || { echo "FAIL: FAQ accordion missing"; exit 1; }
+grep -q 'side hustle' "$P" || { echo "FAIL: side hustle language missing"; exit 1; }
+grep -q 'Individual results vary' "$P" || { echo "FAIL: income disclaimer missing"; exit 1; }
+echo "OK: FAQ and disclaimer present"
+
+n=$(grep -o 'Start Your Business' "$P" | wc -l | tr -d ' ')
+[ "$n" -ge 4 ] || { echo "FAIL: expected at least 4 Start Your Business CTAs, found $n"; exit 1; }
+grep -q 'Your Move' "$P" || { echo "FAIL: closing CTA missing"; exit 1; }
+echo "OK: closing CTA present, $n Start Your Business CTAs"
