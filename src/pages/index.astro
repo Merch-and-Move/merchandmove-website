@@ -12,6 +12,7 @@ import CustomisationSection from '../components/CustomisationSection.tsx'
 import BrandAmbassadors from '../components/BrandAmbassadors.tsx'
 import CTASection from '../components/CTASection.tsx'
 import ContactForm from '../components/ContactForm.tsx'
+import SellerStrip from '../components/SellerStrip.astro'
 import Footer from '../components/Footer.astro'
 ---
 
@@ -30,5 +31,6 @@ import Footer from '../components/Footer.astro'
     <CTASection client:visible />
     <ContactForm client:visible />
   </main>
+  <SellerStrip />
   <Footer />
 </Layout>

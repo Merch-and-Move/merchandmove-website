@@ -26,14 +26,17 @@ for a in how-it-works active-selling platform pricing; do
 done
 if grep -q 'Toggle menu' "$P"; then echo "FAIL: new page renders the mobile menu"; exit 1; fi
 if grep -q 'Contact Us' "$P"; then echo "FAIL: new page shows a Contact Us pill"; exit 1; fi
-if grep -q 'start-your-business' dist/index.html; then
-  echo "FAIL: homepage links to start-your-business"; exit 1
-fi
+# Homepage links to the page exactly twice: the seller strip and the footer quick link. Nowhere above the contact form.
+n=$(grep -o 'href="/start-your-business"' dist/index.html | wc -l | tr -d ' ')
+[ "$n" -eq 2 ] || { echo "FAIL: expected 2 homepage links to start-your-business, found $n"; exit 1; }
+first=$(grep -bo 'href="/start-your-business"' dist/index.html | head -1 | cut -d: -f1)
+contact=$(grep -bo 'id="contact"' dist/index.html | head -1 | cut -d: -f1)
+[ "$first" -gt "$contact" ] || { echo "FAIL: homepage links to start-your-business above the contact form"; exit 1; }
 grep -q 'Side Hustle' "$P" || { echo "FAIL: hero side hustle badge missing"; exit 1; }
 if grep -q 'Quick Links' "$P"; then echo "FAIL: new page renders the full footer"; exit 1; fi
 grep -q 'Quick Links' dist/index.html || { echo "FAIL: homepage footer changed"; exit 1; }
 grep -q 'info@merchandmove.co.za' "$P" || { echo "FAIL: minimal footer missing contact email"; exit 1; }
-echo "OK: start-your-business page is built, indexable, minimal nav and footer, unlinked"
+echo "OK: start-your-business page is built, indexable, minimal nav and footer, linked only below the fold"
 
 grep -q 'id="how-it-works"' "$P" || { echo "FAIL: steps section missing"; exit 1; }
 grep -q 'Application' "$P" || { echo "FAIL: apply mockup missing"; exit 1; }

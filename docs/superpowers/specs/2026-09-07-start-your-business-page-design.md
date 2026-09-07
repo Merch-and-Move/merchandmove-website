@@ -12,8 +12,11 @@ from the homepage audience (businesses buying the platform) and from the
 promoters employed through the app. The page is the first step of a larger
 future feature; for now it only markets the opportunity and captures interest.
 
-The page is intentionally unlinked from the homepage and nav. It is reachable
-by URL only until the programme is ready to launch.
+The homepage links to the page in exactly two quiet places, both below the
+contact form: a one-line "Not a brand? Looking to earn instead?" strip above
+the footer, and a "Start Your Business" entry in the footer's quick links.
+Nothing above the contact form mentions it, so the brand-facing pitch is not
+diluted. The nav never links to it.
 
 ## Out of scope
 
@@ -22,7 +25,7 @@ by URL only until the programme is ready to launch.
   separately. Until that URL exists the buttons point at a placeholder.
 - Any change to the `notify-lead` Edge Function or the shared Supabase
   project.
-- Homepage or nav links to the new page.
+- Nav links to the new page, or any homepage mention above the contact form.
 
 ## Programme decisions (2026-09-07)
 
