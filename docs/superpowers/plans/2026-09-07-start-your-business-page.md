@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add a hidden, single-scroll landing page at `/start-your-business` that recruits independent sellers and sends them to a sign-up form in the Merch & Move app.
+**Goal:** Add a hidden, single-scroll landing page at `/start-your-business` that excites independent sellers about building a business or side hustle, shows off the in-app wallet, and sends them to a sign-up form in the Merch & Move app.
 
-**Architecture:** One new Astro page composed of seven React section components under `src/components/business/`, reusing the existing layout, nav, footer and global styles. Every call to action reads one `START_URL` constant, so wiring the page to the app later is a one-line change. No server-side work.
+**Architecture:** One new Astro page composed of eight React section components under `src/components/business/`, plus five animated mockup components under `src/components/business/mockups/`, all reusing the existing layout, nav, footer and global styles. Every call to action reads one `START_URL` constant. No server-side work.
 
 **Tech Stack:** Astro 6, React 19, Tailwind 4, framer-motion.
 
@@ -17,8 +17,9 @@
 - The page's `<head>` must contain `<meta name="robots" content="noindex">`; the homepage's must not.
 - The only CTA label on the page is **Start Your Business**. Every such button and the nav pill read `START_URL` from `src/components/business/startUrl.ts`.
 - Every piece of copy that depends on the undecided earning model is wrapped in square brackets and begins with `[EARNING MODEL`.
-- Nothing under `supabase/` and nothing in `ContactForm.tsx` or `index.astro` changes.
-- Copy voice: direct, confident, short lines. Match the homepage. "Side hustle" appears in the hero, benefits and FAQ.
+- Nothing under `supabase/` and nothing in `ContactForm.tsx`, `index.astro` or `MobileMenu.tsx` changes.
+- Copy voice: direct, confident, short lines, energetic. "Side hustle" appears in the hero, benefits and FAQ. The wallet is named in the hero chips, benefits, wallet section and FAQ.
+- Mockups follow the homepage mockup pattern: a `#0a0a0f/90` window with three chrome dots and a title, `useInView` once with `-40px` margin, framer-motion staggered reveals, text sizes 6px to 18px.
 - No new npm dependencies.
 
 ## Verification tools available
@@ -34,9 +35,15 @@
 | `src/layouts/Layout.astro` | Modify: add optional `noindex` prop |
 | `src/components/Nav.astro` | Modify: `minimal`, `ctaLabel`, `ctaHref` props |
 | `src/components/business/startUrl.ts` | The single `START_URL` constant |
-| `src/components/business/BusinessHero.tsx` | Hero with headline, side-hustle sub-copy, primary CTA |
-| `src/components/business/BusinessBenefits.tsx` | Six benefit cards |
-| `src/components/business/BusinessSteps.tsx` | Four numbered steps, `id="how-it-works"` |
+| `src/components/business/BusinessHero.tsx` | Hero with headline, side-hustle sub-copy, floating stat chips, primary CTA |
+| `src/components/business/BusinessBenefits.tsx` | Six benefit cards with icons |
+| `src/components/business/mockups/StepApplyMockup.tsx` | Application form sending |
+| `src/components/business/mockups/StepSetupMockup.tsx` | Onboarding checklist ticking |
+| `src/components/business/mockups/StepSellMockup.tsx` | Sale notifications landing |
+| `src/components/business/mockups/StepGrowMockup.tsx` | Earnings bars climbing |
+| `src/components/business/BusinessSteps.tsx` | Four step cards with mockups, `id="how-it-works"` |
+| `src/components/business/mockups/WalletMockup.tsx` | Wallet balance, feed, payout button |
+| `src/components/business/BusinessWallet.tsx` | Two-column wallet section |
 | `src/components/business/BusinessQualities.tsx` | Four "what it takes" cards |
 | `src/components/business/BusinessWhyUs.tsx` | Credibility block |
 | `src/components/business/BusinessFAQ.tsx` | Accordion FAQ and income disclaimer |
@@ -74,7 +81,7 @@ Run:
 ```bash
 chmod +x scripts/check-business-page.sh && npm run build && ./scripts/check-business-page.sh
 ```
-Expected: `OK: homepage has no noindex` (passes already; it guards against regressions in the next step).
+Expected: `OK: homepage has no noindex`.
 
 - [ ] **Step 2: Add the prop to Layout**
 
@@ -104,9 +111,8 @@ Directly after the `<meta name="theme-color" ...>` line, add:
     {noindex && <meta name="robots" content="noindex" />}
 ```
 
-- [ ] **Step 3: Verify the homepage is unchanged**
+- [ ] **Step 3: Verify**
 
-Run:
 ```bash
 npm run build && ./scripts/check-business-page.sh
 ```
@@ -127,7 +133,7 @@ git commit -m "Add optional noindex prop to Layout"
 - Modify: `src/components/Nav.astro:1-30`
 
 **Interfaces:**
-- Produces: `<Nav minimal ctaLabel="Start Your Business" ctaHref={START_URL} />` renders only the logo and one pill. Without `minimal`, output matches what the homepage renders today (`ctaLabel` defaults to `Contact Us`, `ctaHref` to `#contact`).
+- Produces: `<Nav minimal ctaLabel="Start Your Business" ctaHref={START_URL} />` renders only the logo and one pill. Without `minimal`, output matches what the homepage renders today.
 
 - [ ] **Step 1: Write the homepage guard**
 
@@ -142,11 +148,7 @@ grep -q 'Contact Us' dist/index.html || { echo "FAIL: homepage Contact Us pill m
 echo "OK: homepage nav intact"
 ```
 
-Run:
-```bash
-npm run build && ./scripts/check-business-page.sh
-```
-Expected: `OK: homepage nav intact` (passes now; it guards the homepage while Nav is edited). The minimal mode itself is asserted in Task 3 once the page exists.
+Run `npm run build && ./scripts/check-business-page.sh`. Expected: `OK: homepage nav intact`.
 
 - [ ] **Step 2: Add the props to Nav.astro**
 
@@ -200,17 +202,11 @@ const pillClasses =
 </nav>
 ```
 
-Leave the existing `<script>` block unchanged. `MobileMenu.tsx` is not modified.
+Leave the `<script>` block unchanged.
 
 - [ ] **Step 3: Verify**
 
-Run:
-```bash
-npm run build && ./scripts/check-business-page.sh
-```
-Expected: both `OK:` lines.
-
-With the dev server running, open `http://localhost:4321/` and confirm the nav looks exactly as before: four links, yellow Contact Us pill, hamburger on mobile.
+`npm run build && ./scripts/check-business-page.sh`. Expected: both `OK:` lines. Open `http://localhost:4321/` and confirm the nav is unchanged.
 
 - [ ] **Step 4: Commit**
 
@@ -221,16 +217,16 @@ git commit -m "Add minimal mode to Nav for single-purpose pages"
 
 ---
 
-### Task 3: Start link, Hero, Benefits, and the page
+### Task 3: Start link, Hero with floating chips, Benefits with icons, and the page
 
 **Files:**
 - Create: `src/components/business/startUrl.ts`
 - Create: `src/components/business/BusinessHero.tsx`
 - Create: `src/components/business/BusinessBenefits.tsx`
-- Create: `src/pages/start-your-business.astro` (minimal, grows in later tasks)
+- Create: `src/pages/start-your-business.astro`
 
 **Interfaces:**
-- Produces: `export const START_URL: string` from `startUrl.ts`. Default-export React components with no props. Page at `/start-your-business` renders `Layout` with `noindex`, `Nav` in minimal mode, the two sections, and `Footer`.
+- Produces: `export const START_URL: string`. Default-export components with no props. Page renders `Layout` with `noindex`, `Nav` minimal, the two sections, `Footer`.
 
 - [ ] **Step 1: Write the failing build check**
 
@@ -252,14 +248,11 @@ if grep -q 'Contact Us' "$P"; then echo "FAIL: new page shows a Contact Us pill"
 if grep -q 'start-your-business' dist/index.html; then
   echo "FAIL: homepage links to start-your-business"; exit 1
 fi
+grep -q 'Side Hustle' "$P" || { echo "FAIL: hero side hustle badge missing"; exit 1; }
 echo "OK: start-your-business page is built, noindex, minimal nav, unlinked"
 ```
 
-Run:
-```bash
-npm run build && ./scripts/check-business-page.sh
-```
-Expected: `FAIL: dist/start-your-business/index.html not built`
+Run `npm run build && ./scripts/check-business-page.sh`. Expected: `FAIL: dist/start-your-business/index.html not built`.
 
 - [ ] **Step 2: Create startUrl.ts**
 
@@ -275,15 +268,71 @@ export const START_URL = '#'
 import { motion } from 'framer-motion'
 import { START_URL } from './startUrl'
 
+const chips = [
+  {
+    label: 'Your hours',
+    className: 'left-[2%] top-[18%] sm:left-[4%] sm:top-[24%]',
+    delay: 0.9,
+    float: 6,
+    icon: (
+      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    ),
+  },
+  {
+    label: 'Your wallet',
+    className: 'right-[2%] top-[28%] sm:right-[5%] sm:top-[30%]',
+    delay: 1.1,
+    float: -7,
+    icon: (
+      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v3" />
+      </svg>
+    ),
+  },
+  {
+    label: 'No experience needed',
+    className: 'left-[6%] bottom-[14%] sm:left-[10%] sm:bottom-[20%]',
+    delay: 1.3,
+    float: 5,
+    icon: (
+      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    ),
+  },
+]
+
 export default function BusinessHero() {
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center bg-base overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center bg-base overflow-hidden">
       <div className="mesh-orb mesh-orb-indigo w-[800px] h-[800px] -top-60 -left-60" />
-      <div className="mesh-orb mesh-orb-yellow w-[500px] h-[500px] top-1/3 right-0 translate-x-1/4" />
+      <div className="mesh-orb mesh-orb-yellow w-[600px] h-[600px] top-1/4 right-0 translate-x-1/4" />
       <div className="mesh-orb mesh-orb-sky w-[400px] h-[400px] bottom-10 left-1/3" />
       <div className="absolute inset-0 max-w-7xl mx-auto grid-lines" />
 
-      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-24 pb-16">
+      {/* Floating chips */}
+      <div className="absolute inset-0 max-w-6xl mx-auto pointer-events-none hidden sm:block">
+        {chips.map(c => (
+          <motion.div
+            key={c.label}
+            initial={{ opacity: 0, y: 12, scale: 0.9 }}
+            animate={{ opacity: 1, y: [0, c.float, 0], scale: 1 }}
+            transition={{
+              opacity: { duration: 0.6, delay: c.delay },
+              scale: { duration: 0.6, delay: c.delay },
+              y: { duration: 6, repeat: Infinity, ease: 'easeInOut', delay: c.delay },
+            }}
+            className={`absolute ${c.className} flex items-center gap-2 px-3.5 py-2 rounded-full bg-white/[0.05] border border-white/[0.1] backdrop-blur-sm text-yellow`}
+          >
+            {c.icon}
+            <span className="text-[11px] font-semibold tracking-wide text-white/80">{c.label}</span>
+          </motion.div>
+        ))}
+      </div>
+
+      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-28 pb-20">
         <motion.span
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -297,7 +346,7 @@ export default function BusinessHero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1 }}
-          className="font-display text-6xl sm:text-7xl md:text-8xl text-white leading-[0.95] tracking-[-0.02em] mb-8"
+          className="font-display text-6xl sm:text-7xl md:text-8xl lg:text-[120px] text-white leading-[0.92] tracking-[-0.02em] mb-8"
         >
           Start Your Own{' '}
           <span className="italic text-gradient-yellow-animated">Business</span>
@@ -309,9 +358,9 @@ export default function BusinessHero() {
           transition={{ duration: 0.6, delay: 0.25 }}
           className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto mb-12 leading-relaxed"
         >
-          Sell on your own schedule, from wherever you are, backed by a brand that already moves product.
-          Start it as a side hustle.{' '}
-          <span className="text-white font-medium">Grow it as far as you want.</span>
+          Sell brands people already love, on your own schedule, from wherever you are. Earnings land in
+          your own wallet and you cash out when you want.{' '}
+          <span className="text-white font-medium">Start small. Grow it as far as you like.</span>
         </motion.p>
 
         <motion.div
@@ -337,6 +386,21 @@ export default function BusinessHero() {
           </a>
         </motion.div>
       </div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5 }}
+        className="absolute bottom-10 left-1/2 -translate-x-1/2"
+      >
+        <motion.div
+          animate={{ y: [0, 6, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="w-5 h-8 border border-white/15 rounded-full flex items-start justify-center p-1.5"
+        >
+          <div className="w-1 h-2 bg-white/30 rounded-full" />
+        </motion.div>
+      </motion.div>
     </section>
   )
 }
@@ -352,31 +416,61 @@ const benefits = [
     title: 'Be Your Own Boss',
     body: 'Set your own hours and work from anywhere. Scale up when you want more, scale back when life needs room.',
     accent: 'yellow' as const,
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
+      </svg>
+    ),
   },
   {
     title: 'Side Hustle or Full-Time',
     body: 'Start with a few hours a week alongside your job. Plenty of sellers begin that way and grow from there.',
     accent: 'sky' as const,
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    ),
   },
   {
     title: 'Earn On What You Sell',
     body: '[EARNING MODEL: one line on how sellers earn, e.g. commission on every sale you make.]',
     accent: 'sky' as const,
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+      </svg>
+    ),
+  },
+  {
+    title: 'Your Own Wallet',
+    body: 'Every sale lands in your wallet in the app. Request a payout whenever you want. Your money, on your terms.',
+    accent: 'yellow' as const,
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v3" />
+      </svg>
+    ),
   },
   {
     title: 'Tools & Training',
     body: 'The same platform our promoters use, plus training to help you sell with confidence from day one.',
-    accent: 'yellow' as const,
-  },
-  {
-    title: 'Products People Want',
-    body: 'Sell brands that are already on shelves and already moving. No inventing demand from scratch.',
-    accent: 'yellow' as const,
+    accent: 'sky' as const,
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />
+      </svg>
+    ),
   },
   {
     title: 'A Community Behind You',
     body: 'Join a network of sellers across South Africa who share what works and celebrate each other\'s wins.',
-    accent: 'sky' as const,
+    accent: 'yellow' as const,
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+      </svg>
+    ),
   },
 ]
 
@@ -405,8 +499,8 @@ export default function BusinessBenefits() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="font-display text-4xl sm:text-5xl md:text-6xl text-white mb-6 leading-[1.0]"
           >
-            Why Sellers{' '}
-            <span className="italic text-gradient-yellow">Join Us</span>
+            Everything You Need to{' '}
+            <span className="italic text-gradient-yellow">Get Going</span>
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 15 }}
@@ -415,7 +509,7 @@ export default function BusinessBenefits() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-base text-white/50 max-w-xl mx-auto"
           >
-            Everything you need to build something of your own, without starting from nothing.
+            Build something of your own without starting from nothing.
           </motion.p>
         </div>
 
@@ -429,15 +523,17 @@ export default function BusinessBenefits() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-60px' }}
                 transition={{ duration: 0.6, delay: i * 0.08 }}
-                className="card rounded-2xl p-7 sm:p-8"
+                className="card rounded-2xl p-7 sm:p-8 group"
               >
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-[11px] font-mono font-bold mb-6 ${
-                  isYellow ? 'bg-yellow/10 text-yellow border border-yellow/20' : 'bg-sky/10 text-sky border border-sky/20'
+                <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-6 transition-all duration-500 ${
+                  isYellow
+                    ? 'bg-yellow/10 text-yellow border border-yellow/20 group-hover:bg-yellow/15 group-hover:shadow-[0_0_24px_rgba(249,215,2,0.2)]'
+                    : 'bg-sky/10 text-sky border border-sky/20 group-hover:bg-sky/15 group-hover:shadow-[0_0_24px_rgba(62,181,225,0.2)]'
                 }`}>
-                  {String(i + 1).padStart(2, '0')}
+                  {b.icon}
                 </div>
                 <h3 className="font-display text-2xl text-white mb-3 leading-[1.15]">{b.title}</h3>
-                <p className="text-sm text-white/50 leading-[1.8]">{b.body}</p>
+                <p className="text-sm text-white/50 leading-[1.8] group-hover:text-white/65 transition-colors duration-500">{b.body}</p>
               </motion.div>
             )
           })}
@@ -467,7 +563,7 @@ import BusinessBenefits from '../components/business/BusinessBenefits.tsx'
 
 <Layout
   title="Start Your Own Business — Merch & Move"
-  description="Become an independent Merch & Move seller. Side hustle or full-time, work on your own schedule and sell brands that already move."
+  description="Become an independent Merch & Move seller. Side hustle or full-time, work on your own schedule, sell brands that already move, and cash out from your own wallet whenever you want."
   noindex
 >
   <SmoothScroll client:load />
@@ -482,34 +578,30 @@ import BusinessBenefits from '../components/business/BusinessBenefits.tsx'
 
 - [ ] **Step 6: Verify**
 
-Run:
-```bash
-npm run build && ./scripts/check-business-page.sh
-```
-Expected: three `OK:` lines.
-
-With the dev server running, open `http://localhost:4321/start-your-business`. Expected: nav shows only the logo and a "Start Your Business" pill at every width; hero headline "Start Your Own Business" with the side-hustle badge above it; yellow "Start Your Business" button; six benefit cards below.
+`npm run build && ./scripts/check-business-page.sh`. Expected: three `OK:` lines. In the browser: minimal nav, hero with three floating chips at desktop width (hidden on mobile), six benefit cards with glowing icons on hover.
 
 - [ ] **Step 7: Commit**
 
 ```bash
-git add src/components/business/startUrl.ts src/components/business/BusinessHero.tsx src/components/business/BusinessBenefits.tsx src/pages/start-your-business.astro scripts/check-business-page.sh
+git add src/components/business scripts/check-business-page.sh src/pages/start-your-business.astro
 git commit -m "Add Start Your Business page with hero and benefits"
 ```
 
 ---
 
-### Task 4: Steps, Qualities and Why Us sections
+### Task 4: Step mockups and the How It Works section
 
 **Files:**
+- Create: `src/components/business/mockups/StepApplyMockup.tsx`
+- Create: `src/components/business/mockups/StepSetupMockup.tsx`
+- Create: `src/components/business/mockups/StepSellMockup.tsx`
+- Create: `src/components/business/mockups/StepGrowMockup.tsx`
 - Create: `src/components/business/BusinessSteps.tsx`
-- Create: `src/components/business/BusinessQualities.tsx`
-- Create: `src/components/business/BusinessWhyUs.tsx`
 - Modify: `src/pages/start-your-business.astro`
 
 **Interfaces:**
-- Consumes: `START_URL` from `./startUrl`.
-- Produces: `BusinessSteps` renders `<section id="how-it-works">` (the hero's second button targets it). Others have no id.
+- Consumes: `START_URL`.
+- Produces: `BusinessSteps` renders `<section id="how-it-works">`. Mockups are default-export components with no props.
 
 - [ ] **Step 1: Write the failing build check**
 
@@ -517,54 +609,401 @@ Append to `scripts/check-business-page.sh`:
 
 ```bash
 grep -q 'id="how-it-works"' "$P" || { echo "FAIL: steps section missing"; exit 1; }
-grep -q 'What It Takes' "$P" || { echo "FAIL: qualities section missing"; exit 1; }
-grep -q 'Why Merch' "$P" || { echo "FAIL: why-us section missing"; exit 1; }
-echo "OK: steps, qualities and why-us sections present"
+grep -q 'Application' "$P" || { echo "FAIL: apply mockup missing"; exit 1; }
+echo "OK: steps section with mockups present"
 ```
 
-Run:
-```bash
-npm run build && ./scripts/check-business-page.sh
-```
-Expected: `FAIL: steps section missing`
+Run. Expected: `FAIL: steps section missing`.
 
-- [ ] **Step 2: Create BusinessSteps.tsx**
+- [ ] **Step 2: Create StepApplyMockup.tsx**
 
 ```tsx
-import { motion } from 'framer-motion'
+import { motion, useInView } from 'framer-motion'
+import { useRef } from 'react'
+
+const fields = [
+  { label: 'Full name', value: 'Thandi Nkosi' },
+  { label: 'Phone', value: '082 123 4567' },
+  { label: 'Area', value: 'Durban North' },
+]
+
+export default function StepApplyMockup() {
+  const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref, { once: true, margin: '-40px' })
+
+  return (
+    <div ref={ref} className="relative">
+      <div className="absolute -inset-3 bg-yellow/[0.04] rounded-2xl blur-xl" />
+      <div className="relative bg-[#0a0a0f]/90 border border-white/[0.06] rounded-xl overflow-hidden backdrop-blur-sm">
+        <div className="flex items-center gap-1.5 px-3 py-2 border-b border-white/[0.04]">
+          <div className="w-1.5 h-1.5 rounded-full bg-white/10" />
+          <div className="w-1.5 h-1.5 rounded-full bg-white/10" />
+          <div className="w-1.5 h-1.5 rounded-full bg-white/10" />
+          <span className="ml-2 text-[8px] text-white/20 font-medium tracking-wide">Application</span>
+        </div>
+
+        <div className="p-3" style={{ minHeight: 130 }}>
+          <div className="space-y-1.5 mb-3">
+            {fields.map((f, i) => (
+              <motion.div
+                key={f.label}
+                className="rounded-md bg-white/[0.03] border border-white/[0.05] px-2 py-1.5"
+                initial={{ opacity: 0, y: 6 }}
+                animate={inView ? { opacity: 1, y: 0 } : undefined}
+                transition={{ duration: 0.3, delay: 0.3 + i * 0.25 }}
+              >
+                <div className="text-[6px] text-white/25 uppercase tracking-wider mb-0.5">{f.label}</div>
+                <motion.div
+                  className="text-[8px] text-white/70 font-medium overflow-hidden whitespace-nowrap"
+                  initial={{ width: 0 }}
+                  animate={inView ? { width: '100%' } : undefined}
+                  transition={{ duration: 0.5, delay: 0.5 + i * 0.25, ease: 'linear' }}
+                >
+                  {f.value}
+                </motion.div>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div
+            className="rounded-md py-1.5 text-center text-[7px] font-bold tracking-wider bg-yellow text-base"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={inView ? { opacity: 1, scale: 1 } : undefined}
+            transition={{ duration: 0.3, delay: 1.4 }}
+          >
+            START MY BUSINESS
+          </motion.div>
+
+          <motion.div
+            className="mt-2 flex items-center justify-center gap-1 py-1 rounded-md bg-emerald-500/[0.06] border border-emerald-500/10"
+            initial={{ opacity: 0, y: 4 }}
+            animate={inView ? { opacity: 1, y: 0 } : undefined}
+            transition={{ type: 'spring', stiffness: 300, damping: 20, delay: 2.0 }}
+          >
+            <svg className="w-2 h-2 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span className="text-[6px] font-semibold text-emerald-400 tracking-wider">APPLICATION SENT</span>
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  )
+}
+```
+
+- [ ] **Step 3: Create StepSetupMockup.tsx**
+
+```tsx
+import { motion, useInView } from 'framer-motion'
+import { useRef } from 'react'
+
+const items = [
+  { label: 'Welcome call booked', delay: 0.4 },
+  { label: 'Product training complete', delay: 0.9 },
+  { label: 'App access granted', delay: 1.4 },
+  { label: 'Wallet activated', delay: 1.9 },
+]
+
+export default function StepSetupMockup() {
+  const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref, { once: true, margin: '-40px' })
+
+  return (
+    <div ref={ref} className="relative">
+      <div className="absolute -inset-3 bg-sky/[0.04] rounded-2xl blur-xl" />
+      <div className="relative bg-[#0a0a0f]/90 border border-white/[0.06] rounded-xl overflow-hidden backdrop-blur-sm">
+        <div className="flex items-center gap-1.5 px-3 py-2 border-b border-white/[0.04]">
+          <div className="w-1.5 h-1.5 rounded-full bg-white/10" />
+          <div className="w-1.5 h-1.5 rounded-full bg-white/10" />
+          <div className="w-1.5 h-1.5 rounded-full bg-white/10" />
+          <span className="ml-2 text-[8px] text-white/20 font-medium tracking-wide">Getting Started</span>
+          <span className="ml-auto text-[6px] font-bold text-sky tracking-wider">4 / 4</span>
+        </div>
+
+        <div className="p-3" style={{ minHeight: 130 }}>
+          <div className="mb-3">
+            <div className="h-1 bg-white/[0.06] rounded-full overflow-hidden">
+              <motion.div
+                className="h-full bg-gradient-to-r from-sky/60 to-sky rounded-full"
+                initial={{ width: 0 }}
+                animate={inView ? { width: '100%' } : undefined}
+                transition={{ duration: 2.0, delay: 0.4, ease: 'easeOut' }}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            {items.map(item => (
+              <motion.div
+                key={item.label}
+                className="flex items-center gap-2 px-2 py-1.5 rounded-md bg-white/[0.02]"
+                initial={{ opacity: 0, x: -8 }}
+                animate={inView ? { opacity: 1, x: 0 } : undefined}
+                transition={{ duration: 0.3, delay: item.delay }}
+              >
+                <motion.div
+                  className="w-3 h-3 rounded-full bg-sky/20 border border-sky/40 flex items-center justify-center flex-shrink-0"
+                  initial={{ scale: 0.6 }}
+                  animate={inView ? { scale: 1 } : undefined}
+                  transition={{ type: 'spring', stiffness: 400, damping: 15, delay: item.delay + 0.15 }}
+                >
+                  <svg className="w-2 h-2 text-sky" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </motion.div>
+                <span className="text-[7.5px] text-white/60 font-medium">{item.label}</span>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+```
+
+- [ ] **Step 4: Create StepSellMockup.tsx**
+
+```tsx
+import { motion, useInView } from 'framer-motion'
+import { useRef } from 'react'
+
+const sales = [
+  { product: '2× Aloe Gel', where: 'Umhlanga', amount: '+R180', delay: 0.5 },
+  { product: '1× Vitamin C Pack', where: 'Durban North', amount: '+R95', delay: 1.1 },
+  { product: '3× Energy Drink', where: 'Ballito', amount: '+R120', delay: 1.7 },
+]
+
+export default function StepSellMockup() {
+  const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref, { once: true, margin: '-40px' })
+
+  return (
+    <div ref={ref} className="relative">
+      <div className="absolute -inset-3 bg-sky/[0.04] rounded-2xl blur-xl" />
+      <div className="relative bg-[#0a0a0f]/90 border border-white/[0.06] rounded-xl overflow-hidden backdrop-blur-sm">
+        <div className="flex items-center gap-1.5 px-3 py-2 border-b border-white/[0.04]">
+          <div className="w-1.5 h-1.5 rounded-full bg-white/10" />
+          <div className="w-1.5 h-1.5 rounded-full bg-white/10" />
+          <div className="w-1.5 h-1.5 rounded-full bg-white/10" />
+          <span className="ml-2 text-[8px] text-white/20 font-medium tracking-wide">Sales</span>
+          <div className="ml-auto flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+            <motion.div
+              className="w-1 h-1 rounded-full bg-emerald-400"
+              animate={{ opacity: [1, 0.3, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            />
+            <span className="text-[6px] font-bold text-emerald-400 tracking-wider">LIVE</span>
+          </div>
+        </div>
+
+        <div className="p-3" style={{ minHeight: 130 }}>
+          <motion.div
+            className="text-center mb-3"
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : undefined}
+            transition={{ delay: 0.2 }}
+          >
+            <div className="text-[6px] text-white/25 uppercase tracking-wider mb-0.5">Today</div>
+            <div className="text-[16px] font-bold text-sky">
+              {[0, 180, 275, 395].map((v, i) => (
+                <motion.span
+                  key={v}
+                  className="absolute left-0 right-0"
+                  initial={{ opacity: i === 0 ? 1 : 0 }}
+                  animate={inView ? { opacity: 0 } : undefined}
+                  transition={{ delay: i === 0 ? 0.5 : sales[i - 1].delay + (i < 3 ? 0.6 : 99) }}
+                  style={{ position: i === 3 ? 'static' : 'absolute' }}
+                >
+                  {i === 3 ? (
+                    <motion.span initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : undefined} transition={{ delay: sales[2].delay }}>
+                      R{v}
+                    </motion.span>
+                  ) : (
+                    `R${v}`
+                  )}
+                </motion.span>
+              ))}
+            </div>
+          </motion.div>
+
+          <div className="space-y-1.5">
+            {sales.map(s => (
+              <motion.div
+                key={s.product}
+                className="flex items-center gap-2 px-2 py-1.5 rounded-md bg-white/[0.03] border border-white/[0.05]"
+                initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                animate={inView ? { opacity: 1, y: 0, scale: 1 } : undefined}
+                transition={{ type: 'spring', stiffness: 300, damping: 22, delay: s.delay }}
+              >
+                <div className="w-4 h-4 rounded-full bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-2 h-2 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[7.5px] text-white/70 font-medium truncate">{s.product}</div>
+                  <div className="text-[6px] text-white/25">{s.where}</div>
+                </div>
+                <span className="text-[8px] font-bold text-emerald-400">{s.amount}</span>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+```
+
+Note on the "Today" counter: the layered spans are fiddly. The implementer may replace them with a single `useState` counter that steps through 0, 180, 275, 395 on timers aligned to each sale's `delay`, which is the cleaner approach. Either is acceptable as long as the total visibly climbs as each sale lands.
+
+- [ ] **Step 5: Create StepGrowMockup.tsx**
+
+```tsx
+import { motion, useInView } from 'framer-motion'
+import { useRef } from 'react'
+
+const months = [
+  { label: 'Jan', pct: 22 },
+  { label: 'Feb', pct: 35 },
+  { label: 'Mar', pct: 30 },
+  { label: 'Apr', pct: 52 },
+  { label: 'May', pct: 68 },
+  { label: 'Jun', pct: 100 },
+]
+
+export default function StepGrowMockup() {
+  const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref, { once: true, margin: '-40px' })
+
+  return (
+    <div ref={ref} className="relative">
+      <div className="absolute -inset-3 bg-yellow/[0.04] rounded-2xl blur-xl" />
+      <div className="relative bg-[#0a0a0f]/90 border border-white/[0.06] rounded-xl overflow-hidden backdrop-blur-sm">
+        <div className="flex items-center gap-1.5 px-3 py-2 border-b border-white/[0.04]">
+          <div className="w-1.5 h-1.5 rounded-full bg-white/10" />
+          <div className="w-1.5 h-1.5 rounded-full bg-white/10" />
+          <div className="w-1.5 h-1.5 rounded-full bg-white/10" />
+          <span className="ml-2 text-[8px] text-white/20 font-medium tracking-wide">Earnings</span>
+          <motion.span
+            className="ml-auto px-1.5 py-0.5 rounded-full bg-yellow/10 border border-yellow/25 text-[6px] font-bold text-yellow tracking-wider"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={inView ? { opacity: 1, scale: 1 } : undefined}
+            transition={{ type: 'spring', stiffness: 300, damping: 18, delay: 1.8 }}
+          >
+            +354%
+          </motion.span>
+        </div>
+
+        <div className="p-3" style={{ minHeight: 130 }}>
+          <div className="flex items-end justify-between gap-1.5 h-[84px] mb-2">
+            {months.map((m, i) => (
+              <div key={m.label} className="flex-1 flex flex-col items-center justify-end h-full">
+                <motion.div
+                  className={`w-full rounded-sm ${i === months.length - 1 ? 'bg-gradient-to-t from-yellow/60 to-yellow' : 'bg-gradient-to-t from-sky/30 to-sky/60'}`}
+                  initial={{ height: 0 }}
+                  animate={inView ? { height: `${m.pct}%` } : undefined}
+                  transition={{ duration: 0.6, delay: 0.3 + i * 0.15, ease: 'easeOut' }}
+                />
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-between gap-1.5">
+            {months.map(m => (
+              <div key={m.label} className="flex-1 text-center text-[6px] text-white/25">{m.label}</div>
+            ))}
+          </div>
+
+          <motion.div
+            className="mt-3 flex items-center justify-between px-2 py-1.5 rounded-md bg-white/[0.03] border border-white/[0.05]"
+            initial={{ opacity: 0, y: 6 }}
+            animate={inView ? { opacity: 1, y: 0 } : undefined}
+            transition={{ duration: 0.4, delay: 1.5 }}
+          >
+            <span className="text-[6.5px] text-white/35">Best month yet</span>
+            <span className="text-[8px] font-bold text-yellow">June</span>
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  )
+}
+```
+
+- [ ] **Step 6: Create BusinessSteps.tsx**
+
+Uses the homepage step-card layout (number badge, title, mockup left, copy and feature bullets right, scroll-driven progress line).
+
+```tsx
+import { useRef } from 'react'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import { START_URL } from './startUrl'
+import StepApplyMockup from './mockups/StepApplyMockup'
+import StepSetupMockup from './mockups/StepSetupMockup'
+import StepSellMockup from './mockups/StepSellMockup'
+import StepGrowMockup from './mockups/StepGrowMockup'
 
 const steps = [
   {
     number: '01',
     title: 'Start Your Business',
-    body: 'Hit the button, fill in a short form in the Merch & Move app, and tell us a little about yourself.',
+    headline: 'Two Minutes. One Form. You\'re In.',
+    description:
+      'Hit the button, fill in a short form in the Merch & Move app, and tell us a little about yourself. No CV, no interview panel, no waiting weeks for an answer.',
+    features: ['Apply from your phone in minutes', 'No sales experience required', 'We\'ll call you to say hello and answer questions'],
     accent: 'yellow' as const,
+    mockup: <StepApplyMockup />,
   },
   {
     number: '02',
     title: 'Get Set Up',
-    body: '[EARNING MODEL: what onboarding involves, e.g. starter kit, platform access, first training session.]',
+    headline: 'Trained, Equipped and Ready to Sell',
+    description:
+      '[EARNING MODEL: what onboarding involves, e.g. starter kit, platform access, first training session.] You\'ll finish setup knowing the products, the app and exactly how you get paid.',
+    features: ['Product training you can do around your day', 'Your own login to the Merch & Move app', 'Your wallet, activated and ready'],
     accent: 'sky' as const,
+    mockup: <StepSetupMockup />,
   },
   {
     number: '03',
     title: 'Start Selling',
-    body: 'Share products with the people around you. Every sale is tracked on the platform, so you always know where you stand.',
+    headline: 'Every Sale Lands in Your Wallet',
+    description:
+      'Share products with the people around you, at work, at gym, at church, on WhatsApp. Every sale is confirmed in the app and credited to your wallet, so you always know exactly where you stand.',
+    features: ['Sell in your own community, your own way', 'Sales confirmed and tracked in real time', 'Watch your wallet grow with every sale'],
     accent: 'sky' as const,
+    mockup: <StepSellMockup />,
   },
   {
     number: '04',
     title: 'Grow',
-    body: '[EARNING MODEL: how sellers grow, e.g. higher rates at volume, building a team, unlocking rewards.]',
+    headline: 'Side Hustle Today. Bigger Tomorrow.',
+    description:
+      '[EARNING MODEL: how sellers grow, e.g. higher rates at volume, building a team, unlocking rewards.] The more you sell, the more the business becomes yours.',
+    features: ['Scale from a few hours a week to full-time', 'See your growth month by month in the app', '[EARNING MODEL: rewards or tiers for top sellers]'],
     accent: 'yellow' as const,
+    mockup: <StepGrowMockup />,
   },
 ]
 
 export default function BusinessSteps() {
+  const stepsRef = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({ target: stepsRef, offset: ['start 70%', 'end 40%'] })
+
+  const node0 = useTransform(scrollYProgress, [0, 0.08], [0.12, 0.7])
+  const node1 = useTransform(scrollYProgress, [0.25, 0.35], [0.12, 0.7])
+  const node2 = useTransform(scrollYProgress, [0.55, 0.65], [0.12, 0.7])
+  const node3 = useTransform(scrollYProgress, [0.82, 0.92], [0.12, 0.7])
+  const nodeOpacities = [node0, node1, node2, node3]
+  const dotOpacities = nodeOpacities.map(o => useTransform(o, [0.12, 0.7], [0.4, 1]))
+
   return (
     <section id="how-it-works" className="relative py-32 sm:py-40 bg-base overflow-hidden">
-      <div className="mesh-orb mesh-orb-sky w-[500px] h-[500px] bottom-20 -left-20 opacity-15" />
+      <div className="mesh-orb mesh-orb-yellow w-[600px] h-[600px] -top-40 -right-40 opacity-20" />
+      <div className="mesh-orb mesh-orb-sky w-[400px] h-[400px] bottom-20 -left-20 opacity-15" />
+      <div className="absolute inset-0 dot-grid opacity-50" />
       <div className="absolute inset-0 max-w-7xl mx-auto grid-lines" />
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -586,48 +1025,95 @@ export default function BusinessSteps() {
             className="font-display text-4xl sm:text-5xl md:text-6xl text-white mb-6 leading-[1.0]"
           >
             Four Steps to{' '}
-            <span className="italic text-gradient-sky">Your First Sale</span>
+            <span className="italic text-gradient-yellow">Your First Sale</span>
           </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-base text-white/50 max-w-xl mx-auto"
+          >
+            From "I'm curious" to money in your wallet, without the hard part.
+          </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-          {steps.map((s, i) => {
-            const isYellow = s.accent === 'yellow'
-            return (
-              <motion.div
-                key={s.number}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-60px' }}
-                transition={{ duration: 0.6, delay: i * 0.08 }}
-                className="card rounded-2xl p-7"
-              >
-                <div className="flex items-center gap-3 mb-5">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-[11px] font-mono font-bold ${
-                    isYellow ? 'bg-yellow/10 text-yellow border border-yellow/20' : 'bg-sky/10 text-sky border border-sky/20'
-                  }`}>
-                    {s.number}
+        <div ref={stepsRef} className="relative">
+          <div className="hidden lg:block absolute left-5 top-8 bottom-8 w-px">
+            <div className="absolute inset-0 bg-white/[0.06]" />
+            <motion.div className="absolute top-0 left-0 right-0 bg-yellow/50 origin-top" style={{ scaleY: scrollYProgress, height: '100%' }} />
+            <motion.div className="absolute top-0 -left-[2px] w-[5px] bg-yellow/20 origin-top blur-[3px]" style={{ scaleY: scrollYProgress, height: '100%' }} />
+          </div>
+
+          <div className="space-y-6 lg:pl-14">
+            {steps.map((step, i) => {
+              const isYellow = step.accent === 'yellow'
+              return (
+                <motion.div
+                  key={step.number}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-60px' }}
+                  transition={{ duration: 0.6, delay: i * 0.08 }}
+                  className="relative"
+                >
+                  <div className="hidden lg:flex absolute -left-[36px] top-10 -translate-x-1/2 w-4 h-4 items-center justify-center">
+                    <motion.div className={`absolute inset-0 rounded-full blur-[4px] ${isYellow ? 'bg-yellow' : 'bg-sky'}`} style={{ opacity: nodeOpacities[i] }} />
+                    <motion.div
+                      className={`relative w-2.5 h-2.5 rounded-full border-2 ${isYellow ? 'border-yellow/30 bg-yellow/20' : 'border-sky/30 bg-sky/20'}`}
+                      style={{ opacity: dotOpacities[i] }}
+                    />
                   </div>
-                </div>
-                <h3 className="font-display text-xl sm:text-2xl text-white mb-3 leading-[1.15]">{s.title}</h3>
-                <p className="text-sm text-white/50 leading-[1.8]">{s.body}</p>
-              </motion.div>
-            )
-          })}
+
+                  <div className="card rounded-2xl p-6 sm:p-8 group hover:bg-white/[0.055] transition-all duration-500">
+                    <div className="flex items-center gap-3 mb-5">
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-[11px] font-mono font-bold ${
+                        isYellow ? 'bg-yellow/10 text-yellow border border-yellow/20' : 'bg-sky/10 text-sky border border-sky/20'
+                      }`}>
+                        {step.number}
+                      </div>
+                      <span className={`text-xs font-bold tracking-[0.15em] uppercase ${isYellow ? 'text-yellow' : 'text-sky'}`}>
+                        {step.title}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6 lg:gap-8 items-start">
+                      <div className="w-full max-w-[260px] mx-auto lg:mx-0">{step.mockup}</div>
+                      <div>
+                        <h3 className="font-display text-xl sm:text-2xl text-white mb-3 leading-[1.15]">{step.headline}</h3>
+                        <p className="text-sm text-white/50 leading-[1.8] mb-5">{step.description}</p>
+                        <div className="space-y-3">
+                          {step.features.map(feature => (
+                            <div key={feature} className="flex items-start gap-2.5">
+                              <div className={`w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0 ${isYellow ? 'bg-yellow/60' : 'bg-sky/60'}`} />
+                              <p className="text-sm text-white/50 leading-[1.6]">{feature}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )
+            })}
+          </div>
         </div>
 
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="text-center mt-14"
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="text-center mt-16"
         >
           <a
             href={START_URL}
-            className="inline-flex items-center px-8 py-4 text-sm font-semibold text-base bg-yellow rounded-full hover:shadow-[0_0_40px_rgba(249,215,2,0.35)] transition-all duration-500"
+            className="group inline-flex items-center px-8 py-4 text-sm font-semibold text-base bg-yellow rounded-full hover:shadow-[0_0_40px_rgba(249,215,2,0.35)] transition-all duration-500"
           >
             Start Your Business
+            <svg className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
           </a>
         </motion.div>
       </div>
@@ -638,22 +1124,414 @@ export default function BusinessSteps() {
 }
 ```
 
-- [ ] **Step 3: Create BusinessQualities.tsx**
+Note: `dotOpacities` calls a hook inside `map`. The array length is constant, so the hook order is stable, but a cleaner implementation declares four `useTransform` calls explicitly as the homepage does. Either is acceptable.
+
+- [ ] **Step 7: Add to the page and verify**
+
+Import `BusinessSteps` in the page and render `<BusinessSteps client:visible />` after benefits. Run `npm run build && ./scripts/check-business-page.sh`. Expected: four `OK:` lines. In the browser, scroll through the steps: each mockup animates once when it enters view; the progress line fills on desktop.
+
+- [ ] **Step 8: Commit**
+
+```bash
+git add src/components/business src/pages/start-your-business.astro scripts/check-business-page.sh
+git commit -m "Add How It Works steps with animated mockups"
+```
+
+---
+
+### Task 5: Wallet mockup and section
+
+**Files:**
+- Create: `src/components/business/mockups/WalletMockup.tsx`
+- Create: `src/components/business/BusinessWallet.tsx`
+- Modify: `src/pages/start-your-business.astro`
+
+- [ ] **Step 1: Write the failing build check**
+
+Append to `scripts/check-business-page.sh`:
+
+```bash
+grep -q 'Request Payout' "$P" || { echo "FAIL: wallet mockup missing"; exit 1; }
+grep -q 'id="wallet"' "$P" || { echo "FAIL: wallet section missing"; exit 1; }
+echo "OK: wallet section present"
+```
+
+Run. Expected: `FAIL: wallet mockup missing`.
+
+- [ ] **Step 2: Create WalletMockup.tsx**
+
+```tsx
+import { motion, useInView, AnimatePresence } from 'framer-motion'
+import { useRef, useState, useEffect } from 'react'
+
+function RandCounter({ target, delay = 0, duration = 1200 }: { target: number; delay?: number; duration?: number }) {
+  const ref = useRef<HTMLSpanElement>(null)
+  const inView = useInView(ref, { once: true })
+  const [val, setVal] = useState(0)
+
+  useEffect(() => {
+    if (!inView) return
+    const t = setTimeout(() => {
+      let n = 0
+      const step = target / (duration / 16)
+      const iv = setInterval(() => {
+        n += step
+        if (n >= target) { setVal(target); clearInterval(iv) }
+        else setVal(Math.floor(n))
+      }, 16)
+      return () => clearInterval(iv)
+    }, delay * 1000)
+    return () => clearTimeout(t)
+  }, [inView, target, delay, duration])
+
+  return <span ref={ref}>R{val.toLocaleString()}</span>
+}
+
+const activity = [
+  { kind: 'sale', label: 'Sale · 2× Aloe Gel', meta: 'Today, 14:32', amount: '+R180' },
+  { kind: 'sale', label: 'Sale · Vitamin C Pack', meta: 'Today, 11:05', amount: '+R95' },
+  { kind: 'sale', label: 'Sale · 3× Energy Drink', meta: 'Yesterday', amount: '+R120' },
+  { kind: 'payout', label: 'Payout · FNB ····4821', meta: 'Mon', amount: '-R2,000' },
+]
+
+export default function WalletMockup() {
+  const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref, { once: true, margin: '-40px' })
+  const [payoutState, setPayoutState] = useState<'idle' | 'sending' | 'sent'>('idle')
+
+  useEffect(() => {
+    if (!inView) return
+    const t1 = setTimeout(() => setPayoutState('sending'), 3200)
+    const t2 = setTimeout(() => setPayoutState('sent'), 4200)
+    return () => { clearTimeout(t1); clearTimeout(t2) }
+  }, [inView])
+
+  return (
+    <div ref={ref} className="relative max-w-md mx-auto">
+      <div className="absolute -inset-6 bg-yellow/[0.06] rounded-3xl blur-2xl" />
+
+      <div className="relative bg-[#0a0a0f]/90 border border-white/[0.08] rounded-2xl overflow-hidden backdrop-blur-sm glow-yellow">
+        <div className="flex items-center gap-1.5 px-4 py-3 border-b border-white/[0.05]">
+          <div className="w-2 h-2 rounded-full bg-white/10" />
+          <div className="w-2 h-2 rounded-full bg-white/10" />
+          <div className="w-2 h-2 rounded-full bg-white/10" />
+          <span className="ml-2 text-[10px] text-white/25 font-medium tracking-wide">My Wallet</span>
+          <span className="ml-auto text-[9px] text-white/30">Thandi N.</span>
+        </div>
+
+        <div className="p-5">
+          {/* Balance */}
+          <motion.div
+            className="relative rounded-xl p-5 mb-4 overflow-hidden"
+            style={{ background: 'linear-gradient(135deg, rgba(249,215,2,0.12) 0%, rgba(249,215,2,0.03) 60%, rgba(62,181,225,0.06) 100%)', border: '1px solid rgba(249,215,2,0.2)' }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={inView ? { opacity: 1, y: 0 } : undefined}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-yellow/10 blur-2xl" />
+            <div className="text-[9px] text-white/40 uppercase tracking-[0.2em] mb-2">Available balance</div>
+            <div className="text-[34px] leading-none font-bold text-yellow mb-3 tracking-tight">
+              <RandCounter target={4860} delay={0.5} duration={1400} />
+            </div>
+            <div className="flex items-center gap-4">
+              <div>
+                <div className="text-[8px] text-white/30 uppercase tracking-wider">This week</div>
+                <div className="text-[12px] font-semibold text-white/80"><RandCounter target={1240} delay={0.9} duration={900} /></div>
+              </div>
+              <div className="w-px h-6 bg-white/[0.08]" />
+              <div>
+                <div className="text-[8px] text-white/30 uppercase tracking-wider">Sales</div>
+                <div className="text-[12px] font-semibold text-white/80">38</div>
+              </div>
+              <div className="w-px h-6 bg-white/[0.08]" />
+              <div>
+                <div className="text-[8px] text-white/30 uppercase tracking-wider">Pending</div>
+                <div className="text-[12px] font-semibold text-sky">R320</div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Payout button */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={inView ? { opacity: 1, y: 0 } : undefined}
+            transition={{ duration: 0.4, delay: 0.7 }}
+            className="mb-5"
+          >
+            <AnimatePresence mode="wait">
+              {payoutState === 'sent' ? (
+                <motion.div
+                  key="sent"
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                  className="flex items-center justify-center gap-2 py-3 rounded-xl bg-emerald-500/[0.1] border border-emerald-500/25"
+                >
+                  <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 500, damping: 15, delay: 0.1 }}>
+                    <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </motion.div>
+                  <span className="text-[11px] font-bold text-emerald-400 tracking-wider">PAYOUT SENT · R2,000</span>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="btn"
+                  exit={{ opacity: 0, scale: 0.96 }}
+                  className={`relative flex items-center justify-center gap-2 py-3 rounded-xl text-[11px] font-bold tracking-wider transition-colors duration-300 ${
+                    payoutState === 'sending' ? 'bg-yellow/70 text-base' : 'bg-yellow text-base'
+                  }`}
+                >
+                  {payoutState === 'sending' ? (
+                    <>
+                      <motion.div
+                        className="w-3 h-3 rounded-full border-2 border-base/30 border-t-base"
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
+                      />
+                      SENDING…
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m0 0l6.75-6.75M12 19.5l-6.75-6.75" />
+                      </svg>
+                      REQUEST PAYOUT
+                    </>
+                  )}
+                  {/* Cursor tap indicator */}
+                  {payoutState === 'idle' && (
+                    <motion.div
+                      className="absolute right-6 w-5 h-5 rounded-full border-2 border-base/40"
+                      initial={{ opacity: 0, scale: 0.4 }}
+                      animate={inView ? { opacity: [0, 0.8, 0], scale: [0.4, 1.4, 1.8] } : undefined}
+                      transition={{ duration: 0.9, delay: 2.6 }}
+                    />
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+
+          {/* Activity */}
+          <div className="text-[8px] text-white/30 uppercase tracking-[0.2em] mb-2">Recent activity</div>
+          <div className="space-y-1.5">
+            {activity.map((a, i) => (
+              <motion.div
+                key={a.label}
+                className="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.05]"
+                initial={{ opacity: 0, x: -10 }}
+                animate={inView ? { opacity: 1, x: 0 } : undefined}
+                transition={{ duration: 0.35, delay: 1.0 + i * 0.15 }}
+              >
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  a.kind === 'sale' ? 'bg-emerald-500/15 border border-emerald-500/25' : 'bg-sky/15 border border-sky/25'
+                }`}>
+                  {a.kind === 'sale' ? (
+                    <svg className="w-3 h-3 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 19.5v-15m0 0l-6.75 6.75M12 4.5l6.75 6.75" />
+                    </svg>
+                  ) : (
+                    <svg className="w-3 h-3 text-sky" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m0 0l6.75-6.75M12 19.5l-6.75-6.75" />
+                    </svg>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[10px] text-white/75 font-medium truncate">{a.label}</div>
+                  <div className="text-[8px] text-white/25">{a.meta}</div>
+                </div>
+                <span className={`text-[11px] font-bold ${a.kind === 'sale' ? 'text-emerald-400' : 'text-white/50'}`}>{a.amount}</span>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+```
+
+- [ ] **Step 3: Create BusinessWallet.tsx**
+
+```tsx
+import { motion } from 'framer-motion'
+import WalletMockup from './mockups/WalletMockup'
+
+const features = [
+  {
+    title: 'Every Sale Lands in Your Wallet',
+    description: 'The moment a sale is confirmed, your earnings are credited to your wallet in the app. No spreadsheets, no chasing, no waiting for month-end.',
+  },
+  {
+    title: 'Request a Payout Whenever You Want',
+    description: 'Need it now? Tap Request Payout and it\'s on its way to your bank. [EARNING MODEL: payout timing, minimums or fees, if any.]',
+  },
+  {
+    title: 'See Exactly Where You Stand',
+    description: 'Balance, this week\'s sales, pending amounts and a full history. You always know what you\'ve earned and what\'s coming.',
+  },
+]
+
+export default function BusinessWallet() {
+  return (
+    <section id="wallet" className="relative py-32 sm:py-40 bg-base-light overflow-hidden">
+      <div className="mesh-orb mesh-orb-yellow w-[700px] h-[700px] -top-40 -left-40 opacity-25" />
+      <div className="mesh-orb mesh-orb-sky w-[400px] h-[400px] bottom-0 right-20 opacity-20" />
+      <div className="absolute inset-0 max-w-7xl mx-auto grid-lines" />
+
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
+          <div>
+            <motion.span
+              initial={{ opacity: 0, x: -10 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="inline-block text-[11px] font-bold tracking-[0.25em] text-yellow uppercase mb-6"
+            >
+              Your Wallet
+            </motion.span>
+
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="font-display text-4xl sm:text-5xl md:text-6xl text-white mb-6 leading-[1.0]"
+            >
+              Your Money.{' '}
+              <span className="italic text-gradient-yellow">Whenever You Want It.</span>
+            </motion.h2>
+
+            <motion.p
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="text-sm text-white/50 mb-10 leading-[1.7]"
+            >
+              Every business owner gets a wallet inside the Merch &amp; Move app. Earnings go in as you sell.
+              Payouts come out when you say so. It's the part most people don't believe until they see it.
+            </motion.p>
+
+            <div className="space-y-8">
+              {features.map((feature, i) => (
+                <motion.div
+                  key={feature.title}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
+                  className="group flex gap-5"
+                >
+                  <div className="accent-line flex-shrink-0 bg-yellow/20 group-hover:bg-yellow transition-colors" />
+                  <div>
+                    <h3 className="text-sm font-semibold text-white mb-2">{feature.title}</h3>
+                    <p className="text-sm text-white/50 leading-[1.7] group-hover:text-white/65 transition-colors duration-500">{feature.description}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+          >
+            <WalletMockup />
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="absolute bottom-0 left-0 right-0 section-divider" />
+    </section>
+  )
+}
+```
+
+- [ ] **Step 4: Add to the page and verify**
+
+Import `BusinessWallet` and render `<BusinessWallet client:visible />` after steps. Build and run the script. Expected: five `OK:` lines. In the browser: balance counts up, activity slides in, a ripple appears on the button, it shows "Sending…", then flips to "Payout sent".
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add src/components/business src/pages/start-your-business.astro scripts/check-business-page.sh
+git commit -m "Add wallet section with animated payout mockup"
+```
+
+---
+
+### Task 6: Qualities and Why Us sections
+
+**Files:**
+- Create: `src/components/business/BusinessQualities.tsx`
+- Create: `src/components/business/BusinessWhyUs.tsx`
+- Modify: `src/pages/start-your-business.astro`
+
+- [ ] **Step 1: Write the failing build check**
+
+Append to `scripts/check-business-page.sh`:
+
+```bash
+grep -q 'What It Takes' "$P" || { echo "FAIL: qualities section missing"; exit 1; }
+grep -q 'Why Merch' "$P" || { echo "FAIL: why-us section missing"; exit 1; }
+echo "OK: qualities and why-us sections present"
+```
+
+Run. Expected: `FAIL: qualities section missing`.
+
+- [ ] **Step 2: Create BusinessQualities.tsx**
 
 ```tsx
 import { motion } from 'framer-motion'
 
 const qualities = [
-  { title: 'Self-Driven', body: 'Nobody sets your hours. The people who do best here are the ones who show up for themselves.' },
-  { title: 'A People Person', body: 'Selling is talking. If you enjoy a conversation and can read a room, you already have the hardest part.' },
-  { title: 'Organised', body: 'Keep track of your customers, your stock and your follow-ups. The platform helps, but the habit is yours.' },
-  { title: 'Ambitious', body: 'This can stay a side hustle or become a full business. How big it gets is up to you.' },
+  {
+    title: 'Self-Driven',
+    body: 'Nobody sets your hours. The people who do best here are the ones who show up for themselves.',
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+      </svg>
+    ),
+  },
+  {
+    title: 'A People Person',
+    body: 'Selling is talking. If you enjoy a conversation and can read a room, you already have the hardest part.',
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+      </svg>
+    ),
+  },
+  {
+    title: 'Organised',
+    body: 'Keep track of your customers, your stock and your follow-ups. The app helps, but the habit is yours.',
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
+      </svg>
+    ),
+  },
+  {
+    title: 'Ambitious',
+    body: 'This can stay a side hustle or become a full business. How big it gets is up to you.',
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+      </svg>
+    ),
+  },
 ]
 
 export default function BusinessQualities() {
   return (
-    <section className="relative py-32 sm:py-40 bg-base-light overflow-hidden">
-      <div className="mesh-orb mesh-orb-yellow w-[500px] h-[500px] -bottom-40 -right-40 opacity-15" />
+    <section className="relative py-32 sm:py-40 bg-base overflow-hidden">
+      <div className="mesh-orb mesh-orb-sky w-[500px] h-[500px] -bottom-40 -right-40 opacity-15" />
       <div className="absolute inset-0 max-w-7xl mx-auto grid-lines" />
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -664,7 +1542,7 @@ export default function BusinessQualities() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="inline-block text-[11px] font-bold tracking-[0.25em] text-yellow uppercase mb-6"
+              className="inline-block text-[11px] font-bold tracking-[0.25em] text-sky uppercase mb-6"
             >
               What It Takes
             </motion.span>
@@ -676,7 +1554,7 @@ export default function BusinessQualities() {
               className="font-display text-4xl sm:text-5xl text-white mb-6 leading-[1.0]"
             >
               No Experience Needed.{' '}
-              <span className="italic text-gradient-yellow">Just the Right Mindset.</span>
+              <span className="italic text-gradient-sky">Just the Right Mindset.</span>
             </motion.h2>
             <motion.p
               initial={{ opacity: 0, y: 15 }}
@@ -685,7 +1563,8 @@ export default function BusinessQualities() {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="text-base text-white/50 leading-relaxed"
             >
-              We'll teach you the products and the platform. What we can't teach is the drive to use them.
+              We'll teach you the products and the app. What we can't teach is the drive to use them.
+              If this sounds like you, you're already most of the way there.
             </motion.p>
           </div>
 
@@ -697,9 +1576,11 @@ export default function BusinessQualities() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-60px' }}
                 transition={{ duration: 0.6, delay: i * 0.08 }}
-                className="card rounded-2xl p-7"
+                className="card rounded-2xl p-7 group"
               >
-                <div className="w-1.5 h-1.5 rounded-full bg-yellow/60 mb-5" />
+                <div className="w-10 h-10 rounded-xl bg-sky/10 border border-sky/20 text-sky flex items-center justify-center mb-5 group-hover:shadow-[0_0_24px_rgba(62,181,225,0.2)] transition-all duration-500">
+                  {q.icon}
+                </div>
                 <h3 className="font-display text-xl text-white mb-2 leading-[1.15]">{q.title}</h3>
                 <p className="text-sm text-white/50 leading-[1.8]">{q.body}</p>
               </motion.div>
@@ -714,20 +1595,20 @@ export default function BusinessQualities() {
 }
 ```
 
-- [ ] **Step 4: Create BusinessWhyUs.tsx**
+- [ ] **Step 3: Create BusinessWhyUs.tsx**
 
 ```tsx
 import { motion } from 'framer-motion'
 
 const proofPoints = [
   { label: 'Active selling, not shelf-filling', body: 'Our promoters are trained to close sales in-store. You get that same playbook.' },
-  { label: 'A platform that tracks everything', body: 'Every sale, every product, every day. You always know exactly what you\'ve earned.' },
+  { label: 'An app that tracks everything', body: 'Every sale, every payout, every day. You always know exactly what you\'ve earned.' },
   { label: 'Brands that already move', body: 'You sell products with proven demand and national retail presence.' },
 ]
 
 export default function BusinessWhyUs() {
   return (
-    <section className="relative py-32 sm:py-40 bg-base overflow-hidden">
+    <section className="relative py-32 sm:py-40 bg-base-light overflow-hidden">
       <div className="mesh-orb mesh-orb-indigo w-[700px] h-[700px] -top-60 left-1/2 -translate-x-1/2 opacity-40" />
       <div className="absolute inset-0 max-w-7xl mx-auto grid-lines" />
 
@@ -737,7 +1618,7 @@ export default function BusinessWhyUs() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="inline-block text-[11px] font-bold tracking-[0.25em] text-sky uppercase mb-6"
+          className="inline-block text-[11px] font-bold tracking-[0.25em] text-yellow uppercase mb-6"
         >
           Why Merch &amp; Move
         </motion.span>
@@ -749,7 +1630,7 @@ export default function BusinessWhyUs() {
           className="font-display text-4xl sm:text-5xl md:text-6xl text-white mb-14 leading-[1.0]"
         >
           Built on a Business That{' '}
-          <span className="italic text-gradient-sky">Already Sells</span>
+          <span className="italic text-gradient-yellow">Already Sells</span>
         </motion.h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-left">
@@ -775,51 +1656,22 @@ export default function BusinessWhyUs() {
 }
 ```
 
-- [ ] **Step 5: Add the sections to the page**
+- [ ] **Step 4: Add to the page, verify, commit**
 
-In `src/pages/start-your-business.astro`, add the imports:
-
-```astro
-import BusinessSteps from '../components/business/BusinessSteps.tsx'
-import BusinessQualities from '../components/business/BusinessQualities.tsx'
-import BusinessWhyUs from '../components/business/BusinessWhyUs.tsx'
-```
-
-and inside `<main>`, after `<BusinessBenefits client:visible />`:
-
-```astro
-    <BusinessSteps client:visible />
-    <BusinessQualities client:visible />
-    <BusinessWhyUs client:visible />
-```
-
-- [ ] **Step 6: Verify**
-
-Run:
-```bash
-npm run build && ./scripts/check-business-page.sh
-```
-Expected: four `OK:` lines.
-
-In the browser at `http://localhost:4321/start-your-business`, click "See How It Works" in the hero. Expected: scrolls to the four-step section, which ends with a "Start Your Business" button. Scroll on: qualities grid, then the three-card "why us" block.
-
-- [ ] **Step 7: Commit**
+Import both, render after the wallet section. Build and run the script. Expected: six `OK:` lines.
 
 ```bash
-git add src/components/business/BusinessSteps.tsx src/components/business/BusinessQualities.tsx src/components/business/BusinessWhyUs.tsx src/pages/start-your-business.astro scripts/check-business-page.sh
-git commit -m "Add steps, qualities and why-us sections to Start Your Business"
+git add src/components/business src/pages/start-your-business.astro scripts/check-business-page.sh
+git commit -m "Add qualities and why-us sections to Start Your Business"
 ```
 
 ---
 
-### Task 5: FAQ with income disclaimer
+### Task 7: FAQ with income disclaimer
 
 **Files:**
 - Create: `src/components/business/BusinessFAQ.tsx`
 - Modify: `src/pages/start-your-business.astro`
-
-**Interfaces:**
-- Produces: `BusinessFAQ` renders an accordion (native `<details>` for accessibility and no state) and a disclaimer paragraph.
 
 - [ ] **Step 1: Write the failing build check**
 
@@ -832,11 +1684,7 @@ grep -q 'Individual results vary' "$P" || { echo "FAIL: income disclaimer missin
 echo "OK: FAQ and disclaimer present"
 ```
 
-Run:
-```bash
-npm run build && ./scripts/check-business-page.sh
-```
-Expected: `FAIL: FAQ accordion missing`
+Run. Expected: `FAIL: FAQ accordion missing`.
 
 - [ ] **Step 2: Create BusinessFAQ.tsx**
 
@@ -849,8 +1697,12 @@ const faqs = [
     a: 'Yes. Most sellers start with a few hours a week around a job or studies. There is no minimum, and you can scale up whenever you are ready.',
   },
   {
-    q: 'How do I earn money?',
-    a: '[EARNING MODEL: plain-language answer on how sellers are paid, and how often.]',
+    q: 'How do I get paid?',
+    a: 'Every confirmed sale is credited to your wallet in the Merch & Move app. When you want your money, tap Request Payout and it goes to your bank account. [EARNING MODEL: payout timing, minimums or fees, if any.]',
+  },
+  {
+    q: 'How much can I earn?',
+    a: '[EARNING MODEL: plain-language answer on how earnings work, e.g. commission per sale, and what a typical range looks like.]',
   },
   {
     q: 'Does it cost anything to start?',
@@ -858,21 +1710,21 @@ const faqs = [
   },
   {
     q: 'Am I employed by Merch & Move?',
-    a: 'No. Independent sellers run their own business. You choose your hours, your customers and how much you want to sell.',
+    a: 'No. Business owners run their own business. You choose your hours, your customers and how much you want to sell.',
   },
   {
     q: 'Do I need sales experience?',
-    a: 'No. We provide training on the products and the platform. Enthusiasm and consistency matter more than a CV.',
+    a: 'No. We provide training on the products and the app. Enthusiasm and consistency matter more than a CV.',
   },
   {
     q: 'Where in South Africa can I sell?',
-    a: 'Anywhere. Sellers work in their own communities, so the programme is open across all nine provinces.',
+    a: 'Anywhere. Business owners work in their own communities, so the programme is open across all nine provinces.',
   },
 ]
 
 export default function BusinessFAQ() {
   return (
-    <section className="relative py-32 sm:py-40 bg-base-light overflow-hidden">
+    <section className="relative py-32 sm:py-40 bg-base overflow-hidden">
       <div className="mesh-orb mesh-orb-sky w-[400px] h-[400px] top-0 right-0 opacity-15" />
       <div className="absolute inset-0 max-w-7xl mx-auto grid-lines" />
 
@@ -937,31 +1789,9 @@ export default function BusinessFAQ() {
 }
 ```
 
-- [ ] **Step 3: Add to the page**
+- [ ] **Step 3: Add to the page, verify, commit**
 
-In `src/pages/start-your-business.astro`, add the import:
-
-```astro
-import BusinessFAQ from '../components/business/BusinessFAQ.tsx'
-```
-
-and inside `<main>`, after `<BusinessWhyUs client:visible />`:
-
-```astro
-    <BusinessFAQ client:visible />
-```
-
-- [ ] **Step 4: Verify**
-
-Run:
-```bash
-npm run build && ./scripts/check-business-page.sh
-```
-Expected: five `OK:` lines.
-
-In the browser, click an FAQ question. Expected: it expands and the plus icon rotates to a cross.
-
-- [ ] **Step 5: Commit**
+Import and render after why-us. Build and run the script. Expected: seven `OK:` lines.
 
 ```bash
 git add src/components/business/BusinessFAQ.tsx src/pages/start-your-business.astro scripts/check-business-page.sh
@@ -970,33 +1800,24 @@ git commit -m "Add FAQ and income disclaimer to Start Your Business"
 
 ---
 
-### Task 6: Closing CTA
+### Task 8: Closing CTA
 
 **Files:**
 - Create: `src/components/business/BusinessCTA.tsx`
 - Modify: `src/pages/start-your-business.astro`
-
-**Interfaces:**
-- Consumes: `START_URL` from `./startUrl`.
-- Produces: `BusinessCTA` renders the final section before the footer.
 
 - [ ] **Step 1: Write the failing build check**
 
 Append to `scripts/check-business-page.sh`:
 
 ```bash
-# All Start Your Business buttons share one href (the nav pill, hero, steps, closing CTA).
 n=$(grep -o 'Start Your Business' "$P" | wc -l | tr -d ' ')
 [ "$n" -ge 4 ] || { echo "FAIL: expected at least 4 Start Your Business CTAs, found $n"; exit 1; }
 grep -q 'Your Move' "$P" || { echo "FAIL: closing CTA missing"; exit 1; }
 echo "OK: closing CTA present, $n Start Your Business CTAs"
 ```
 
-Run:
-```bash
-npm run build && ./scripts/check-business-page.sh
-```
-Expected: `FAIL: closing CTA missing`
+Run. Expected: `FAIL: closing CTA missing`.
 
 - [ ] **Step 2: Create BusinessCTA.tsx**
 
@@ -1006,7 +1827,7 @@ import { START_URL } from './startUrl'
 
 export default function BusinessCTA() {
   return (
-    <section className="relative py-32 sm:py-40 bg-base overflow-hidden">
+    <section className="relative py-32 sm:py-40 bg-base-light overflow-hidden">
       <motion.div
         animate={{ x: [0, 20, -15, 10, 0], y: [0, -15, 20, -10, 0], scale: [1, 1.05, 0.95, 1.03, 1] }}
         transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
@@ -1040,7 +1861,7 @@ export default function BusinessCTA() {
           transition={{ duration: 0.6, delay: 0.15 }}
           className="text-lg text-white/60 max-w-xl mx-auto mb-12 leading-relaxed"
         >
-          Side hustle today, something bigger tomorrow. It starts with one form.
+          Side hustle today, something bigger tomorrow. It starts with one form and ends with money in your wallet.
         </motion.p>
 
         <motion.div
@@ -1065,31 +1886,9 @@ export default function BusinessCTA() {
 }
 ```
 
-- [ ] **Step 3: Add to the page**
+- [ ] **Step 3: Add to the page, verify, commit**
 
-In `src/pages/start-your-business.astro`, add the import:
-
-```astro
-import BusinessCTA from '../components/business/BusinessCTA.tsx'
-```
-
-and inside `<main>`, after `<BusinessFAQ client:visible />`:
-
-```astro
-    <BusinessCTA client:visible />
-```
-
-- [ ] **Step 4: Verify**
-
-Run:
-```bash
-npm run build && ./scripts/check-business-page.sh
-```
-Expected: six `OK:` lines.
-
-In the browser, scroll to the bottom. Expected: the "Your Business. Your Move." headline with a large yellow button above the footer.
-
-- [ ] **Step 5: Commit**
+Import and render after the FAQ. Build and run the script. Expected: eight `OK:` lines.
 
 ```bash
 git add src/components/business/BusinessCTA.tsx src/pages/start-your-business.astro scripts/check-business-page.sh
@@ -1098,49 +1897,37 @@ git commit -m "Add closing CTA to Start Your Business"
 
 ---
 
-### Task 7: Full-page review
+### Task 9: Full-page review
 
-**Files:**
-- Read-only pass over everything under `src/components/business/` and `src/pages/start-your-business.astro`.
+- [ ] **Step 1: Placeholders**
 
-- [ ] **Step 1: Confirm every earning-model placeholder is findable**
-
-Run:
 ```bash
 grep -rn "\[EARNING MODEL" src/components/business
 ```
-Expected: 6 matches (benefits 1, steps 2, FAQ 2, disclaimer 1), all beginning `[EARNING MODEL`. Any bracketed placeholder that does not start with that prefix, other than the `[APP LINK]` comment in `startUrl.ts`, is a bug; fix it.
+Expected: 9 matches (benefits 1, steps 3, wallet 1, FAQ 3, disclaimer 1), all beginning `[EARNING MODEL`.
 
-- [ ] **Step 2: Confirm every CTA reads START_URL**
+- [ ] **Step 2: Every CTA reads START_URL**
 
-Run:
 ```bash
 grep -rn "href=" src/components/business src/pages/start-your-business.astro | grep -v "START_URL\|#how-it-works"
 ```
-Expected: no output. Every href in the page is either `START_URL` or the in-page `#how-it-works` scroll.
+Expected: no output.
 
-- [ ] **Step 3: Confirm nothing links to the page and nothing else changed**
+- [ ] **Step 3: Nothing links to the page and nothing else changed**
 
-Run:
 ```bash
 grep -rn "start-your-business" src | grep -v "src/pages/start-your-business.astro"
-git diff e402067 --stat -- supabase src/components/ContactForm.tsx src/pages/index.astro src/components/MobileMenu.tsx
+git diff cadaf0c --stat -- supabase src/components/ContactForm.tsx src/pages/index.astro src/components/MobileMenu.tsx
 ```
 Expected: no output from either.
 
-- [ ] **Step 4: Full build and assertion script**
+- [ ] **Step 4: Full build and script**
 
-Run:
-```bash
-npm run build && ./scripts/check-business-page.sh
-```
-Expected: six `OK:` lines, no build errors. Warnings about content config and `emitFile` are pre-existing and fine.
+`npm run build && ./scripts/check-business-page.sh`. Expected: eight `OK:` lines.
 
 - [ ] **Step 5: Visual pass**
 
-With the dev server on, load `http://localhost:4321/start-your-business` at desktop width and at a 390px-wide mobile viewport. Check: no horizontal scroll, every section visible, hero text not clipped, the nav shows only the logo and the pill at every width, buttons full width or centred on mobile.
-
-Take one desktop screenshot and one mobile screenshot for the user.
+Load the page at desktop width and at a 390px-wide mobile viewport. Check: no horizontal scroll, every section visible, all five mockups animate on entering view, hero chips hidden on mobile, minimal nav at every width. Take one desktop screenshot and one mobile screenshot for the user.
 
 - [ ] **Step 6: Commit any fixes**
 
@@ -1148,18 +1935,17 @@ Take one desktop screenshot and one mobile screenshot for the user.
 git add -A src scripts
 git commit -m "Polish Start Your Business page"
 ```
-(Skip if nothing changed.)
 
 ---
 
 ## Wiring the app link later
 
-When the app's sign-up form URL exists, change one line in `src/components/business/startUrl.ts`, rebuild, and every button on the page points at it. If the link should open in a new tab, add `target="_blank" rel="noopener"` to the four anchors that read `START_URL` (nav pill, hero, steps, closing CTA).
+Change one line in `src/components/business/startUrl.ts`, rebuild, and every button points at the app. If the link should open in a new tab, add `target="_blank" rel="noopener"` to the four anchors that read `START_URL` (nav pill, hero, steps, closing CTA).
 
 ## Self-review
 
-**Spec coverage.** Purpose and hidden URL: Tasks 3 and 7. Positioning and side-hustle language: hero badge and sub-copy (3), benefit card (3), qualities (4), FAQ (5), closing CTA (6), asserted in Task 5's check. Nine sections: hero and benefits (3), steps, qualities, why-us (4), FAQ and disclaimer (5), closing CTA (6), footer (3). Minimal nav: Task 2, asserted in Task 3. `START_URL`: Task 3, consumed in 4 and 6, audited in 7. `noindex`: Tasks 1 and 3. No server or form work: nothing in the plan touches `supabase/`, verified in Task 7. Every test in the spec's Testing section maps to a step.
+**Spec coverage.** Positioning and side-hustle language: hero badge, sub-copy and chips (3), benefit card (3), step 4 headline (4), qualities (6), FAQ (7), closing CTA (8). Wallet: hero chip and sub-copy (3), benefit card (3), step 2 and 3 copy and mockups (4), dedicated section and mockup (5), FAQ (7). Ten sections: hero and benefits (3), steps (4), wallet (5), qualities and why-us (6), FAQ and disclaimer (7), closing CTA (8), footer (3). Minimal nav: Task 2, asserted in Task 3. `START_URL`: Task 3, consumed in 4 and 8, audited in 9. `noindex`: Tasks 1 and 3. Mockup pattern: Tasks 4 and 5 copy the homepage's window chrome, `useInView` and stagger conventions.
 
-**Placeholders.** None outside the deliberate `[EARNING MODEL ...]` copy markers and the `[APP LINK]` comment, both of which the spec requires.
+**Placeholders.** None outside the deliberate `[EARNING MODEL ...]` markers and the `[APP LINK]` comment.
 
-**Type consistency.** `START_URL` is the export name in Task 3 and the import in Tasks 3, 4 and 6 and the page. `minimal`, `ctaLabel` and `ctaHref` are the prop names in Task 2 and the page in Task 3. The steps section id `how-it-works` matches the hero's secondary button.
+**Type consistency.** `START_URL` export and imports match. `minimal`, `ctaLabel`, `ctaHref` match between Task 2 and Task 3. Mockup component names match their imports in `BusinessSteps` and `BusinessWallet`.
