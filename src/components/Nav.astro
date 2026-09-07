@@ -1,5 +1,16 @@
 ---
 import MobileMenu from './MobileMenu.tsx'
+
+interface Props {
+  minimal?: boolean
+  ctaLabel?: string
+  ctaHref?: string
+}
+
+const { minimal = false, ctaLabel = 'Contact Us', ctaHref = '#contact' } = Astro.props
+
+const pillClasses =
+  'inline-flex items-center px-5 py-2 text-sm font-medium text-yellow bg-white/10 border border-white/10 rounded-full hover:bg-yellow hover:text-base hover:border-yellow transition-all duration-300'
 ---
 
 <nav id="main-nav" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500">
@@ -12,19 +23,23 @@ import MobileMenu from './MobileMenu.tsx'
         </span>
       </a>
 
-      <!-- Desktop Nav -->
-      <div class="hidden md:flex items-center gap-8">
-        <a href="#how-it-works" class="text-sm font-medium text-white/50 hover:text-white transition-colors duration-300">How It Works</a>
-        <a href="#active-selling" class="text-sm font-medium text-white/50 hover:text-white transition-colors duration-300">Active Selling</a>
-        <a href="#platform" class="text-sm font-medium text-white/50 hover:text-white transition-colors duration-300">Platform</a>
-        <a href="#pricing" class="text-sm font-medium text-white/50 hover:text-white transition-colors duration-300">Pricing</a>
-        <a href="#contact" class="inline-flex items-center px-5 py-2 text-sm font-medium text-base bg-white/10 border border-white/10 rounded-full hover:bg-yellow hover:text-base hover:border-yellow transition-all duration-300">
-          Contact Us
-        </a>
-      </div>
+      {minimal ? (
+        <a href={ctaHref} class={pillClasses}>{ctaLabel}</a>
+      ) : (
+        <>
+          <!-- Desktop Nav -->
+          <div class="hidden md:flex items-center gap-8">
+            <a href="#how-it-works" class="text-sm font-medium text-white/50 hover:text-white transition-colors duration-300">How It Works</a>
+            <a href="#active-selling" class="text-sm font-medium text-white/50 hover:text-white transition-colors duration-300">Active Selling</a>
+            <a href="#platform" class="text-sm font-medium text-white/50 hover:text-white transition-colors duration-300">Platform</a>
+            <a href="#pricing" class="text-sm font-medium text-white/50 hover:text-white transition-colors duration-300">Pricing</a>
+            <a href={ctaHref} class={pillClasses}>{ctaLabel}</a>
+          </div>
 
-      <!-- Mobile Menu -->
-      <MobileMenu client:load />
+          <!-- Mobile Menu -->
+          <MobileMenu client:load />
+        </>
+      )}
     </div>
   </div>
 </nav>
