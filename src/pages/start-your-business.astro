@@ -6,6 +6,7 @@ import SmoothScroll from '../components/SmoothScroll.tsx'
 import { START_URL } from '../components/business/startUrl'
 import BusinessHero from '../components/business/BusinessHero.tsx'
 import BusinessBenefits from '../components/business/BusinessBenefits.tsx'
+import BusinessSteps from '../components/business/BusinessSteps.tsx'
 ---
 
 <Layout
@@ -18,6 +19,7 @@ import BusinessBenefits from '../components/business/BusinessBenefits.tsx'
   <main>
     <BusinessHero client:load />
     <BusinessBenefits client:visible />
+    <BusinessSteps client:visible />
   </main>
   <Footer />
 </Layout>

@@ -31,3 +31,7 @@ if grep -q 'start-your-business' dist/index.html; then
 fi
 grep -q 'Side Hustle' "$P" || { echo "FAIL: hero side hustle badge missing"; exit 1; }
 echo "OK: start-your-business page is built, noindex, minimal nav, unlinked"
+
+grep -q 'id="how-it-works"' "$P" || { echo "FAIL: steps section missing"; exit 1; }
+grep -q 'Application' "$P" || { echo "FAIL: apply mockup missing"; exit 1; }
+echo "OK: steps section with mockups present"
