@@ -11,7 +11,7 @@ const faqs = [
   },
   {
     q: 'How much can I earn?',
-    a: 'That\'s up to you. You earn a minimum of 15% on every sale you make through the app, plus whatever mark-up you set on stock you buy from our in-house brands, plus every website sale that uses your coupon. There is no cap and no salary band. Sell a little, earn a little. Sell a lot, and you write your own paycheck.',
+    a: 'That\'s up to you. You earn a minimum of 15% on every sale you make, plus whatever mark-up you set on stock you buy from our in-house brands, plus every website sale that uses your coupon. There is no cap and no salary band. Sell a little, earn a little. Sell a lot, and you write your own paycheck.',
   },
   {
     q: 'Does it cost anything to start?',

@@ -2,19 +2,9 @@ import { motion } from 'framer-motion'
 
 const ways = [
   {
-    title: 'Sell From the App',
-    body: 'Share products with the people around you and close the sale in the app. You earn a minimum of 15% on every sale, straight into your wallet.',
-    accent: 'yellow' as const,
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
-      </svg>
-    ),
-  },
-  {
     title: 'Sell Your Own Stock',
     body: 'Buy from our in-house brands at incredible discounts, set your own mark-up and keep the difference. Your stock, your price, your profit.',
-    accent: 'sky' as const,
+    accent: 'yellow' as const,
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
@@ -23,7 +13,7 @@ const ways = [
   },
   {
     title: 'Your Unique Coupon',
-    body: 'Get a coupon code that\'s yours alone. Share it anywhere. Every sale on our website that uses it is credited to you, even while you sleep.',
+    body: 'Get a coupon code that\'s yours alone. Share it anywhere. Every sale on our website that uses it is credited to you, and we deliver straight to your customer. You never touch a box.',
     accent: 'sky' as const,
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -79,11 +69,11 @@ export default function BusinessWaysToEarn() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-base text-white/50 max-w-xl mx-auto"
           >
-            One business, four income streams. Use one, use them all. Every rand lands in the same wallet.
+            One business, three income streams. Use one, use them all. Every rand lands in the same wallet.
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
           {ways.map((w, i) => {
             const isYellow = w.accent === 'yellow'
             return (

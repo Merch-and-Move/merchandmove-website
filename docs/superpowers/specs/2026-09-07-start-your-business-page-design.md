@@ -38,12 +38,14 @@ by URL only until the programme is ready to launch.
   not "training".
 - **Wallet payouts.** Request any time, no minimum, no fee, usually in the
   bank within a business day or two.
-- **Commission.** A minimum of 15% on every sale made through the app. This
-  figure is published on the page.
-- **Ways to earn.** Four streams: selling from the app, buying in-house stock
-  at a discount and selling at own mark-up, a unique coupon code whose
-  website sales are credited to the owner, and booking shifts in retail
-  stores. They get their own section, "So Many Ways To Earn".
+- **Commission.** A minimum of 15% on every sale. This figure is published
+  on the page.
+- **Ways to earn.** Three streams: buying in-house stock at a discount and
+  selling at own mark-up, a unique coupon code whose website sales are
+  credited to the owner and delivered straight to their customer, and
+  booking shifts in retail stores. The app is where sales are tracked and
+  paid, not a channel of its own. They get their own section, "So Many Ways
+  To Earn".
 - **Winners Event.** A recognition event for top sellers. Mentioned in the
   community benefit card, step 4, a banner under the ways-to-earn section,
   and an FAQ item. No dates, prizes or qualifying rules are published.
@@ -96,7 +98,7 @@ One scrolling page, modelled on Forever Living's "Your Opportunity" and
    notifications landing), grow (earnings chart climbing). Step copy is
    generic until the model is decided. Ends with a "Start Your Business"
    button.
-4. **So many ways to earn.** Four cards, one per income stream, with icons,
+4. **So many ways to earn.** Three cards, one per income stream, with icons,
    followed by a Winners Event banner.
 5. **Your wallet.** Two-column section, wallet mockup on one side and three
    feature points on the other: earnings land in your wallet, request a
