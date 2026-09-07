@@ -7,6 +7,7 @@ import { START_URL } from '../components/business/startUrl'
 import BusinessHero from '../components/business/BusinessHero.tsx'
 import BusinessBenefits from '../components/business/BusinessBenefits.tsx'
 import BusinessSteps from '../components/business/BusinessSteps.tsx'
+import BusinessWallet from '../components/business/BusinessWallet.tsx'
 ---
 
 <Layout
@@ -20,6 +21,7 @@ import BusinessSteps from '../components/business/BusinessSteps.tsx'
     <BusinessHero client:load />
     <BusinessBenefits client:visible />
     <BusinessSteps client:visible />
+    <BusinessWallet client:visible />
   </main>
   <Footer />
 </Layout>

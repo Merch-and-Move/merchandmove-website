@@ -35,3 +35,7 @@ echo "OK: start-your-business page is built, noindex, minimal nav, unlinked"
 grep -q 'id="how-it-works"' "$P" || { echo "FAIL: steps section missing"; exit 1; }
 grep -q 'Application' "$P" || { echo "FAIL: apply mockup missing"; exit 1; }
 echo "OK: steps section with mockups present"
+
+grep -q 'Request Payout\|REQUEST PAYOUT' "$P" || { echo "FAIL: wallet mockup missing"; exit 1; }
+grep -q 'id="wallet"' "$P" || { echo "FAIL: wallet section missing"; exit 1; }
+echo "OK: wallet section present"
