@@ -23,7 +23,7 @@ const benefits = [
   },
   {
     title: 'Earn On What You Sell',
-    body: 'A minimum of 15% on every sale you make. Want more? Buy from our in-house brands at incredible discounts and sell at your own mark-up.',
+    body: 'A minimum of 15% on coupon and in-store sales. Or buy from our in-house brands at incredible discounts and sell at whatever mark-up you choose.',
     accent: 'sky' as const,
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
