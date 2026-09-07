@@ -50,9 +50,10 @@ One scrolling page, modelled on Forever Living's "Your Opportunity" and
    heading.
 9. **Footer.** Existing site footer.
 
-Nav is the existing `Nav.astro`. Its section anchors point to homepage
-sections, so on this page they link back to `/#how-it-works` etc. The
-"Contact Us" pill links to `#register` on this page.
+Nav is the existing `Nav.astro` in a new minimal mode: logo on the left,
+one "Register Your Interest" pill on the right linking to `#register`, and
+nothing else. No section links and no mobile menu. The page has a single
+purpose and the nav should not offer exits from it.
 
 ## Components
 
@@ -70,10 +71,11 @@ src/components/business/BusinessFAQ.tsx
 src/components/business/BusinessInterestForm.tsx
 ```
 
-Existing `Layout.astro`, `Nav.astro`, `Footer.astro`, `SmoothScroll.tsx` and
-global styles are reused unchanged. `Nav.astro` gets one change so its anchor
-links resolve from any page: `#how-it-works` becomes `/#how-it-works` and so
-on. The Contact Us pill's target becomes a prop defaulting to `#contact`.
+Existing `Layout.astro`, `Footer.astro`, `SmoothScroll.tsx` and global
+styles are reused unchanged. `Nav.astro` gains a `minimal` prop. When set, it
+renders only the logo and a single pill whose label and target come from
+`ctaLabel` and `ctaHref` props. The homepage does not pass `minimal` and is
+unchanged.
 
 `Layout.astro` gains an optional `noindex` prop that emits
 `<meta name="robots" content="noindex">`. The new page sets it so search
@@ -128,4 +130,4 @@ works]`, so it can be found and replaced in one pass.
   arrives with the seller template.
 - A homepage lead with no `lead_type` still sends the existing email.
 - The page's `<head>` contains the noindex meta; the homepage's does not.
-- Nav anchor links work from both the homepage and the new page.
+- The new page's nav shows only the logo and the register pill. The homepage nav is unchanged.

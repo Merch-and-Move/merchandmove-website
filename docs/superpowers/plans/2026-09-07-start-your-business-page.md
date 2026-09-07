@@ -33,8 +33,7 @@
 | File | Responsibility |
 |---|---|
 | `src/layouts/Layout.astro` | Modify: add optional `noindex` prop |
-| `src/components/Nav.astro` | Modify: absolute anchor hrefs, `ctaHref` prop |
-| `src/components/MobileMenu.tsx` | Modify: absolute anchor hrefs, `ctaHref` prop |
+| `src/components/Nav.astro` | Modify: `minimal`, `ctaLabel`, `ctaHref` props |
 | `src/components/business/BusinessHero.tsx` | Hero with headline and CTA to `#register` |
 | `src/components/business/BusinessBenefits.tsx` | Six benefit cards |
 | `src/components/business/BusinessSteps.tsx` | Four numbered steps |
@@ -122,48 +121,51 @@ git commit -m "Add optional noindex prop to Layout"
 
 ---
 
-### Task 2: Nav and mobile menu work from any page
+### Task 2: Minimal nav mode
 
 **Files:**
 - Modify: `src/components/Nav.astro:1-30`
-- Modify: `src/components/MobileMenu.tsx:1-10` and `:363-418`
 
 **Interfaces:**
-- Produces: `<Nav ctaHref="#register" />` and `<MobileMenu client:load ctaHref="#register" />`. Both default `ctaHref` to `#contact`. Section links are `/#how-it-works`, `/#active-selling`, `/#platform`, `/#pricing`.
+- Produces: `<Nav minimal ctaLabel="Register Your Interest" ctaHref="#register" />` renders only the logo and one pill. Without `minimal`, output is byte-for-byte what the homepage renders today (`ctaLabel` defaults to `Contact Us`, `ctaHref` to `#contact`).
 
 - [ ] **Step 1: Write the failing build check**
 
-Append to `scripts/check-noindex.sh` (rename is not needed; it is the build assertion script):
+Append to `scripts/check-noindex.sh`:
 
 ```bash
-# Nav anchors must be absolute so they resolve from any page.
+# Homepage nav is unchanged: still has its four section links and Contact Us.
 for a in how-it-works active-selling platform pricing; do
-  if ! grep -q "href=\"/#$a\"" dist/index.html; then
-    echo "FAIL: nav link /#$a missing from homepage"; exit 1
-  fi
+  grep -q "href=\"#$a\"" dist/index.html || { echo "FAIL: homepage nav link #$a missing"; exit 1; }
 done
-echo "OK: nav anchors are absolute"
+grep -q 'Contact Us' dist/index.html || { echo "FAIL: homepage Contact Us pill missing"; exit 1; }
+echo "OK: homepage nav intact"
 ```
 
 Run:
 ```bash
 npm run build && ./scripts/check-noindex.sh
 ```
-Expected: `FAIL: nav link /#how-it-works missing from homepage`
+Expected: `OK: homepage nav intact` (passes now; it guards the homepage while Nav is edited). The check for the minimal mode itself lands in Task 5 once the page exists.
 
-- [ ] **Step 2: Update Nav.astro**
+- [ ] **Step 2: Add the props to Nav.astro**
 
-Replace the whole frontmatter and the markup above `<script>` with:
+Replace the frontmatter and the markup above `<script>` with:
 
 ```astro
 ---
 import MobileMenu from './MobileMenu.tsx'
 
 interface Props {
+  minimal?: boolean
+  ctaLabel?: string
   ctaHref?: string
 }
 
-const { ctaHref = '#contact' } = Astro.props
+const { minimal = false, ctaLabel = 'Contact Us', ctaHref = '#contact' } = Astro.props
+
+const pillClasses =
+  'inline-flex items-center px-5 py-2 text-sm font-medium text-yellow bg-white/10 border border-white/10 rounded-full hover:bg-yellow hover:text-base hover:border-yellow transition-all duration-300'
 ---
 
 <nav id="main-nav" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500">
@@ -176,48 +178,31 @@ const { ctaHref = '#contact' } = Astro.props
         </span>
       </a>
 
-      <!-- Desktop Nav -->
-      <div class="hidden md:flex items-center gap-8">
-        <a href="/#how-it-works" class="text-sm font-medium text-white/50 hover:text-white transition-colors duration-300">How It Works</a>
-        <a href="/#active-selling" class="text-sm font-medium text-white/50 hover:text-white transition-colors duration-300">Active Selling</a>
-        <a href="/#platform" class="text-sm font-medium text-white/50 hover:text-white transition-colors duration-300">Platform</a>
-        <a href="/#pricing" class="text-sm font-medium text-white/50 hover:text-white transition-colors duration-300">Pricing</a>
-        <a href={ctaHref} class="inline-flex items-center px-5 py-2 text-sm font-medium text-yellow bg-white/10 border border-white/10 rounded-full hover:bg-yellow hover:text-base hover:border-yellow transition-all duration-300">
-          Contact Us
-        </a>
-      </div>
+      {minimal ? (
+        <a href={ctaHref} class={pillClasses}>{ctaLabel}</a>
+      ) : (
+        <>
+          <!-- Desktop Nav -->
+          <div class="hidden md:flex items-center gap-8">
+            <a href="#how-it-works" class="text-sm font-medium text-white/50 hover:text-white transition-colors duration-300">How It Works</a>
+            <a href="#active-selling" class="text-sm font-medium text-white/50 hover:text-white transition-colors duration-300">Active Selling</a>
+            <a href="#platform" class="text-sm font-medium text-white/50 hover:text-white transition-colors duration-300">Platform</a>
+            <a href="#pricing" class="text-sm font-medium text-white/50 hover:text-white transition-colors duration-300">Pricing</a>
+            <a href={ctaHref} class={pillClasses}>{ctaLabel}</a>
+          </div>
 
-      <!-- Mobile Menu -->
-      <MobileMenu client:load ctaHref={ctaHref} />
+          <!-- Mobile Menu -->
+          <MobileMenu client:load />
+        </>
+      )}
     </div>
   </div>
 </nav>
 ```
 
-Leave the existing `<script>` block unchanged.
+Leave the existing `<script>` block unchanged. `MobileMenu.tsx` is not modified.
 
-- [ ] **Step 3: Update MobileMenu.tsx**
-
-Change the `links` array and the component signature:
-
-```tsx
-const links = [
-  { label: 'How It Works', href: '/#how-it-works' },
-  { label: 'Active Selling', href: '/#active-selling' },
-  { label: 'Platform', href: '/#platform' },
-  { label: 'Pricing', href: '/#pricing' },
-]
-
-type Props = {
-  ctaHref?: string
-}
-
-export default function MobileMenu({ ctaHref = '#contact' }: Props) {
-```
-
-And change the CTA anchor's `href="#contact"` to `href={ctaHref}`.
-
-- [ ] **Step 4: Verify**
+- [ ] **Step 3: Verify**
 
 Run:
 ```bash
@@ -225,13 +210,13 @@ npm run build && ./scripts/check-noindex.sh
 ```
 Expected: both `OK:` lines.
 
-Then with the dev server running, open `http://localhost:4321/` and click "Platform" in the nav. Expected: page scrolls to the platform section (same behaviour as before).
+With the dev server running, open `http://localhost:4321/` and confirm the nav looks exactly as before: four links, yellow Contact Us pill, hamburger on mobile.
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 4: Commit**
 
 ```bash
-git add src/components/Nav.astro src/components/MobileMenu.tsx scripts/check-noindex.sh
-git commit -m "Make nav anchors absolute and CTA target configurable"
+git add src/components/Nav.astro scripts/check-noindex.sh
+git commit -m "Add minimal mode to Nav for single-purpose pages"
 ```
 
 ---
@@ -607,7 +592,7 @@ Deployment is a separate, deliberate step at the end (Task 10), since it touches
 - Create: `src/pages/start-your-business.astro` (minimal, grows in later tasks)
 
 **Interfaces:**
-- Produces: default-export React components with no props. Page at `/start-your-business` renders `Layout` with `noindex`, `Nav ctaHref="#register"`, the two sections, and `Footer`.
+- Produces: default-export React components with no props. Page at `/start-your-business` renders `Layout` with `noindex`, `Nav` in minimal mode, the two sections, and `Footer`.
 
 - [ ] **Step 1: Write the failing build check**
 
@@ -619,6 +604,12 @@ P=dist/start-your-business/index.html
 [ -f "$P" ] || { echo "FAIL: $P not built"; exit 1; }
 grep -q 'name="robots" content="noindex"' "$P" || { echo "FAIL: new page lacks noindex"; exit 1; }
 grep -q 'href="#register"' "$P" || { echo "FAIL: new page nav CTA does not point to #register"; exit 1; }
+for a in how-it-works active-selling platform pricing; do
+  if grep -q "href=\"/#$a\"\|href=\"#$a\" class=\"text-sm font-medium text-white/50" "$P"; then
+    echo "FAIL: new page nav carries section link #$a"; exit 1
+  fi
+done
+grep -q 'Toggle menu' "$P" && { echo "FAIL: new page renders the mobile menu"; exit 1; }
 if grep -q 'start-your-business' dist/index.html; then
   echo "FAIL: homepage links to start-your-business"; exit 1
 fi
@@ -830,7 +821,7 @@ import BusinessBenefits from '../components/business/BusinessBenefits.tsx'
   noindex
 >
   <SmoothScroll client:load />
-  <Nav ctaHref="#register" />
+  <Nav minimal ctaLabel="Register Your Interest" ctaHref="#register" />
   <main>
     <BusinessHero client:load />
     <BusinessBenefits client:visible />
@@ -847,7 +838,7 @@ npm run build && ./scripts/check-noindex.sh
 ```
 Expected: three `OK:` lines.
 
-With the dev server running, open `http://localhost:4321/start-your-business`. Expected: hero headline "Start Your Own Business", yellow "Register Your Interest" button, six benefit cards below. The nav's Contact Us pill links to `#register` (nothing to scroll to yet; that arrives in Task 7).
+With the dev server running, open `http://localhost:4321/start-your-business`. Expected: hero headline "Start Your Own Business", yellow "Register Your Interest" button, six benefit cards below. The nav shows only the logo and a "Register Your Interest" pill, with no section links and no hamburger at mobile width. The pill links to `#register` (nothing to scroll to yet; that arrives in Task 8).
 
 - [ ] **Step 6: Commit**
 
@@ -1647,7 +1638,7 @@ Expected: six `OK:` lines, no build errors. Warnings about content config and `e
 
 - [ ] **Step 5: Visual pass**
 
-With the dev server on, load `http://localhost:4321/start-your-business` at desktop width and at a 390px-wide mobile viewport. Check: no horizontal scroll, every section visible, hero text not clipped, form inputs full width on mobile, mobile menu opens and its Contact Us link goes to `#register`.
+With the dev server on, load `http://localhost:4321/start-your-business` at desktop width and at a 390px-wide mobile viewport. Check: no horizontal scroll, every section visible, hero text not clipped, form inputs full width on mobile, the nav shows only the logo and the register pill at every width.
 
 Take one desktop screenshot and one mobile screenshot for the user.
 
@@ -1705,8 +1696,8 @@ Ask the user to submit the form once on the dev server with their own details, a
 
 ## Self-review
 
-**Spec coverage.** Purpose and hidden URL: Tasks 5 and 9. Nine sections: hero and benefits (5), steps, qualities, why-us (6), FAQ and disclaimer (7), form (8), footer (5). Nav anchors and CTA target: Task 2. `noindex`: Tasks 1 and 5. Form fields and `lead_type: "seller"`: Tasks 3, 4, 8. Business leads unchanged: Task 4 (branch placed before business validation) and verified in Tasks 4, 9, 10. Placeholder copy convention: Global Constraints and Task 9. Every test in the spec's Testing section maps to a step.
+**Spec coverage.** Purpose and hidden URL: Tasks 5 and 9. Nine sections: hero and benefits (5), steps, qualities, why-us (6), FAQ and disclaimer (7), form (8), footer (5). Minimal nav: Task 2, verified in Task 5. `noindex`: Tasks 1 and 5. Form fields and `lead_type: "seller"`: Tasks 3, 4, 8. Business leads unchanged: Task 4 (branch placed before business validation) and verified in Tasks 4, 9, 10. Placeholder copy convention: Global Constraints and Task 9. Every test in the spec's Testing section maps to a step.
 
 **Placeholders.** None outside the deliberate `[EARNING MODEL ...]` copy markers, which the spec requires.
 
-**Type consistency.** `SellerLead` field names (`full_name`, `email`, `phone`, `location`, `about`, `user_agent`, `referrer`, `utm_*`) match `SellerPayload` in Task 8 plus `lead_type` and `hp_website_url`, which the function reads before validation. `validateSellerLead` and `renderSellerEmail` names are identical in Tasks 3 and 4. `ctaHref` is the prop name in both `Nav.astro` and `MobileMenu.tsx`.
+**Type consistency.** `SellerLead` field names (`full_name`, `email`, `phone`, `location`, `about`, `user_agent`, `referrer`, `utm_*`) match `SellerPayload` in Task 8 plus `lead_type` and `hp_website_url`, which the function reads before validation. `validateSellerLead` and `renderSellerEmail` names are identical in Tasks 3 and 4. `minimal`, `ctaLabel` and `ctaHref` are the prop names in Task 2 and the page in Task 5.
