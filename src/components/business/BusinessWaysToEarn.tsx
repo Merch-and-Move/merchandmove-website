@@ -23,7 +23,7 @@ const ways = [
   },
   {
     title: 'Shifts in Retail Stores',
-    body: 'Want more? Book shifts in the retail stores we work with and sell on the floor alongside our promoters. Real customers, real volume.',
+    body: 'Want more? Book shifts in the retail stores we work with and sell on the floor. Real customers, real volume, on the days that suit you.',
     accent: 'yellow' as const,
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
