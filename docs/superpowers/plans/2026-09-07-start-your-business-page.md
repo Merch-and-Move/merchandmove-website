@@ -2,11 +2,11 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add a hidden, single-scroll marketing page at `/start-your-business` that recruits independent sellers and captures their interest by email.
+**Goal:** Add a hidden, single-scroll landing page at `/start-your-business` that recruits independent sellers and sends them to a sign-up form in the Merch & Move app.
 
-**Architecture:** One new Astro page composed of seven React section components under `src/components/business/`, reusing the existing layout, nav, footer and global styles. The interest form posts to the existing `notify-lead` Supabase Edge Function, which gains a `lead_type` branch; seller validation and email rendering live in a new pure module `seller.ts` so they can be unit-tested with `deno test`.
+**Architecture:** One new Astro page composed of seven React section components under `src/components/business/`, reusing the existing layout, nav, footer and global styles. Every call to action reads one `START_URL` constant, so wiring the page to the app later is a one-line change. No server-side work.
 
-**Tech Stack:** Astro 6, React 19, Tailwind 4, framer-motion, Supabase Edge Functions (Deno 2), Resend.
+**Tech Stack:** Astro 6, React 19, Tailwind 4, framer-motion.
 
 **Spec:** `docs/superpowers/specs/2026-09-07-start-your-business-page-design.md`
 
@@ -15,18 +15,17 @@
 - URL is exactly `/start-your-business`. File is `src/pages/start-your-business.astro`.
 - The page is never linked from the homepage, nav, mobile menu or footer.
 - The page's `<head>` must contain `<meta name="robots" content="noindex">`; the homepage's must not.
+- The only CTA label on the page is **Start Your Business**. Every such button and the nav pill read `START_URL` from `src/components/business/startUrl.ts`.
 - Every piece of copy that depends on the undecided earning model is wrapped in square brackets and begins with `[EARNING MODEL`.
-- Only server-side change is inside `supabase/functions/notify-lead/`. Nothing else in the shared Supabase project is touched.
-- Leads with no `lead_type`, or `lead_type: "business"`, must behave exactly as today.
-- Copy voice: direct, confident, short lines. Match the homepage.
+- Nothing under `supabase/` and nothing in `ContactForm.tsx` or `index.astro` changes.
+- Copy voice: direct, confident, short lines. Match the homepage. "Side hustle" appears in the hero, benefits and FAQ.
 - No new npm dependencies.
 
 ## Verification tools available
 
-- `npm run build` produces static HTML in `dist/`. Site-side checks grep `dist/start-your-business/index.html` and `dist/index.html`.
-- `deno test` runs in `supabase/functions/notify-lead/` (Deno 2.7 is installed at `/opt/homebrew/bin/deno`).
-- There is no JS unit test runner for the site. React components are verified by build output and by loading the page in the dev server.
-- Dev server: `npm run dev` on `http://localhost:4321`.
+- `npm run build` produces static HTML in `dist/`. Checks grep `dist/start-your-business/index.html` and `dist/index.html`.
+- `scripts/check-business-page.sh` is a build assertion script that grows task by task. Run it after every build.
+- There is no JS unit test runner for the site. Components are verified by build output and by loading the page in the dev server (`npm run dev`, `http://localhost:4321`).
 
 ## File structure
 
@@ -34,17 +33,16 @@
 |---|---|
 | `src/layouts/Layout.astro` | Modify: add optional `noindex` prop |
 | `src/components/Nav.astro` | Modify: `minimal`, `ctaLabel`, `ctaHref` props |
-| `src/components/business/BusinessHero.tsx` | Hero with headline and CTA to `#register` |
+| `src/components/business/startUrl.ts` | The single `START_URL` constant |
+| `src/components/business/BusinessHero.tsx` | Hero with headline, side-hustle sub-copy, primary CTA |
 | `src/components/business/BusinessBenefits.tsx` | Six benefit cards |
-| `src/components/business/BusinessSteps.tsx` | Four numbered steps |
+| `src/components/business/BusinessSteps.tsx` | Four numbered steps, `id="how-it-works"` |
 | `src/components/business/BusinessQualities.tsx` | Four "what it takes" cards |
 | `src/components/business/BusinessWhyUs.tsx` | Credibility block |
 | `src/components/business/BusinessFAQ.tsx` | Accordion FAQ and income disclaimer |
-| `src/components/business/BusinessInterestForm.tsx` | Interest form posting `lead_type: "seller"` |
+| `src/components/business/BusinessCTA.tsx` | Closing CTA section |
 | `src/pages/start-your-business.astro` | Composes the sections |
-| `supabase/functions/notify-lead/seller.ts` | Pure: `validateSellerLead`, `renderSellerEmail` |
-| `supabase/functions/notify-lead/seller_test.ts` | Deno tests for `seller.ts` |
-| `supabase/functions/notify-lead/index.ts` | Modify: branch on `lead_type` |
+| `scripts/check-business-page.sh` | Build assertions |
 
 ---
 
@@ -52,18 +50,20 @@
 
 **Files:**
 - Modify: `src/layouts/Layout.astro:1-12` (props block) and `:19-22` (head metas)
+- Create: `scripts/check-business-page.sh`
 
 **Interfaces:**
 - Produces: `Layout` accepts `noindex?: boolean`. When true, head contains `<meta name="robots" content="noindex">`.
 
-- [ ] **Step 1: Write a failing build check**
+- [ ] **Step 1: Create the build assertion script**
 
-Create `scripts/check-noindex.sh` (a tiny build assertion, kept in the repo so later tasks can re-run it):
+`scripts/check-business-page.sh`:
 
 ```bash
 #!/usr/bin/env bash
-# Asserts the homepage is indexable. Extended in Task 8 to assert the new page is not.
+# Build assertions for the Start Your Business page. Run after `npm run build`.
 set -euo pipefail
+
 if grep -q 'name="robots" content="noindex"' dist/index.html; then
   echo "FAIL: homepage carries noindex"; exit 1
 fi
@@ -72,9 +72,9 @@ echo "OK: homepage has no noindex"
 
 Run:
 ```bash
-chmod +x scripts/check-noindex.sh && npm run build && ./scripts/check-noindex.sh
+chmod +x scripts/check-business-page.sh && npm run build && ./scripts/check-business-page.sh
 ```
-Expected: `OK: homepage has no noindex` (this half passes already; it guards against regressions in the next step).
+Expected: `OK: homepage has no noindex` (passes already; it guards against regressions in the next step).
 
 - [ ] **Step 2: Add the prop to Layout**
 
@@ -108,14 +108,14 @@ Directly after the `<meta name="theme-color" ...>` line, add:
 
 Run:
 ```bash
-npm run build && ./scripts/check-noindex.sh
+npm run build && ./scripts/check-business-page.sh
 ```
 Expected: `OK: homepage has no noindex`
 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add src/layouts/Layout.astro scripts/check-noindex.sh
+git add src/layouts/Layout.astro scripts/check-business-page.sh
 git commit -m "Add optional noindex prop to Layout"
 ```
 
@@ -127,11 +127,11 @@ git commit -m "Add optional noindex prop to Layout"
 - Modify: `src/components/Nav.astro:1-30`
 
 **Interfaces:**
-- Produces: `<Nav minimal ctaLabel="Register Your Interest" ctaHref="#register" />` renders only the logo and one pill. Without `minimal`, output is byte-for-byte what the homepage renders today (`ctaLabel` defaults to `Contact Us`, `ctaHref` to `#contact`).
+- Produces: `<Nav minimal ctaLabel="Start Your Business" ctaHref={START_URL} />` renders only the logo and one pill. Without `minimal`, output matches what the homepage renders today (`ctaLabel` defaults to `Contact Us`, `ctaHref` to `#contact`).
 
-- [ ] **Step 1: Write the failing build check**
+- [ ] **Step 1: Write the homepage guard**
 
-Append to `scripts/check-noindex.sh`:
+Append to `scripts/check-business-page.sh`:
 
 ```bash
 # Homepage nav is unchanged: still has its four section links and Contact Us.
@@ -144,9 +144,9 @@ echo "OK: homepage nav intact"
 
 Run:
 ```bash
-npm run build && ./scripts/check-noindex.sh
+npm run build && ./scripts/check-business-page.sh
 ```
-Expected: `OK: homepage nav intact` (passes now; it guards the homepage while Nav is edited). The check for the minimal mode itself lands in Task 5 once the page exists.
+Expected: `OK: homepage nav intact` (passes now; it guards the homepage while Nav is edited). The minimal mode itself is asserted in Task 3 once the page exists.
 
 - [ ] **Step 2: Add the props to Nav.astro**
 
@@ -206,7 +206,7 @@ Leave the existing `<script>` block unchanged. `MobileMenu.tsx` is not modified.
 
 Run:
 ```bash
-npm run build && ./scripts/check-noindex.sh
+npm run build && ./scripts/check-business-page.sh
 ```
 Expected: both `OK:` lines.
 
@@ -215,417 +215,65 @@ With the dev server running, open `http://localhost:4321/` and confirm the nav l
 - [ ] **Step 4: Commit**
 
 ```bash
-git add src/components/Nav.astro scripts/check-noindex.sh
+git add src/components/Nav.astro scripts/check-business-page.sh
 git commit -m "Add minimal mode to Nav for single-purpose pages"
 ```
 
 ---
 
-### Task 3: Seller lead validation and email (pure module, TDD)
+### Task 3: Start link, Hero, Benefits, and the page
 
 **Files:**
-- Create: `supabase/functions/notify-lead/seller.ts`
-- Create: `supabase/functions/notify-lead/seller_test.ts`
-
-**Interfaces:**
-- Produces:
-  ```ts
-  export type SellerLead = {
-    full_name: string
-    email: string
-    phone: string
-    location: string
-    about: string | null
-    user_agent: string | null
-    referrer: string | null
-    utm_source: string | null
-    utm_medium: string | null
-    utm_campaign: string | null
-  }
-  export type SellerValidation = { ok: true; lead: SellerLead } | { ok: false; error: string }
-  export function validateSellerLead(data: Record<string, unknown>): SellerValidation
-  export function renderSellerEmail(lead: SellerLead): { subject: string; html: string; text: string }
-  ```
-
-- [ ] **Step 1: Write the failing tests**
-
-Create `supabase/functions/notify-lead/seller_test.ts`:
-
-```ts
-import { assertEquals, assertStringIncludes } from 'jsr:@std/assert@1'
-import { validateSellerLead, renderSellerEmail } from './seller.ts'
-
-const valid = {
-  full_name: 'Thandi Nkosi',
-  email: 'thandi@example.com',
-  phone: '082 123 4567',
-  location: 'Durban',
-  about: 'I run a small side business already.',
-}
-
-Deno.test('accepts a valid seller lead and normalises phone', () => {
-  const r = validateSellerLead(valid)
-  assertEquals(r.ok, true)
-  if (r.ok) {
-    assertEquals(r.lead.phone, '0821234567')
-    assertEquals(r.lead.about, 'I run a small side business already.')
-    assertEquals(r.lead.utm_source, null)
-  }
-})
-
-Deno.test('rejects missing required fields', () => {
-  for (const key of ['full_name', 'email', 'phone', 'location'] as const) {
-    const r = validateSellerLead({ ...valid, [key]: '' })
-    assertEquals(r.ok, false)
-    if (!r.ok) assertEquals(r.error, 'Missing required fields')
-  }
-})
-
-Deno.test('rejects a bad email', () => {
-  const r = validateSellerLead({ ...valid, email: 'not-an-email' })
-  assertEquals(r, { ok: false, error: 'Invalid email address' })
-})
-
-Deno.test('rejects a bad phone', () => {
-  const r = validateSellerLead({ ...valid, phone: '123' })
-  assertEquals(r, { ok: false, error: 'Invalid phone number' })
-})
-
-Deno.test('rejects about text over 2000 chars', () => {
-  const r = validateSellerLead({ ...valid, about: 'x'.repeat(2001) })
-  assertEquals(r, { ok: false, error: 'About too long' })
-})
-
-Deno.test('treats empty about as null', () => {
-  const r = validateSellerLead({ ...valid, about: '' })
-  assertEquals(r.ok, true)
-  if (r.ok) assertEquals(r.lead.about, null)
-})
-
-Deno.test('renders the seller email', () => {
-  const r = validateSellerLead({ ...valid, utm_source: 'instagram' })
-  if (!r.ok) throw new Error(r.error)
-  const { subject, html, text } = renderSellerEmail(r.lead)
-  assertEquals(subject, 'New seller interest: Thandi Nkosi')
-  assertStringIncludes(text, 'Durban')
-  assertStringIncludes(text, 'source=instagram')
-  assertStringIncludes(html, 'Seller Interest')
-  assertStringIncludes(html, 'thandi@example.com')
-})
-
-Deno.test('escapes html in the email', () => {
-  const r = validateSellerLead({ ...valid, about: '<script>alert(1)</script>' })
-  if (!r.ok) throw new Error(r.error)
-  const { html } = renderSellerEmail(r.lead)
-  assertStringIncludes(html, '&lt;script&gt;')
-})
-```
-
-- [ ] **Step 2: Run the tests to verify they fail**
-
-Run:
-```bash
-cd supabase/functions/notify-lead && deno test seller_test.ts
-```
-Expected: error resolving `./seller.ts` (module not found).
-
-- [ ] **Step 3: Implement seller.ts**
-
-Create `supabase/functions/notify-lead/seller.ts`:
-
-```ts
-// Seller-interest leads from /start-your-business.
-// Pure validation and email rendering; no I/O, so it can be unit-tested.
-
-export type SellerLead = {
-  full_name: string
-  email: string
-  phone: string
-  location: string
-  about: string | null
-  user_agent: string | null
-  referrer: string | null
-  utm_source: string | null
-  utm_medium: string | null
-  utm_campaign: string | null
-}
-
-export type SellerValidation =
-  | { ok: true; lead: SellerLead }
-  | { ok: false; error: string }
-
-const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/
-const PHONE_RE = /^\+?\d{9,15}$/
-
-function str(v: unknown): string {
-  return typeof v === 'string' ? v.trim() : ''
-}
-
-function optional(v: unknown): string | null {
-  const s = str(v)
-  return s.length > 0 ? s : null
-}
-
-export function validateSellerLead(data: Record<string, unknown>): SellerValidation {
-  const full_name = str(data.full_name)
-  const email = str(data.email)
-  const rawPhone = str(data.phone)
-  const location = str(data.location)
-
-  if (!full_name || !email || !rawPhone || !location) {
-    return { ok: false, error: 'Missing required fields' }
-  }
-  if (!EMAIL_RE.test(email)) {
-    return { ok: false, error: 'Invalid email address' }
-  }
-  const phone = rawPhone.replace(/[\s().\-]/g, '')
-  if (!PHONE_RE.test(phone)) {
-    return { ok: false, error: 'Invalid phone number' }
-  }
-  const about = optional(data.about)
-  if (about && about.length > 2000) {
-    return { ok: false, error: 'About too long' }
-  }
-
-  return {
-    ok: true,
-    lead: {
-      full_name,
-      email,
-      phone,
-      location,
-      about,
-      user_agent: optional(data.user_agent),
-      referrer: optional(data.referrer),
-      utm_source: optional(data.utm_source),
-      utm_medium: optional(data.utm_medium),
-      utm_campaign: optional(data.utm_campaign),
-    },
-  }
-}
-
-function escape(s: string): string {
-  return String(s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-}
-
-function row(label: string, value: string): string {
-  return `<tr>
-    <td style="padding:8px 16px 8px 0;color:#6b7280;width:140px;vertical-align:top;">${escape(label)}</td>
-    <td style="padding:8px 0;color:#111827;">${escape(value)}</td>
-  </tr>`
-}
-
-export function renderSellerEmail(lead: SellerLead): { subject: string; html: string; text: string } {
-  const subject = `New seller interest: ${lead.full_name}`
-
-  const utmLine = [
-    lead.utm_source && `source=${lead.utm_source}`,
-    lead.utm_medium && `medium=${lead.utm_medium}`,
-    lead.utm_campaign && `campaign=${lead.utm_campaign}`,
-  ].filter(Boolean).join(' · ')
-
-  const text = [
-    `NEW SELLER INTEREST — ${lead.full_name}`,
-    ``,
-    `${lead.full_name} <${lead.email}>`,
-    `Phone:    ${lead.phone}`,
-    `Location: ${lead.location}`,
-    ``,
-    lead.about ? `ABOUT\n  ${lead.about.replace(/\n/g, '\n  ')}\n` : null,
-    utmLine ? `ATTRIBUTION\n  ${utmLine}` : null,
-    lead.referrer ? `  Referrer: ${lead.referrer}` : null,
-    ``,
-    `Reply to this email to respond directly to ${lead.full_name}.`,
-  ].filter(Boolean).join('\n')
-
-  const html = `<!doctype html>
-<html><body style="margin:0;padding:0;background:#f4f5f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1f2937;">
-  <div style="max-width:560px;margin:0 auto;padding:32px 24px;">
-    <div style="background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:32px 28px;">
-      <div style="border-left:3px solid #3EB5E1;padding-left:16px;margin-bottom:24px;">
-        <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#0369a1;font-weight:700;">Seller Interest</div>
-        <h1 style="margin:8px 0 4px;font-size:22px;line-height:1.2;color:#111827;font-weight:600;">${escape(lead.full_name)}</h1>
-        <div style="color:#6b7280;font-size:14px;"><a href="mailto:${escape(lead.email)}" style="color:#6b7280;">${escape(lead.email)}</a></div>
-        <div style="color:#6b7280;font-size:14px;margin-top:4px;"><a href="tel:${escape(lead.phone)}" style="color:#6b7280;">${escape(lead.phone)}</a></div>
-      </div>
-      <table style="width:100%;border-collapse:collapse;font-size:14px;line-height:1.6;">
-        ${row('Location', lead.location)}
-      </table>
-      ${lead.about ? `<div style="margin-top:24px;padding:16px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#6b7280;margin-bottom:8px;">About</div><div style="color:#1f2937;white-space:pre-wrap;">${escape(lead.about)}</div></div>` : ''}
-      ${utmLine || lead.referrer ? `<div style="margin-top:24px;font-size:12px;color:#6b7280;">${utmLine ? `<div>Attribution: ${escape(utmLine)}</div>` : ''}${lead.referrer ? `<div>Referrer: ${escape(lead.referrer)}</div>` : ''}</div>` : ''}
-      <div style="margin-top:32px;padding-top:16px;border-top:1px solid #e5e7eb;font-size:12px;color:#6b7280;">Reply to this email to respond directly to ${escape(lead.full_name)}.</div>
-    </div>
-  </div>
-</body></html>`
-
-  return { subject, html, text }
-}
-```
-
-- [ ] **Step 4: Run the tests to verify they pass**
-
-Run:
-```bash
-cd supabase/functions/notify-lead && deno test seller_test.ts
-```
-Expected: `ok | 8 passed | 0 failed`
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add supabase/functions/notify-lead/seller.ts supabase/functions/notify-lead/seller_test.ts
-git commit -m "Add seller lead validation and email rendering"
-```
-
----
-
-### Task 4: Branch notify-lead on `lead_type`
-
-**Files:**
-- Modify: `supabase/functions/notify-lead/index.ts` (top imports, `LeadForm` type at ~line 64, handler body after the honeypot check at ~line 212)
-
-**Interfaces:**
-- Consumes: `validateSellerLead`, `renderSellerEmail` from `./seller.ts`.
-- Produces: POST body `{ lead_type: "seller", ... }` sends the seller email. Missing or `"business"` behaves as today. Any other value returns 400 `Invalid lead_type`.
-
-- [ ] **Step 1: Add the import and type field**
-
-At the top of `index.ts`, after the `Resend` import:
-
-```ts
-import { validateSellerLead, renderSellerEmail } from './seller.ts'
-```
-
-In `type LeadForm`, add as the first field:
-
-```ts
-  lead_type?: string
-```
-
-- [ ] **Step 2: Branch after the honeypot check**
-
-Immediately after the honeypot block (the one ending `return json(200, { ok: true }, cors)`), and before the `if (!data.full_name || !data.work_email || !data.company)` line, insert:
-
-```ts
-  const leadType = data.lead_type ?? 'business'
-  if (leadType !== 'business' && leadType !== 'seller') {
-    return json(400, { ok: false, error: 'Invalid lead_type' }, cors)
-  }
-
-  if (leadType === 'seller') {
-    const v = validateSellerLead(data as Record<string, unknown>)
-    if (!v.ok) return json(400, { ok: false, error: v.error }, cors)
-
-    const { subject, html, text } = renderSellerEmail(v.lead)
-    const resend = new Resend(RESEND_API_KEY)
-    const { data: sendData, error } = await resend.emails.send({
-      from: NOTIFY_FROM,
-      to: [NOTIFY_TO],
-      replyTo: v.lead.email,
-      subject,
-      html,
-      text,
-    })
-    if (error) {
-      console.error('notify-lead: Resend error (seller)', error)
-      return json(502, { ok: false, error: 'Failed to send email' }, cors)
-    }
-    console.log('notify-lead: sent seller interest', { resendId: sendData?.id, name: v.lead.full_name })
-    return json(200, { ok: true, id: sendData?.id }, cors)
-  }
-```
-
-The existing business validation and send below it stay untouched.
-
-- [ ] **Step 3: Type-check the function**
-
-Run:
-```bash
-cd supabase/functions/notify-lead && deno check index.ts && deno test
-```
-Expected: `deno check` prints nothing (or "Check ..." with no errors); tests `ok | 8 passed`.
-
-- [ ] **Step 4: Smoke test locally with a fake key**
-
-Run the function locally and post a seller lead. Without a real Resend key the send fails at Resend, which proves routing and validation without sending mail:
-
-```bash
-cd supabase/functions/notify-lead && RESEND_API_KEY=re_test deno run --allow-net --allow-env index.ts &
-sleep 2
-curl -s -X POST http://localhost:8000 -H 'Content-Type: application/json' -H 'Origin: http://localhost:4321' \
-  -d '{"lead_type":"seller","full_name":"Test","email":"t@example.com","phone":"0821234567","location":"Durban"}'
-echo
-curl -s -X POST http://localhost:8000 -H 'Content-Type: application/json' -H 'Origin: http://localhost:4321' \
-  -d '{"lead_type":"seller","full_name":"Test","email":"bad","phone":"0821234567","location":"Durban"}'
-echo
-curl -s -X POST http://localhost:8000 -H 'Content-Type: application/json' -H 'Origin: http://localhost:4321' \
-  -d '{"lead_type":"other","full_name":"Test"}'
-echo
-kill %1
-```
-Expected, in order:
-- `{"ok":false,"error":"Failed to send email"}` (reached Resend with a fake key: routing and validation passed)
-- `{"ok":false,"error":"Invalid email address"}`
-- `{"ok":false,"error":"Invalid lead_type"}`
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add supabase/functions/notify-lead/index.ts
-git commit -m "Route seller leads in notify-lead by lead_type"
-```
-
-Deployment is a separate, deliberate step at the end (Task 10), since it touches the shared Supabase project.
-
----
-
-### Task 5: Hero and Benefits sections
-
-**Files:**
+- Create: `src/components/business/startUrl.ts`
 - Create: `src/components/business/BusinessHero.tsx`
 - Create: `src/components/business/BusinessBenefits.tsx`
 - Create: `src/pages/start-your-business.astro` (minimal, grows in later tasks)
 
 **Interfaces:**
-- Produces: default-export React components with no props. Page at `/start-your-business` renders `Layout` with `noindex`, `Nav` in minimal mode, the two sections, and `Footer`.
+- Produces: `export const START_URL: string` from `startUrl.ts`. Default-export React components with no props. Page at `/start-your-business` renders `Layout` with `noindex`, `Nav` in minimal mode, the two sections, and `Footer`.
 
 - [ ] **Step 1: Write the failing build check**
 
-Append to `scripts/check-noindex.sh`:
+Append to `scripts/check-business-page.sh`:
 
 ```bash
-# The new page exists, is noindex, and is not linked from the homepage.
+# The new page exists, is noindex, has a minimal nav, and is not linked from the homepage.
 P=dist/start-your-business/index.html
 [ -f "$P" ] || { echo "FAIL: $P not built"; exit 1; }
 grep -q 'name="robots" content="noindex"' "$P" || { echo "FAIL: new page lacks noindex"; exit 1; }
-grep -q 'href="#register"' "$P" || { echo "FAIL: new page nav CTA does not point to #register"; exit 1; }
+grep -q 'Start Your Business' "$P" || { echo "FAIL: new page has no Start Your Business CTA"; exit 1; }
 for a in how-it-works active-selling platform pricing; do
-  if grep -q "href=\"/#$a\"\|href=\"#$a\" class=\"text-sm font-medium text-white/50" "$P"; then
+  if grep -q "href=\"#$a\" class=\"text-sm font-medium text-white/50" "$P"; then
     echo "FAIL: new page nav carries section link #$a"; exit 1
   fi
 done
-grep -q 'Toggle menu' "$P" && { echo "FAIL: new page renders the mobile menu"; exit 1; }
+if grep -q 'Toggle menu' "$P"; then echo "FAIL: new page renders the mobile menu"; exit 1; fi
+if grep -q 'Contact Us' "$P"; then echo "FAIL: new page shows a Contact Us pill"; exit 1; fi
 if grep -q 'start-your-business' dist/index.html; then
   echo "FAIL: homepage links to start-your-business"; exit 1
 fi
-echo "OK: start-your-business page is built, noindex, and unlinked"
+echo "OK: start-your-business page is built, noindex, minimal nav, unlinked"
 ```
 
 Run:
 ```bash
-npm run build && ./scripts/check-noindex.sh
+npm run build && ./scripts/check-business-page.sh
 ```
 Expected: `FAIL: dist/start-your-business/index.html not built`
 
-- [ ] **Step 2: Create BusinessHero.tsx**
+- [ ] **Step 2: Create startUrl.ts**
+
+```ts
+// Every "Start Your Business" button on /start-your-business reads this.
+// [APP LINK] Replace '#' with the Merch & Move app's sign-up form URL once it exists.
+export const START_URL = '#'
+```
+
+- [ ] **Step 3: Create BusinessHero.tsx**
 
 ```tsx
 import { motion } from 'framer-motion'
+import { START_URL } from './startUrl'
 
 export default function BusinessHero() {
   return (
@@ -642,7 +290,7 @@ export default function BusinessHero() {
           transition={{ duration: 0.5 }}
           className="inline-block px-4 py-1.5 text-[11px] font-medium tracking-[0.15em] uppercase bg-yellow/10 border border-yellow/20 rounded-full text-yellow mb-10"
         >
-          Independent Seller Programme
+          Side Hustle or Full-Time. Your Call.
         </motion.span>
 
         <motion.h1
@@ -661,8 +309,9 @@ export default function BusinessHero() {
           transition={{ duration: 0.6, delay: 0.25 }}
           className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto mb-12 leading-relaxed"
         >
-          Sell on your own schedule, from wherever you are, backed by a brand that already moves product.{' '}
-          <span className="text-white font-medium">You decide how far you take it.</span>
+          Sell on your own schedule, from wherever you are, backed by a brand that already moves product.
+          Start it as a side hustle.{' '}
+          <span className="text-white font-medium">Grow it as far as you want.</span>
         </motion.p>
 
         <motion.div
@@ -672,10 +321,10 @@ export default function BusinessHero() {
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
           <a
-            href="#register"
+            href={START_URL}
             className="group inline-flex items-center px-8 py-4 text-sm font-semibold text-base bg-yellow rounded-full hover:shadow-[0_0_40px_rgba(249,215,2,0.35)] transition-all duration-500"
           >
-            Register Your Interest
+            Start Your Business
             <svg className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
@@ -693,7 +342,7 @@ export default function BusinessHero() {
 }
 ```
 
-- [ ] **Step 3: Create BusinessBenefits.tsx**
+- [ ] **Step 4: Create BusinessBenefits.tsx**
 
 ```tsx
 import { motion } from 'framer-motion'
@@ -705,13 +354,13 @@ const benefits = [
     accent: 'yellow' as const,
   },
   {
-    title: 'Earn On What You Sell',
-    body: '[EARNING MODEL: one line on how sellers earn, e.g. commission on every sale you make.]',
+    title: 'Side Hustle or Full-Time',
+    body: 'Start with a few hours a week alongside your job. Plenty of sellers begin that way and grow from there.',
     accent: 'sky' as const,
   },
   {
-    title: 'Incentives & Rewards',
-    body: '[EARNING MODEL: bonuses, tiers or rewards available to top performers.]',
+    title: 'Earn On What You Sell',
+    body: '[EARNING MODEL: one line on how sellers earn, e.g. commission on every sale you make.]',
     accent: 'sky' as const,
   },
   {
@@ -801,7 +450,7 @@ export default function BusinessBenefits() {
 }
 ```
 
-- [ ] **Step 4: Create the page**
+- [ ] **Step 5: Create the page**
 
 `src/pages/start-your-business.astro`:
 
@@ -811,17 +460,18 @@ import Layout from '../layouts/Layout.astro'
 import Nav from '../components/Nav.astro'
 import Footer from '../components/Footer.astro'
 import SmoothScroll from '../components/SmoothScroll.tsx'
+import { START_URL } from '../components/business/startUrl'
 import BusinessHero from '../components/business/BusinessHero.tsx'
 import BusinessBenefits from '../components/business/BusinessBenefits.tsx'
 ---
 
 <Layout
   title="Start Your Own Business — Merch & Move"
-  description="Become an independent Merch & Move seller. Work on your own schedule, sell brands that already move, and build something of your own."
+  description="Become an independent Merch & Move seller. Side hustle or full-time, work on your own schedule and sell brands that already move."
   noindex
 >
   <SmoothScroll client:load />
-  <Nav minimal ctaLabel="Register Your Interest" ctaHref="#register" />
+  <Nav minimal ctaLabel="Start Your Business" ctaHref={START_URL} />
   <main>
     <BusinessHero client:load />
     <BusinessBenefits client:visible />
@@ -830,26 +480,26 @@ import BusinessBenefits from '../components/business/BusinessBenefits.tsx'
 </Layout>
 ```
 
-- [ ] **Step 5: Verify**
+- [ ] **Step 6: Verify**
 
 Run:
 ```bash
-npm run build && ./scripts/check-noindex.sh
+npm run build && ./scripts/check-business-page.sh
 ```
 Expected: three `OK:` lines.
 
-With the dev server running, open `http://localhost:4321/start-your-business`. Expected: hero headline "Start Your Own Business", yellow "Register Your Interest" button, six benefit cards below. The nav shows only the logo and a "Register Your Interest" pill, with no section links and no hamburger at mobile width. The pill links to `#register` (nothing to scroll to yet; that arrives in Task 8).
+With the dev server running, open `http://localhost:4321/start-your-business`. Expected: nav shows only the logo and a "Start Your Business" pill at every width; hero headline "Start Your Own Business" with the side-hustle badge above it; yellow "Start Your Business" button; six benefit cards below.
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 7: Commit**
 
 ```bash
-git add src/components/business/BusinessHero.tsx src/components/business/BusinessBenefits.tsx src/pages/start-your-business.astro scripts/check-noindex.sh
+git add src/components/business/startUrl.ts src/components/business/BusinessHero.tsx src/components/business/BusinessBenefits.tsx src/pages/start-your-business.astro scripts/check-business-page.sh
 git commit -m "Add Start Your Business page with hero and benefits"
 ```
 
 ---
 
-### Task 6: Steps, Qualities and Why Us sections
+### Task 4: Steps, Qualities and Why Us sections
 
 **Files:**
 - Create: `src/components/business/BusinessSteps.tsx`
@@ -858,11 +508,12 @@ git commit -m "Add Start Your Business page with hero and benefits"
 - Modify: `src/pages/start-your-business.astro`
 
 **Interfaces:**
+- Consumes: `START_URL` from `./startUrl`.
 - Produces: `BusinessSteps` renders `<section id="how-it-works">` (the hero's second button targets it). Others have no id.
 
 - [ ] **Step 1: Write the failing build check**
 
-Append to `scripts/check-noindex.sh`:
+Append to `scripts/check-business-page.sh`:
 
 ```bash
 grep -q 'id="how-it-works"' "$P" || { echo "FAIL: steps section missing"; exit 1; }
@@ -873,7 +524,7 @@ echo "OK: steps, qualities and why-us sections present"
 
 Run:
 ```bash
-npm run build && ./scripts/check-noindex.sh
+npm run build && ./scripts/check-business-page.sh
 ```
 Expected: `FAIL: steps section missing`
 
@@ -881,12 +532,13 @@ Expected: `FAIL: steps section missing`
 
 ```tsx
 import { motion } from 'framer-motion'
+import { START_URL } from './startUrl'
 
 const steps = [
   {
     number: '01',
-    title: 'Register Your Interest',
-    body: 'Fill in the short form below. We\'ll be in touch to tell you more and answer your questions.',
+    title: 'Start Your Business',
+    body: 'Hit the button, fill in a short form in the Merch & Move app, and tell us a little about yourself.',
     accent: 'yellow' as const,
   },
   {
@@ -963,6 +615,21 @@ export default function BusinessSteps() {
             )
           })}
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="text-center mt-14"
+        >
+          <a
+            href={START_URL}
+            className="inline-flex items-center px-8 py-4 text-sm font-semibold text-base bg-yellow rounded-full hover:shadow-[0_0_40px_rgba(249,215,2,0.35)] transition-all duration-500"
+          >
+            Start Your Business
+          </a>
+        </motion.div>
       </div>
 
       <div className="absolute bottom-0 left-0 right-0 section-divider" />
@@ -980,7 +647,7 @@ const qualities = [
   { title: 'Self-Driven', body: 'Nobody sets your hours. The people who do best here are the ones who show up for themselves.' },
   { title: 'A People Person', body: 'Selling is talking. If you enjoy a conversation and can read a room, you already have the hardest part.' },
   { title: 'Organised', body: 'Keep track of your customers, your stock and your follow-ups. The platform helps, but the habit is yours.' },
-  { title: 'Ambitious', body: 'This can be a side income or a full business. How big it gets is up to you.' },
+  { title: 'Ambitious', body: 'This can stay a side hustle or become a full business. How big it gets is up to you.' },
 ]
 
 export default function BusinessQualities() {
@@ -1130,22 +797,22 @@ and inside `<main>`, after `<BusinessBenefits client:visible />`:
 
 Run:
 ```bash
-npm run build && ./scripts/check-noindex.sh
+npm run build && ./scripts/check-business-page.sh
 ```
 Expected: four `OK:` lines.
 
-In the browser at `http://localhost:4321/start-your-business`, click "See How It Works" in the hero. Expected: scrolls to the four-step section. Scroll on: qualities grid, then the three-card "why us" block.
+In the browser at `http://localhost:4321/start-your-business`, click "See How It Works" in the hero. Expected: scrolls to the four-step section, which ends with a "Start Your Business" button. Scroll on: qualities grid, then the three-card "why us" block.
 
 - [ ] **Step 7: Commit**
 
 ```bash
-git add src/components/business/BusinessSteps.tsx src/components/business/BusinessQualities.tsx src/components/business/BusinessWhyUs.tsx src/pages/start-your-business.astro scripts/check-noindex.sh
+git add src/components/business/BusinessSteps.tsx src/components/business/BusinessQualities.tsx src/components/business/BusinessWhyUs.tsx src/pages/start-your-business.astro scripts/check-business-page.sh
 git commit -m "Add steps, qualities and why-us sections to Start Your Business"
 ```
 
 ---
 
-### Task 7: FAQ with income disclaimer
+### Task 5: FAQ with income disclaimer
 
 **Files:**
 - Create: `src/components/business/BusinessFAQ.tsx`
@@ -1156,17 +823,18 @@ git commit -m "Add steps, qualities and why-us sections to Start Your Business"
 
 - [ ] **Step 1: Write the failing build check**
 
-Append to `scripts/check-noindex.sh`:
+Append to `scripts/check-business-page.sh`:
 
 ```bash
 grep -q '<details' "$P" || { echo "FAIL: FAQ accordion missing"; exit 1; }
+grep -q 'side hustle' "$P" || { echo "FAIL: side hustle language missing"; exit 1; }
 grep -q 'Individual results vary' "$P" || { echo "FAIL: income disclaimer missing"; exit 1; }
 echo "OK: FAQ and disclaimer present"
 ```
 
 Run:
 ```bash
-npm run build && ./scripts/check-noindex.sh
+npm run build && ./scripts/check-business-page.sh
 ```
 Expected: `FAIL: FAQ accordion missing`
 
@@ -1176,6 +844,10 @@ Expected: `FAIL: FAQ accordion missing`
 import { motion } from 'framer-motion'
 
 const faqs = [
+  {
+    q: 'Can I do this as a side hustle?',
+    a: 'Yes. Most sellers start with a few hours a week around a job or studies. There is no minimum, and you can scale up whenever you are ready.',
+  },
   {
     q: 'How do I earn money?',
     a: '[EARNING MODEL: plain-language answer on how sellers are paid, and how often.]',
@@ -1187,10 +859,6 @@ const faqs = [
   {
     q: 'Am I employed by Merch & Move?',
     a: 'No. Independent sellers run their own business. You choose your hours, your customers and how much you want to sell.',
-  },
-  {
-    q: 'What do I actually sell?',
-    a: '[EARNING MODEL: what sellers sell and to whom.]',
   },
   {
     q: 'Do I need sales experience?',
@@ -1287,7 +955,7 @@ and inside `<main>`, after `<BusinessWhyUs client:visible />`:
 
 Run:
 ```bash
-npm run build && ./scripts/check-noindex.sh
+npm run build && ./scripts/check-business-page.sh
 ```
 Expected: five `OK:` lines.
 
@@ -1296,254 +964,101 @@ In the browser, click an FAQ question. Expected: it expands and the plus icon ro
 - [ ] **Step 5: Commit**
 
 ```bash
-git add src/components/business/BusinessFAQ.tsx src/pages/start-your-business.astro scripts/check-noindex.sh
+git add src/components/business/BusinessFAQ.tsx src/pages/start-your-business.astro scripts/check-business-page.sh
 git commit -m "Add FAQ and income disclaimer to Start Your Business"
 ```
 
 ---
 
-### Task 8: Interest form
+### Task 6: Closing CTA
 
 **Files:**
-- Create: `src/components/business/BusinessInterestForm.tsx`
+- Create: `src/components/business/BusinessCTA.tsx`
 - Modify: `src/pages/start-your-business.astro`
 
 **Interfaces:**
-- Consumes: `PUBLIC_LEAD_ENDPOINT_URL` env var (already in `.env`), `notify-lead` accepting `lead_type: "seller"` (Task 4).
-- Produces: `<section id="register">` containing the form. Payload shape matches `validateSellerLead` input in Task 3.
+- Consumes: `START_URL` from `./startUrl`.
+- Produces: `BusinessCTA` renders the final section before the footer.
 
 - [ ] **Step 1: Write the failing build check**
 
-Append to `scripts/check-noindex.sh`:
+Append to `scripts/check-business-page.sh`:
 
 ```bash
-grep -q 'id="register"' "$P" || { echo "FAIL: register section missing"; exit 1; }
-grep -q 'name="hp_website_url"' "$P" || { echo "FAIL: honeypot missing from interest form"; exit 1; }
-echo "OK: interest form present"
+# All Start Your Business buttons share one href (the nav pill, hero, steps, closing CTA).
+n=$(grep -o 'Start Your Business' "$P" | wc -l | tr -d ' ')
+[ "$n" -ge 4 ] || { echo "FAIL: expected at least 4 Start Your Business CTAs, found $n"; exit 1; }
+grep -q 'Your Move' "$P" || { echo "FAIL: closing CTA missing"; exit 1; }
+echo "OK: closing CTA present, $n Start Your Business CTAs"
 ```
 
 Run:
 ```bash
-npm run build && ./scripts/check-noindex.sh
+npm run build && ./scripts/check-business-page.sh
 ```
-Expected: `FAIL: register section missing`
+Expected: `FAIL: closing CTA missing`
 
-- [ ] **Step 2: Create BusinessInterestForm.tsx**
+- [ ] **Step 2: Create BusinessCTA.tsx**
 
 ```tsx
-import { useState, type FormEvent } from 'react'
 import { motion } from 'framer-motion'
+import { START_URL } from './startUrl'
 
-type Status = 'idle' | 'sending' | 'success' | 'error'
-
-type SellerPayload = {
-  lead_type: 'seller'
-  full_name: string
-  email: string
-  phone: string
-  location: string
-  about: string | null
-  hp_website_url: string | null
-  user_agent: string | null
-  referrer: string | null
-  utm_source: string | null
-  utm_medium: string | null
-  utm_campaign: string | null
-}
-
-const ENDPOINT = import.meta.env.PUBLIC_LEAD_ENDPOINT_URL as string | undefined
-
-// Accepts local and international formats ("082 123 4567", "+27 82 123 4567").
-// Returns digits (with optional leading +), or null if invalid.
-function normalizePhone(raw: string): string | null {
-  const stripped = raw.replace(/[\s().\-]/g, '')
-  return /^\+?\d{9,15}$/.test(stripped) ? stripped : null
-}
-
-function readUtm(): Pick<SellerPayload, 'utm_source' | 'utm_medium' | 'utm_campaign' | 'referrer'> {
-  if (typeof window === 'undefined') {
-    return { utm_source: null, utm_medium: null, utm_campaign: null, referrer: null }
-  }
-  const p = new URLSearchParams(window.location.search)
-  return {
-    utm_source: p.get('utm_source'),
-    utm_medium: p.get('utm_medium'),
-    utm_campaign: p.get('utm_campaign'),
-    referrer: document.referrer || null,
-  }
-}
-
-export default function BusinessInterestForm() {
-  const [status, setStatus] = useState<Status>('idle')
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
-
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    setErrorMessage(null)
-
-    if (!ENDPOINT) {
-      setStatus('error')
-      setErrorMessage('Lead endpoint not configured. Set PUBLIC_LEAD_ENDPOINT_URL in .env.')
-      return
-    }
-
-    const form = e.currentTarget
-    const get = (name: string) =>
-      (form.elements.namedItem(name) as HTMLInputElement | HTMLTextAreaElement | null)?.value.trim() ?? ''
-
-    const phone = normalizePhone(get('phone'))
-    if (!phone) {
-      setStatus('error')
-      setErrorMessage('Enter a valid phone number, like 082 123 4567 or +27 82 123 4567.')
-      return
-    }
-
-    setStatus('sending')
-
-    const payload: SellerPayload = {
-      lead_type: 'seller',
-      full_name: get('full_name'),
-      email: get('email'),
-      phone,
-      location: get('location'),
-      about: get('about') || null,
-      hp_website_url: get('hp_website_url') || null,
-      user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
-      ...readUtm(),
-    }
-
-    try {
-      const res = await fetch(ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      })
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}))
-        throw new Error(body.error || `Server returned ${res.status}`)
-      }
-      setStatus('success')
-      form.reset()
-    } catch (err) {
-      console.error('Seller interest submission failed:', err)
-      setStatus('error')
-      setErrorMessage(
-        err instanceof Error ? err.message : 'Something went wrong. Please email us directly.',
-      )
-    }
-  }
-
-  const inputClasses =
-    'w-full px-4 py-3.5 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white placeholder-white/25 focus:outline-none focus:ring-1 focus:ring-yellow/50 focus:border-yellow/40 transition-all duration-300 text-sm'
-
-  const labelClasses =
-    'block text-[11px] font-semibold tracking-[0.15em] text-white/35 uppercase mb-2'
-
+export default function BusinessCTA() {
   return (
-    <section id="register" className="relative py-32 sm:py-40 bg-base overflow-hidden">
-      <div className="mesh-orb mesh-orb-yellow w-[500px] h-[500px] top-0 left-0 opacity-20" />
-      <div className="mesh-orb mesh-orb-sky w-[400px] h-[400px] bottom-0 right-0 opacity-20" />
+    <section className="relative py-32 sm:py-40 bg-base overflow-hidden">
+      <motion.div
+        animate={{ x: [0, 20, -15, 10, 0], y: [0, -15, 20, -10, 0], scale: [1, 1.05, 0.95, 1.03, 1] }}
+        transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
+        className="mesh-orb mesh-orb-yellow w-[700px] h-[700px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-15"
+        style={{ animation: 'none' }}
+      />
+      <motion.div
+        animate={{ x: [0, -20, 15, -10, 0], y: [0, 15, -20, 10, 0], scale: [1, 0.97, 1.04, 0.98, 1] }}
+        transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+        className="mesh-orb mesh-orb-sky w-[500px] h-[500px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-15"
+        style={{ animation: 'none' }}
+      />
       <div className="absolute inset-0 max-w-7xl mx-auto grid-lines" />
 
-      <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
+      <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <motion.h2
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-14"
+          transition={{ duration: 0.7 }}
+          className="font-display text-5xl sm:text-6xl md:text-7xl text-white mb-8 leading-[1.0]"
         >
-          <span className="inline-block text-[11px] font-bold tracking-[0.25em] text-yellow uppercase mb-6">
-            Register Your Interest
-          </span>
-          <h2 className="font-display text-4xl sm:text-5xl text-white mb-4 leading-[1.05]">
-            Ready to <span className="italic text-gradient-yellow">Start?</span>
-          </h2>
-          <p className="text-sm text-white/50">
-            Leave your details and we'll be in touch with everything you need to know.
-          </p>
+          Your Business.{' '}
+          <span className="italic text-gradient-yellow">Your Move.</span>
+        </motion.h2>
+
+        <motion.p
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.15 }}
+          className="text-lg text-white/60 max-w-xl mx-auto mb-12 leading-relaxed"
+        >
+          Side hustle today, something bigger tomorrow. It starts with one form.
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
+          <a
+            href={START_URL}
+            className="group inline-flex items-center px-10 py-5 text-base font-semibold text-base bg-yellow rounded-full hover:shadow-[0_0_50px_rgba(249,215,2,0.4)] transition-all duration-500"
+          >
+            Start Your Business
+            <svg className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </a>
         </motion.div>
-
-        {status === 'success' ? (
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="card-elevated rounded-2xl p-12 text-center"
-          >
-            <div className="w-14 h-14 mx-auto mb-6 rounded-full bg-yellow/10 border border-yellow/25 flex items-center justify-center">
-              <svg className="w-6 h-6 text-yellow" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <h3 className="font-display text-2xl text-white mb-3">Thanks, we've got your details.</h3>
-            <p className="text-sm text-white/50 max-w-md mx-auto leading-relaxed">
-              A member of our team will be in touch within a few business days to tell you more about the programme.
-            </p>
-          </motion.div>
-        ) : (
-          <motion.form
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            onSubmit={handleSubmit}
-            className="card-elevated rounded-2xl p-8 sm:p-10 space-y-6"
-          >
-            <div aria-hidden="true" className="absolute -left-[9999px] top-auto w-px h-px overflow-hidden">
-              <label>
-                Leave this field empty
-                <input type="text" name="hp_website_url" tabIndex={-1} autoComplete="off" />
-              </label>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div>
-                <label htmlFor="full_name" className={labelClasses}>Full name</label>
-                <input type="text" id="full_name" name="full_name" required maxLength={200} autoComplete="name" className={inputClasses} placeholder="Thandi Nkosi" />
-              </div>
-              <div>
-                <label htmlFor="email" className={labelClasses}>Email</label>
-                <input type="email" id="email" name="email" required autoComplete="email" className={inputClasses} placeholder="you@example.com" />
-              </div>
-              <div>
-                <label htmlFor="phone" className={labelClasses}>Phone number</label>
-                <input type="tel" id="phone" name="phone" required autoComplete="tel" maxLength={20} className={inputClasses} placeholder="082 123 4567" />
-              </div>
-              <div>
-                <label htmlFor="location" className={labelClasses}>Town or province</label>
-                <input type="text" id="location" name="location" required maxLength={120} autoComplete="address-level2" className={inputClasses} placeholder="Durban" />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="about" className={labelClasses}>
-                Tell us a bit about yourself <span className="text-white/25 normal-case tracking-normal">— optional</span>
-              </label>
-              <textarea
-                id="about"
-                name="about"
-                rows={4}
-                maxLength={2000}
-                className={`${inputClasses} resize-none`}
-                placeholder="What you do now, why this interests you, anything you'd like us to know…"
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={status === 'sending'}
-              className="w-full py-4 bg-yellow text-base font-semibold rounded-xl hover:shadow-[0_0_30px_rgba(249,215,2,0.3)] transition-all duration-500 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-            >
-              {status === 'sending' ? 'Sending…' : 'Register My Interest'}
-            </button>
-
-            {status === 'error' && errorMessage && (
-              <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="text-center text-red-400/80 text-xs">
-                {errorMessage}
-              </motion.p>
-            )}
-          </motion.form>
-        )}
       </div>
     </section>
   )
@@ -1555,50 +1070,35 @@ export default function BusinessInterestForm() {
 In `src/pages/start-your-business.astro`, add the import:
 
 ```astro
-import BusinessInterestForm from '../components/business/BusinessInterestForm.tsx'
+import BusinessCTA from '../components/business/BusinessCTA.tsx'
 ```
 
 and inside `<main>`, after `<BusinessFAQ client:visible />`:
 
 ```astro
-    <BusinessInterestForm client:visible />
+    <BusinessCTA client:visible />
 ```
 
-- [ ] **Step 4: Verify the build**
+- [ ] **Step 4: Verify**
 
 Run:
 ```bash
-npm run build && ./scripts/check-noindex.sh
+npm run build && ./scripts/check-business-page.sh
 ```
 Expected: six `OK:` lines.
 
-- [ ] **Step 5: Verify the form against the local function**
+In the browser, scroll to the bottom. Expected: the "Your Business. Your Move." headline with a large yellow button above the footer.
 
-Start the edge function locally with a fake key (as in Task 4 Step 4) and point the site at it:
-
-```bash
-cd supabase/functions/notify-lead && RESEND_API_KEY=re_test deno run --allow-net --allow-env index.ts &
-cd - >/dev/null
-PUBLIC_LEAD_ENDPOINT_URL=http://localhost:8000 npm run dev
-```
-
-In the browser at `http://localhost:4321/start-your-business`:
-1. Click "Register Your Interest" in the hero. Expected: scrolls to the form.
-2. Submit with phone `123`. Expected: red message about a valid phone number, nothing sent.
-3. Submit with valid values. Expected: red message `Failed to send email` (the fake key stopped it at Resend, so validation and routing passed).
-
-Stop both processes afterwards. Restart the normal dev server without the override.
-
-- [ ] **Step 6: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
-git add src/components/business/BusinessInterestForm.tsx src/pages/start-your-business.astro scripts/check-noindex.sh
-git commit -m "Add seller interest form to Start Your Business"
+git add src/components/business/BusinessCTA.tsx src/pages/start-your-business.astro scripts/check-business-page.sh
+git commit -m "Add closing CTA to Start Your Business"
 ```
 
 ---
 
-### Task 9: Full-page review
+### Task 7: Full-page review
 
 **Files:**
 - Read-only pass over everything under `src/components/business/` and `src/pages/start-your-business.astro`.
@@ -1607,38 +1107,38 @@ git commit -m "Add seller interest form to Start Your Business"
 
 Run:
 ```bash
-grep -rn "\[EARNING MODEL" src/components/business | wc -l
 grep -rn "\[EARNING MODEL" src/components/business
 ```
-Expected: 8 matches, all beginning `[EARNING MODEL`. Any bracketed placeholder that does not start with that prefix is a bug; fix it.
+Expected: 6 matches (benefits 1, steps 2, FAQ 2, disclaimer 1), all beginning `[EARNING MODEL`. Any bracketed placeholder that does not start with that prefix, other than the `[APP LINK]` comment in `startUrl.ts`, is a bug; fix it.
 
-- [ ] **Step 2: Confirm nothing links to the page**
-
-Run:
-```bash
-grep -rn "start-your-business" src --include=*.astro --include=*.tsx | grep -v "src/pages/start-your-business.astro"
-```
-Expected: no output.
-
-- [ ] **Step 3: Confirm the homepage lead flow is untouched**
+- [ ] **Step 2: Confirm every CTA reads START_URL**
 
 Run:
 ```bash
-git diff 718cfe5 -- src/components/ContactForm.tsx src/pages/index.astro
+grep -rn "href=" src/components/business src/pages/start-your-business.astro | grep -v "START_URL\|#how-it-works"
 ```
-Expected: no output (neither file changed since the spec commit).
+Expected: no output. Every href in the page is either `START_URL` or the in-page `#how-it-works` scroll.
+
+- [ ] **Step 3: Confirm nothing links to the page and nothing else changed**
+
+Run:
+```bash
+grep -rn "start-your-business" src | grep -v "src/pages/start-your-business.astro"
+git diff e402067 --stat -- supabase src/components/ContactForm.tsx src/pages/index.astro src/components/MobileMenu.tsx
+```
+Expected: no output from either.
 
 - [ ] **Step 4: Full build and assertion script**
 
 Run:
 ```bash
-npm run build && ./scripts/check-noindex.sh
+npm run build && ./scripts/check-business-page.sh
 ```
 Expected: six `OK:` lines, no build errors. Warnings about content config and `emitFile` are pre-existing and fine.
 
 - [ ] **Step 5: Visual pass**
 
-With the dev server on, load `http://localhost:4321/start-your-business` at desktop width and at a 390px-wide mobile viewport. Check: no horizontal scroll, every section visible, hero text not clipped, form inputs full width on mobile, the nav shows only the logo and the register pill at every width.
+With the dev server on, load `http://localhost:4321/start-your-business` at desktop width and at a 390px-wide mobile viewport. Check: no horizontal scroll, every section visible, hero text not clipped, the nav shows only the logo and the pill at every width, buttons full width or centred on mobile.
 
 Take one desktop screenshot and one mobile screenshot for the user.
 
@@ -1652,52 +1152,14 @@ git commit -m "Polish Start Your Business page"
 
 ---
 
-### Task 10: Deploy notify-lead (user-gated)
+## Wiring the app link later
 
-This touches the shared Supabase project. Do not run it without the user saying so.
-
-**Files:**
-- None changed. Deploys `supabase/functions/notify-lead/`.
-
-- [ ] **Step 1: Ask the user for the go-ahead**
-
-Tell the user the site work is complete and the function is ready. Deploying changes the live `notify-lead` function used by the production homepage. Ask for an explicit yes.
-
-- [ ] **Step 2: Deploy**
-
-```bash
-supabase functions deploy notify-lead --no-verify-jwt
-```
-Expected: deploy succeeds and lists `notify-lead`.
-
-- [ ] **Step 3: Verify the live function still accepts business leads**
-
-Post a business-shaped lead with the honeypot filled, which returns success without sending mail:
-
-```bash
-curl -s -X POST "$PUBLIC_LEAD_ENDPOINT_URL" -H 'Content-Type: application/json' -H 'Origin: https://merchandmove.co.za' \
-  -d '{"full_name":"Smoke","work_email":"s@example.com","company":"Smoke","product_category":"other","retail_footprint":"dtc_only","timeline":"exploring","target_regions":["national"],"hp_website_url":"bot"}'
-```
-Expected: `{"ok":true}`
-
-Then post a seller-shaped invalid lead to confirm routing is live without sending mail:
-
-```bash
-curl -s -X POST "$PUBLIC_LEAD_ENDPOINT_URL" -H 'Content-Type: application/json' -H 'Origin: https://merchandmove.co.za' \
-  -d '{"lead_type":"seller","full_name":"Smoke","email":"bad","phone":"0821234567","location":"Durban"}'
-```
-Expected: `{"ok":false,"error":"Invalid email address"}`
-
-- [ ] **Step 4: One real seller submission**
-
-Ask the user to submit the form once on the dev server with their own details, and confirm the "New seller interest" email arrives. This is the only step that sends mail.
-
----
+When the app's sign-up form URL exists, change one line in `src/components/business/startUrl.ts`, rebuild, and every button on the page points at it. If the link should open in a new tab, add `target="_blank" rel="noopener"` to the four anchors that read `START_URL` (nav pill, hero, steps, closing CTA).
 
 ## Self-review
 
-**Spec coverage.** Purpose and hidden URL: Tasks 5 and 9. Nine sections: hero and benefits (5), steps, qualities, why-us (6), FAQ and disclaimer (7), form (8), footer (5). Minimal nav: Task 2, verified in Task 5. `noindex`: Tasks 1 and 5. Form fields and `lead_type: "seller"`: Tasks 3, 4, 8. Business leads unchanged: Task 4 (branch placed before business validation) and verified in Tasks 4, 9, 10. Placeholder copy convention: Global Constraints and Task 9. Every test in the spec's Testing section maps to a step.
+**Spec coverage.** Purpose and hidden URL: Tasks 3 and 7. Positioning and side-hustle language: hero badge and sub-copy (3), benefit card (3), qualities (4), FAQ (5), closing CTA (6), asserted in Task 5's check. Nine sections: hero and benefits (3), steps, qualities, why-us (4), FAQ and disclaimer (5), closing CTA (6), footer (3). Minimal nav: Task 2, asserted in Task 3. `START_URL`: Task 3, consumed in 4 and 6, audited in 7. `noindex`: Tasks 1 and 3. No server or form work: nothing in the plan touches `supabase/`, verified in Task 7. Every test in the spec's Testing section maps to a step.
 
-**Placeholders.** None outside the deliberate `[EARNING MODEL ...]` copy markers, which the spec requires.
+**Placeholders.** None outside the deliberate `[EARNING MODEL ...]` copy markers and the `[APP LINK]` comment, both of which the spec requires.
 
-**Type consistency.** `SellerLead` field names (`full_name`, `email`, `phone`, `location`, `about`, `user_agent`, `referrer`, `utm_*`) match `SellerPayload` in Task 8 plus `lead_type` and `hp_website_url`, which the function reads before validation. `validateSellerLead` and `renderSellerEmail` names are identical in Tasks 3 and 4. `minimal`, `ctaLabel` and `ctaHref` are the prop names in Task 2 and the page in Task 5.
+**Type consistency.** `START_URL` is the export name in Task 3 and the import in Tasks 3, 4 and 6 and the page. `minimal`, `ctaLabel` and `ctaHref` are the prop names in Task 2 and the page in Task 3. The steps section id `how-it-works` matches the hero's secondary button.
