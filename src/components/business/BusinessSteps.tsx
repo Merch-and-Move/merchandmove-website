@@ -22,8 +22,8 @@ const steps = [
     title: 'Get Set Up',
     headline: 'Trained, Equipped and Ready to Sell',
     description:
-      '[EARNING MODEL: what onboarding involves, e.g. starter kit, platform access, first training session.] You\'ll finish setup knowing the products, the app and exactly how you get paid.',
-    features: ['Product training you can do around your day', 'Your own login to the Merch & Move app', 'Your wallet, activated and ready'],
+      'Come to your Welcome Event, where we train you on the products and the app. Your starter kit arrives, your login goes live and your wallet is switched on. You\'ll finish knowing exactly how you get paid.',
+    features: ['A Welcome Event that gets you selling with confidence', 'Your starter kit, delivered to you', 'Your own app login and wallet, activated and ready'],
     accent: 'sky' as const,
     mockup: <StepSetupMockup />,
   },
@@ -42,8 +42,8 @@ const steps = [
     title: 'Grow',
     headline: 'Side Hustle Today. Bigger Tomorrow.',
     description:
-      '[EARNING MODEL: how sellers grow, e.g. higher rates at volume, building a team, unlocking rewards.] The more you sell, the more the business becomes yours.',
-    features: ['Scale from a few hours a week to full-time', 'See your growth month by month in the app', '[EARNING MODEL: rewards or tiers for top sellers]'],
+      'Start with a few hours a week and a handful of customers. Add more hours, more products and your own stock line as you go. The more you sell, the more the business becomes yours.',
+    features: ['Scale from a few hours a week to full-time', 'Buy stock at a discount and earn the mark-up too', 'See your growth month by month in the app'],
     accent: 'yellow' as const,
     mockup: <StepGrowMockup />,
   },

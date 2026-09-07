@@ -23,7 +23,7 @@ const benefits = [
   },
   {
     title: 'Earn On What You Sell',
-    body: '[EARNING MODEL: one line on how sellers earn, e.g. commission on every sale you make.]',
+    body: 'Earn commission on every sale you make through the app. Want more? Buy from our in-house brands at incredible discounts and sell at your own mark-up.',
     accent: 'sky' as const,
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -43,7 +43,7 @@ const benefits = [
   },
   {
     title: 'Tools & Training',
-    body: 'The same platform our promoters use, plus training to help you sell with confidence from day one.',
+    body: 'The same app our promoters use, plus a Welcome Event that trains you up so you can sell with confidence from day one.',
     accent: 'sky' as const,
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>

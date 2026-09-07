@@ -2,9 +2,9 @@ import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 
 const items = [
-  { label: 'Welcome call booked', delay: 0.4 },
-  { label: 'Product training complete', delay: 0.9 },
-  { label: 'App access granted', delay: 1.4 },
+  { label: 'Welcome Event attended', delay: 0.4 },
+  { label: 'Starter kit delivered', delay: 0.9 },
+  { label: 'App login live', delay: 1.4 },
   { label: 'Wallet activated', delay: 1.9 },
 ]
 

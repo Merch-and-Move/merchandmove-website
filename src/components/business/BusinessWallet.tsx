@@ -8,7 +8,7 @@ const features = [
   },
   {
     title: 'Request a Payout Whenever You Want',
-    description: 'Need it now? Tap Request Payout and it\'s on its way to your bank. [EARNING MODEL: payout timing, minimums or fees, if any.]',
+    description: 'Need it now? Tap Request Payout and it\'s on its way to your bank, usually within a business day or two. No minimum balance. No fees. No waiting for payday.',
   },
   {
     title: 'See Exactly Where You Stand',

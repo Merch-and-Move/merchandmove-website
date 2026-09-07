@@ -1,5 +1,10 @@
 import { motion } from 'framer-motion'
 
+// Illustrative earnings example. These are not real rates; change them here when the model is final.
+const EXAMPLE = { unitsPerWeek: 20, avgSale: 150, commissionPct: 20 }
+const weekly = Math.round((EXAMPLE.unitsPerWeek * EXAMPLE.avgSale * EXAMPLE.commissionPct) / 100)
+const monthly = weekly * 4
+
 const faqs = [
   {
     q: 'Can I do this as a side hustle?',
@@ -7,15 +12,15 @@ const faqs = [
   },
   {
     q: 'How do I get paid?',
-    a: 'Every confirmed sale is credited to your wallet in the Merch & Move app. When you want your money, tap Request Payout and it goes to your bank account. [EARNING MODEL: payout timing, minimums or fees, if any.]',
+    a: 'Every confirmed sale is credited to your wallet in the Merch & Move app. When you want your money, tap Request Payout and it goes to your bank account, usually within a business day or two. There is no minimum balance and no fee.',
   },
   {
     q: 'How much can I earn?',
-    a: '[EARNING MODEL: plain-language answer on how earnings work, e.g. commission per sale, and what a typical range looks like.]',
+    a: `You earn commission on every sale you make through the app, and you can buy from our in-house brands at a discount and sell at your own mark-up. As an illustration only: sell ${EXAMPLE.unitsPerWeek} units a week at an average of R${EXAMPLE.avgSale} with ${EXAMPLE.commissionPct}% commission and you'd earn about R${weekly.toLocaleString()} a week, or R${monthly.toLocaleString()} a month, before any mark-up on your own stock. Your actual earnings depend on what and how much you sell.`,
   },
   {
     q: 'Does it cost anything to start?',
-    a: '[EARNING MODEL: starter cost, if any, and what it includes.]',
+    a: 'There is a starter kit to get you going. We are finalising exactly what goes in it and what it costs, and we will walk you through all of it before you commit to anything.',
   },
   {
     q: 'Am I employed by Merch & Move?',
@@ -23,7 +28,7 @@ const faqs = [
   },
   {
     q: 'Do I need sales experience?',
-    a: 'No. We provide training on the products and the app. Enthusiasm and consistency matter more than a CV.',
+    a: 'No. Your Welcome Event trains you on the products and the app before you sell a thing. Enthusiasm and consistency matter more than a CV.',
   },
   {
     q: 'Where in South Africa can I sell?',
@@ -88,7 +93,7 @@ export default function BusinessFAQ() {
           className="mt-12 text-[11px] text-white/30 leading-[1.8] text-center max-w-xl mx-auto"
         >
           Individual results vary. Merch &amp; Move makes no guarantee of income or success. What you earn depends on
-          your effort, skill and commitment. [EARNING MODEL: link to an income disclosure statement once published.]
+          your effort, skill and commitment.
         </motion.p>
       </div>
 

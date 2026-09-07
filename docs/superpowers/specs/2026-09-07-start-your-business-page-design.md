@@ -17,13 +17,31 @@ by URL only until the programme is ready to launch.
 
 ## Out of scope
 
-- The earning / commission model. Copy leaves clearly marked spots for it.
 - Any lead capture on this site. The "Start Your Business" buttons link to a
   contact form inside the Merch & Move application, which is being built
   separately. Until that URL exists the buttons point at a placeholder.
 - Any change to the `notify-lead` Edge Function or the shared Supabase
   project.
 - Homepage or nav links to the new page.
+
+## Programme decisions (2026-09-07)
+
+- **Earning.** Commission on every sale made through the app, plus the option
+  to buy from Merch & Move's in-house brands at a discount and sell at their
+  own mark-up. No commission rate is published; the FAQ uses a clearly
+  labelled illustrative example whose numbers live in one constant in
+  `BusinessFAQ.tsx`.
+- **Starter kit.** Required. Contents and price are undecided, so copy says
+  one exists and that it is explained before anyone commits.
+- **Onboarding.** A "Welcome Event" (product and app training), starter kit
+  delivery, app login and wallet activation. Use the name "Welcome Event",
+  not "training".
+- **Wallet payouts.** Request any time, no minimum, no fee, usually in the
+  bank within a business day or two.
+- **Growth.** No tiers, team earnings or formal rewards yet. Growth copy is
+  about hours, products and adding a stock line.
+- **Income disclosure statement.** None exists. The disclaimer is a plain
+  sentence with no link.
 
 ## Positioning
 
@@ -44,8 +62,7 @@ Every business owner gets a wallet inside the Merch & Move app. Earnings land
 in it, and the owner can request a payout whenever they want. This is the
 page's standout feature and gets its own section with an animated wallet
 mockup: balance counting up, a live earnings feed, and a "Request Payout"
-button that resolves to "Payout sent". Copy avoids specifics on amounts or
-timing; those are `[EARNING MODEL]` placeholders.
+button that resolves to "Payout sent". Copy states the payout rules above.
 
 ## Page structure
 
@@ -79,8 +96,7 @@ One scrolling page, modelled on Forever Living's "Your Opportunity" and
    hustle?" and "How do I get paid?" (answered with the wallet). Earning
    amounts are placeholders.
 8. **Disclaimer.** Short income disclaimer paragraph. South African
-   direct-selling pages carry one; final wording is a business decision and
-   is marked as placeholder.
+   direct-selling pages carry one. No income disclosure link.
 9. **Closing CTA.** Large headline and a single "Start Your Business" button,
    in the style of the homepage's closing CTA section.
 10. **Footer.** Existing site footer.
@@ -134,10 +150,8 @@ engines do not surface an unfinished programme. Remove it at launch.
 
 ## Copy
 
-Placeholder copy is written in the site's existing voice (direct, confident,
-short lines). Every spot that depends on the undecided earning model is
-wrapped in square brackets, for example `[EARNING MODEL: how commission
-works]`, so it can be found and replaced in one pass.
+Copy is written in the site's existing voice (direct, confident, short
+lines). The only remaining placeholder is the `[APP LINK]` in `startUrl.ts`.
 
 ## Testing
 
