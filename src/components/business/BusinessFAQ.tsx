@@ -1,10 +1,5 @@
 import { motion } from 'framer-motion'
 
-// Illustrative earnings example. These are not real rates; change them here when the model is final.
-const EXAMPLE = { unitsPerWeek: 20, avgSale: 150, commissionPct: 20 }
-const weekly = Math.round((EXAMPLE.unitsPerWeek * EXAMPLE.avgSale * EXAMPLE.commissionPct) / 100)
-const monthly = weekly * 4
-
 const faqs = [
   {
     q: 'Can I do this as a side hustle?',
@@ -16,7 +11,7 @@ const faqs = [
   },
   {
     q: 'How much can I earn?',
-    a: `You earn commission on every sale you make through the app, and you can buy from our in-house brands at a discount and sell at your own mark-up. As an illustration only: sell ${EXAMPLE.unitsPerWeek} units a week at an average of R${EXAMPLE.avgSale} with ${EXAMPLE.commissionPct}% commission and you'd earn about R${weekly.toLocaleString()} a week, or R${monthly.toLocaleString()} a month, before any mark-up on your own stock. Your actual earnings depend on what and how much you sell.`,
+    a: 'That\'s up to you. You earn commission on every sale you make through the app, and you can buy from our in-house brands at a discount and sell at your own mark-up. There is no cap and no salary band. Sell a little, earn a little. Sell a lot, and you write your own paycheck.',
   },
   {
     q: 'Does it cost anything to start?',

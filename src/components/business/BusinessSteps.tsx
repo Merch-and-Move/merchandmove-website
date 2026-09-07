@@ -13,7 +13,7 @@ const steps = [
     headline: 'Two Minutes. One Form. You\'re In.',
     description:
       'Hit the button, fill in a short form in the Merch & Move app, and tell us a little about yourself. No CV, no interview panel, no waiting weeks for an answer.',
-    features: ['Apply from your phone in minutes', 'No sales experience required', 'We\'ll call you to say hello and answer questions'],
+    features: ['Apply from your phone in minutes', 'No sales experience required', 'We\'ll be in touch with your Welcome Event details'],
     accent: 'yellow' as const,
     mockup: <StepApplyMockup />,
   },

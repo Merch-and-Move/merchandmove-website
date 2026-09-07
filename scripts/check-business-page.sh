@@ -17,7 +17,7 @@ echo "OK: homepage nav intact"
 # The new page exists, is noindex, has a minimal nav, and is not linked from the homepage.
 P=dist/start-your-business/index.html
 [ -f "$P" ] || { echo "FAIL: $P not built"; exit 1; }
-grep -q 'name="robots" content="noindex"' "$P" || { echo "FAIL: new page lacks noindex"; exit 1; }
+if grep -q 'name="robots" content="noindex"' "$P"; then echo "FAIL: new page still carries noindex"; exit 1; fi
 grep -q 'Start Your Business' "$P" || { echo "FAIL: new page has no Start Your Business CTA"; exit 1; }
 for a in how-it-works active-selling platform pricing; do
   if grep -q "href=\"#$a\" class=\"text-sm font-medium text-white/50" "$P"; then
@@ -30,7 +30,10 @@ if grep -q 'start-your-business' dist/index.html; then
   echo "FAIL: homepage links to start-your-business"; exit 1
 fi
 grep -q 'Side Hustle' "$P" || { echo "FAIL: hero side hustle badge missing"; exit 1; }
-echo "OK: start-your-business page is built, noindex, minimal nav, unlinked"
+if grep -q 'Quick Links' "$P"; then echo "FAIL: new page renders the full footer"; exit 1; fi
+grep -q 'Quick Links' dist/index.html || { echo "FAIL: homepage footer changed"; exit 1; }
+grep -q 'info@merchandmove.co.za' "$P" || { echo "FAIL: minimal footer missing contact email"; exit 1; }
+echo "OK: start-your-business page is built, indexable, minimal nav and footer, unlinked"
 
 grep -q 'id="how-it-works"' "$P" || { echo "FAIL: steps section missing"; exit 1; }
 grep -q 'Application' "$P" || { echo "FAIL: apply mockup missing"; exit 1; }

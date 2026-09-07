@@ -17,7 +17,6 @@ import BusinessCTA from '../components/business/BusinessCTA.tsx'
 <Layout
   title="Start Your Own Business — Merch & Move"
   description="Become an independent Merch & Move seller. Side hustle or full-time, work on your own schedule, sell brands that already move, and cash out from your own wallet whenever you want."
-  noindex
 >
   <SmoothScroll client:load />
   <Nav minimal ctaLabel="Start Your Business" ctaHref={START_URL} />
@@ -31,5 +30,5 @@ import BusinessCTA from '../components/business/BusinessCTA.tsx'
     <BusinessFAQ client:visible />
     <BusinessCTA client:visible />
   </main>
-  <Footer />
+  <Footer minimal />
 </Layout>
